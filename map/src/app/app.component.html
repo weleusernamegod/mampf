@@ -1,3 +1,9 @@
 <main>
-  <google-map />
+  <mampf-map id="map" [places]="places" (placeClicked)="onPlaceClicked($event)"></mampf-map>
+
+  <div id="grid">
+    <div>Navigation</div>
+    <div>Content</div>
+    <div>Day Selection</div>
+  </div>
 </main>

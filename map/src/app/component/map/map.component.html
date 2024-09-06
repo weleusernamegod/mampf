@@ -1,0 +1,25 @@
+<google-map
+width="100%"
+height="100%"
+[center]="mapCenter"
+[zoom]="mapZoom"
+[options]="MAP_OPTIONS">
+<map-circle
+  [center]="accuracyCircleCenter"
+  [radius]="accuracyCircleRadius"
+  [options]="ACCURACY_CIRCLE_OPTIONS" />
+
+<map-marker
+  icon="assets/marker/position.svg"
+  [position]="locationMarkerPosition"
+  [clickable]="true"
+  (mapClick)="locate()" />
+
+@for (place of places; track place.name) {
+  <map-marker
+    icon="assets/marker/place.svg"
+    [position]="place.position"
+    [clickable]="true"
+    (mapClick)="onPlaceClicked(place)" />
+}
+</google-map>

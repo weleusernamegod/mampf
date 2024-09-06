@@ -1,0 +1,12 @@
+[
+  {
+    "position": { "lat": 47.3769, "lng": 8.545094 },
+    "name": "Some Place",
+    "logo": "/logo.jpg"
+  },
+  {
+    "position": { "lat": 47.3869, "lng": 8.535094 },
+    "name": "Different Place",
+    "logo": "/logo2.jpg"
+  }
+]
