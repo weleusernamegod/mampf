@@ -1,0 +1,23 @@
+<div class="overlay days">
+  <div class="wrapper" (click)="onDaySelected(1)">
+    <div class="day" [class.active]="selectedDay === 1">MO</div>
+  </div>
+  <div class="wrapper" (click)="onDaySelected(2)">
+    <div class="day" [class.active]="selectedDay === 2">DI</div>
+  </div>
+  <div class="wrapper" (click)="onDaySelected(3)">
+    <div class="day" [class.active]="selectedDay === 3">MI</div>
+  </div>
+  <div class="wrapper" (click)="onDaySelected(4)">
+    <div class="day" [class.active]="selectedDay === 4">DO</div>
+  </div>
+  <div class="wrapper" (click)="onDaySelected(5)">
+    <div class="day" [class.active]="selectedDay === 5">FR</div>
+  </div>
+  <div class="wrapper wrapper-saturday" (click)="onDaySelected(6)">
+    <div class="day" [class.active]="selectedDay === 6">SA</div>
+  </div>
+  <div class="wrapper wrapper-sunday" (click)="onDaySelected(0)">
+    <div class="day" [class.active]="selectedDay === 0">SO</div>
+  </div>
+</div>

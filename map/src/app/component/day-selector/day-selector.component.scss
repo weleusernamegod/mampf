@@ -1,0 +1,62 @@
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 47px);
+  grid-template-rows: 47px;
+  justify-content: center;
+
+  padding: 5px;
+  margin: 0px auto 17px auto;
+
+  border-radius: 50px;
+}
+
+.day {
+  width: 17px;
+  height: 17px;
+
+  margin: 15px 0px 0px 15px;
+  border-radius: 19px;
+
+  background-color: var(--grey2);
+
+  color: transparent;
+  font-size: 0px;
+  line-height: 17px;
+  text-align: center;
+
+  transition-timing-function: ease;
+  transition-property: background-color, width, height, margin, color, font-size,
+    line-height;
+  transition-duration: 0.5s;
+}
+
+.day.active {
+  width: 37px;
+  height: 37px;
+
+  margin: 5px 0px 0px 5px;
+
+  background-color: var(--teal);
+
+  color: var(--white);
+  font-size: 19px;
+  line-height: 37px;
+}
+
+.wrapper {
+  cursor: pointer;
+}
+
+.wrapper-saturday {
+  outline: 5px solid var(--grey1);
+  border-radius: 50px 0px 0px 50px;
+
+  background-color: var(--grey1);
+}
+
+.wrapper-sunday {
+  outline: 5px solid var(--grey1);
+  border-radius: 0px 50px 50px 0px;
+
+  background-color: var(--grey1);
+}

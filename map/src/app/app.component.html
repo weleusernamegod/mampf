@@ -1,9 +1,16 @@
 <main>
-  <mampf-map id="map" [places]="places" (placeClicked)="onPlaceClicked($event)"></mampf-map>
+  <mampf-map
+    id="map"
+    [places]="places"
+    (placeClicked)="onPlaceClicked($event)"></mampf-map>
 
   <div id="grid">
     <div>Navigation</div>
     <div>Content</div>
-    <div>Day Selection</div>
+    <div class="align-center">
+      <mampf-day-selector
+        class="inline-block"
+        (daySelected)="onDaySelected($event)"></mampf-day-selector>
+    </div>
   </div>
 </main>

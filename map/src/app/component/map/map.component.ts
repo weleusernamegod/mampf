@@ -10,7 +10,7 @@ import { Place } from '../../dto/place';
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
 })
-export class Map implements OnInit {
+export class MapComponent implements OnInit {
   readonly MAX_ACCURACY_RADIUS = 300;
   readonly DETAIL_ZOOM = 16;
   readonly MAP_OPTIONS: google.maps.MapOptions = {
@@ -30,8 +30,7 @@ export class Map implements OnInit {
     fillOpacity: 0.3,
   };
 
-  private positionUpdateReceived = false;
-
+  positionReceived = false;
   mapZoom = 9;
   mapCenter: google.maps.LatLngLiteral = { lat: 47.3769, lng: 8.5417 };
   accuracyCircleCenter: google.maps.LatLngLiteral = {
@@ -74,8 +73,8 @@ export class Map implements OnInit {
         ? 0
         : geolocationPosition.coords.accuracy;
 
-    if (!this.positionUpdateReceived) {
-      this.positionUpdateReceived = true;
+    if (!this.positionReceived) {
+      this.positionReceived = true;
       this.locate();
     }
   }

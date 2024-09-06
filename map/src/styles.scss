@@ -30,3 +30,15 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.overlay {
+  border-radius: 11px;
+  box-shadow: 0px 2px 5px 0px var(--shadow);
+
+  background-color: var(--white);
+
+  user-select: none;
+  pointer-events: all;
+
+  z-index: 1000;
+}
