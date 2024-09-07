@@ -6,7 +6,7 @@ if [ -d "./dist" ]; then
 fi
 mkdir "./dist"
 
-# build map
+# build & add map
 cd "./map"
 npm install
 npm run build
