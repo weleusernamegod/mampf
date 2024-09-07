@@ -1,0 +1,5 @@
+{
+    "php.format.rules.maxBlankLines": 1,
+    "php.format.rules.booleanConstantCasing": "uppercase",
+    "php.format.rules.nullConstantCasing": "uppercase"
+}
