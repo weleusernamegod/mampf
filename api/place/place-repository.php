@@ -52,12 +52,11 @@ function find_place_by_id($id) {
     $statement->bind_param("i", $id);
     $statement->execute();
 
-    $result = $statement->get_result();
-    if (!$result) {
+    $row = $statement->get_result()->fetch_assoc();
+    if (!$row) {
         return null;
     }
-
-    $row = $result->fetch_assoc();
+    
     $place = _map_row_to_place($row);
 
     $statement->close();

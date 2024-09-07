@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mampf Login</title>
+
+    <link href="bootstrap.min.css" rel="stylesheet">
+
+
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        .form-signin {
+            max-width: 330px;
+            padding: 1rem;
+        }
+
+        .form-signin .form-floating:focus-within {
+            z-index: 2;
+        }
+
+        .form-signin input[type="email"] {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .form-signin input[type="password"] {
+            margin-bottom: 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    </style>
+</head>
+
+<body class="d-flex align-items-center py-4 bg-body-tertiary">
+    <main class="form-signin w-100 m-auto text-center">
+        <form onsubmit="onFormSubmit(event)">
+            <img class="mb-3" src="logo.svg" alt="" width="250">
+            <h1 class="h4 mb-3 fw-normal">Bitte melde dich an</h1>
+
+            <div class="form-floating">
+                <input type="email" class="form-control" id="mail" placeholder="name@example.com" required>
+                <label for="mail">E-Mail</label>
+            </div>
+
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password" placeholder="Password" required>
+                <label for="password">Passwort</label>
+            </div>
+
+            <button id="login-button" class="btn btn-primary w-100 py-2" type="submit">Anmelden</button>
+
+            <div id="alert" class="alert alert-danger mt-3 text-start d-none" role="alert">
+                Dein Anmeldeversuch ist fehlgeschlagen. Bitte versuche es erneut.
+            </div>
+
+            <p class="mt-5 mb-3 text-body-secondary">Noch kein Account? Jetzt registrieren</p>
+        </form>
+    </main>
+</body>
+
+<script>
+    function onFormSubmit(event) {
+        changeAlertVisibility(false);
+
+        const mail = document.getElementById('mail').value;
+        const password = document.getElementById('password').value;
+
+        fetch("../post-login.php", {
+            method: "post",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                mail, password
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = "../test.php";
+                } else {
+                    changeAlertVisibility(true);
+                }
+            }).catch(_ => {
+                changeAlertVisibility(true);
+            });
+
+
+
+        event.preventDefault();
+        return false;
+    }
+
+    function changeAlertVisibility(visible) {
+        const alert = document.getElementById('alert');
+        if (visible) {
+            alert.classList.remove("d-none");
+        } else {
+            alert.classList.add("d-none");
+        }
+    }
+</script>
+
+</html>
