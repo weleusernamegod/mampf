@@ -8,7 +8,6 @@
 
     <link href="bootstrap.min.css" rel="stylesheet">
 
-
     <style>
         html,
         body {
@@ -72,7 +71,7 @@
         const mail = document.getElementById('mail').value;
         const password = document.getElementById('password').value;
 
-        fetch("../post-login.php", {
+        fetch("../api/post-login.php", {
             method: "post",
             headers: {
                 'Accept': 'application/json',
@@ -84,7 +83,7 @@
         })
             .then(response => {
                 if (response.ok) {
-                    window.location.href = "../test.php";
+                    window.location.href = "../admin";
                 } else {
                     changeAlertVisibility(true);
                 }

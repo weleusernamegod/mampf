@@ -67,7 +67,7 @@ export class AppComponent implements OnInit {
   }
 
   onAddClicked() {
-    window.location.href = 'https://www.google.com';
+    window.location.href = './admin';
   }
 
   private filterPlaces(places: Place[], dayFilter: number): Place[] {
