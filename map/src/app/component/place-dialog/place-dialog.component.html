@@ -1,0 +1,23 @@
+<div id="wrapper">
+  <div
+    id="dialog"
+    class="overlay cursor-pointer"
+    [class.minimized]="minimized"
+    (click)="toggleSize()">
+    <hr />
+    <div id="summary">
+      <img id="logo" [src]="place?.logo" width="70" height="70" />
+      <div id="info">
+        <strong>{{ place?.name }}</strong
+        ><br />
+        <span>{{ place?.description }}</span
+        ><br />
+        <span>{{ openingHours }}</span>
+      </div>
+    </div>
+
+    <mampf-open-days
+      class="section block"
+      [openDays]="place?.openDays"></mampf-open-days>
+  </div>
+</div>

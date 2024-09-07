@@ -1,0 +1,30 @@
+.title {
+  display: inline-block;
+  margin-bottom: 7px;
+  font-size: 14px;
+}
+
+#open-days {
+  display: grid;
+  grid-template-columns: 19px auto;
+  grid-auto-rows: 19px;
+  grid-row-gap: 7px;
+  grid-column-gap: 10px;
+
+  margin-left: 7px;
+
+  font-size: 14px;
+
+  .circle {
+    background-color: var(--grey1);
+    border-radius: 12px;
+  }
+
+  .circle.active {
+    background-color: var(--teal);
+  }
+
+  .day {
+    line-height: 19px;
+  }
+}

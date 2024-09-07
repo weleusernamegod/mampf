@@ -4,6 +4,7 @@ import { MapComponent } from './component/map/map.component';
 import { DaySelectorComponent } from './component/day-selector/day-selector.component';
 import { NavigationComponent } from './component/navigation/navigation.component';
 import { AboutDialogComponent } from './component/about-dialog/about-dialog.component';
+import { PlaceDialogComponent } from './component/place-dialog/place-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,7 @@ import { AboutDialogComponent } from './component/about-dialog/about-dialog.comp
     DaySelectorComponent,
     NavigationComponent,
     AboutDialogComponent,
+    PlaceDialogComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -21,13 +23,20 @@ export class AppComponent implements OnInit {
   @ViewChild(MapComponent) mapComponent: MapComponent | undefined = undefined;
 
   places: Place[] = [];
+  filteredPlaces: Place[] = [];
+  selectedPlace: Place | undefined = undefined;
   aboutDialogVisible = false;
+  placeDialogVisible = false;
 
   ngOnInit(): void {
     fetch('assets/tmp/places.json')
       .then(response => response.json())
       .then(data => {
         this.places = data;
+        this.filteredPlaces = this.filterPlaces(
+          this.places,
+          new Date().getDay()
+        );
       })
       .catch(error => {
         console.error('Could not fetch places', error);
@@ -35,11 +44,17 @@ export class AppComponent implements OnInit {
   }
 
   onPlaceClicked(place: Place) {
-    console.log('Place', place);
+    this.selectedPlace = place;
+
+    this.aboutDialogVisible = false;
+    this.placeDialogVisible = true;
   }
 
   onDaySelected(day: number) {
-    console.log('Day', day);
+    this.placeDialogVisible = false;
+    this.aboutDialogVisible = false;
+
+    this.filteredPlaces = this.filterPlaces(this.places, day);
   }
 
   onLocateClicked() {
@@ -47,10 +62,36 @@ export class AppComponent implements OnInit {
   }
 
   onAboutClicked() {
+    this.placeDialogVisible = false;
     this.aboutDialogVisible = !this.aboutDialogVisible;
   }
 
   onAddClicked() {
     window.location.href = 'https://www.google.com';
+  }
+
+  private filterPlaces(places: Place[], dayFilter: number): Place[] {
+    return this.places.filter(place => this.isPlaceOpenOnDay(place, dayFilter));
+  }
+
+  private isPlaceOpenOnDay(place: Place, day: number): boolean {
+    switch (day) {
+      case 0:
+        return place.openDays.sunday;
+      case 1:
+        return place.openDays.monday;
+      case 2:
+        return place.openDays.tuesday;
+      case 3:
+        return place.openDays.wednesday;
+      case 4:
+        return place.openDays.thursday;
+      case 5:
+        return place.openDays.friday;
+      case 6:
+        return place.openDays.saturday;
+      default:
+        return false;
+    }
   }
 }
