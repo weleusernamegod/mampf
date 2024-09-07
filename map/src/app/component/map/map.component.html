@@ -4,18 +4,17 @@
   [center]="mapCenter"
   [zoom]="mapZoom"
   [options]="MAP_OPTIONS">
-
   @if (positionReceived) {
     <map-circle
-    [center]="accuracyCircleCenter"
-    [radius]="accuracyCircleRadius"
-    [options]="ACCURACY_CIRCLE_OPTIONS" />
+      [center]="accuracyCircleCenter"
+      [radius]="accuracyCircleRadius"
+      [options]="ACCURACY_CIRCLE_OPTIONS" />
 
-  <map-marker
-    icon="assets/marker/position.svg"
-    [position]="locationMarkerPosition"
-    [clickable]="true"
-    (mapClick)="locate()" />
+    <map-marker
+      icon="assets/marker/position.svg"
+      [position]="locationMarkerPosition"
+      [clickable]="true"
+      (mapClick)="locate()" />
   }
 
   @for (place of places; track place.name) {

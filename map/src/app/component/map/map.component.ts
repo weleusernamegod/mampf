@@ -56,7 +56,9 @@ export class MapComponent implements OnInit {
   }
 
   locate(): void {
-    this.goToPosition(this.locationMarkerPosition);
+    if (this.positionReceived) {
+      this.goToPosition(this.locationMarkerPosition);
+    }
   }
 
   onPlaceClicked(place: Place) {
