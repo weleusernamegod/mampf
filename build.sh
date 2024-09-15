@@ -20,4 +20,9 @@ cp -R ./login ./dist
 cp -R ./api ./dist
 
 # add admin
-cp -R ./admin ./dist
+mkdir "./dist/admin"
+cd "./mampf-admin"
+npm install
+npm run build
+cp -R ./dist/mampf-admin/browser/* ../dist/admin
+cd ..
