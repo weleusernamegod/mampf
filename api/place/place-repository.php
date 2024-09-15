@@ -5,10 +5,8 @@ function create_place($place)
 {
     global $mysqli;
 
-    $place->createTime = date("Y-m-d H:i:s");
-
-    $statement = $mysqli->prepare("INSERT INTO tbl_place (user_id, name, description, lat, lng, logo_filename, open_sunday, open_monday, open_tuesday, open_wednesday, open_thursday, open_friday, open_saturday, open_morning, open_noon, open_evening, open_night, create_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $statement->bind_param("issddsiiiiiiiiiiis", $place->userId, $place->name, $place->description, $place->lat, $place->lng, $place->logoFilename, $place->openSunday, $place->openMonday, $place->openTuesday, $place->openWednesday, $place->openThursday, $place->openFriday, $place->openSaturday, $place->openMorning, $place->openNoon, $place->openEvening, $place->openNight, $place->createTime);
+    $statement = $mysqli->prepare("INSERT INTO tbl_place (user_id, name, description, lat, lng, logo_filename, open_sunday, open_monday, open_tuesday, open_wednesday, open_thursday, open_friday, open_saturday, open_morning, open_noon, open_evening, open_night, create_time, last_update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $statement->bind_param("issddsiiiiiiiiiiis", $place->userId, $place->name, $place->description, $place->lat, $place->lng, $place->logoFilename, $place->openSunday, $place->openMonday, $place->openTuesday, $place->openWednesday, $place->openThursday, $place->openFriday, $place->openSaturday, $place->openMorning, $place->openNoon, $place->openEvening, $place->openNight, $place->createTime, $place->lastUpdateTime);
     $statement->execute();
     $statement->close();
 
@@ -20,10 +18,8 @@ function update_place($place)
 {
     global $mysqli;
 
-    $place->lastUpdateTime = date("Y-m-d H:i:s");
-
-    $statement = $mysqli->prepare("UPDATE tbl_place SET user_id = ?, name = ?, description = ?, lat = ?, lng = ?, logo_filename = ?, open_sunday = ?, open_monday = ?, open_tuesday = ?, open_wednesday = ?, open_thursday = ?, open_friday = ?, open_saturday = ?, open_morning = ?, open_noon = ?, open_evening = ?, open_night = ?, last_update_time = ? WHERE id = ?");
-    $statement->bind_param("issddsiiiiiiiiiiisi", $place->userId, $place->name, $place->description, $place->lat, $place->lng, $place->logoFilename, $place->openSunday, $place->openMonday, $place->openTuesday, $place->openWednesday, $place->openThursday, $place->openFriday, $place->openSaturday, $place->openMorning, $place->openNoon, $place->openEvening, $place->openNight, $place->lastUpdateTime, $place->id);
+    $statement = $mysqli->prepare("UPDATE tbl_place SET user_id = ?, name = ?, description = ?, lat = ?, lng = ?, logo_filename = ?, open_sunday = ?, open_monday = ?, open_tuesday = ?, open_wednesday = ?, open_thursday = ?, open_friday = ?, open_saturday = ?, open_morning = ?, open_noon = ?, open_evening = ?, open_night = ?, last_update_time = ?, create_time = ? WHERE id = ?");
+    $statement->bind_param("issddsiiiiiiiiiiisi", $place->userId, $place->name, $place->description, $place->lat, $place->lng, $place->logoFilename, $place->openSunday, $place->openMonday, $place->openTuesday, $place->openWednesday, $place->openThursday, $place->openFriday, $place->openSaturday, $place->openMorning, $place->openNoon, $place->openEvening, $place->openNight, $place->lastUpdateTime, $place->createTime, $place->id);
     $statement->execute();
     $statement->close();
 

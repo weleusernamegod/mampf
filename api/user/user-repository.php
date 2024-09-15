@@ -5,10 +5,8 @@ function create_user($user)
 {
     global $mysqli;
 
-    $user->registrationTime = date("Y-m-d H:i:s");
-
-    $statement = $mysqli->prepare("INSERT INTO tbl_user (mail, password_hash, admin, registration_time) VALUES (?, ?, ?, ?)");
-    $statement->bind_param("ssis", $user->mail, $user->passwordHash, $user->admin, $user->registrationTime);
+    $statement = $mysqli->prepare("INSERT INTO tbl_user (mail, password_hash, admin, registration_time, last_login_time) VALUES (?, ?, ?, ?, ?)");
+    $statement->bind_param("ssis", $user->mail, $user->passwordHash, $user->admin, $user->registrationTime, $user->lastLoginTime);
     $statement->execute();
     $statement->close();
 
@@ -20,8 +18,8 @@ function update_user($user)
 {
     global $mysqli;
 
-    $statement = $mysqli->prepare("UPDATE tbl_user SET mail= ?, password_hash = ?, admin = ?, last_login_time = ? WHERE id = ?");
-    $statement->bind_param("ssisi", $user->mail, $user->passwordHash, $user->admin, $user->lastLoginTime, $user->id);
+    $statement = $mysqli->prepare("UPDATE tbl_user SET mail= ?, password_hash = ?, admin = ?, last_login_time = ?, registration_time = ? WHERE id = ?");
+    $statement->bind_param("ssisi", $user->mail, $user->passwordHash, $user->admin, $user->lastLoginTime, $user->registrationTime, $user->id);
     $statement->execute();
     $statement->close();
 

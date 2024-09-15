@@ -14,6 +14,7 @@ if (!isset($data['mail']) || !isset($data['password'])) {
 }
 
 $mysqli = create_db_connection();
+
 $user = find_user_by_mail($data['mail']);
 if (!$user) {
     http_response_code(400);
