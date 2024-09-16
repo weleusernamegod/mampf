@@ -16,7 +16,16 @@ if (!$user) {
     http_response_code(404);
     exit();
 }
-return_json($user);
+return_json(_map_user_to_dto($user));
 
 close_db_connection($mysqli);
+
+function _map_user_to_dto($user)
+{
+    return [
+        'id' => $user->id,
+        'mail' => $user->mail,
+        'admin' => $user->admin
+    ];
+}
 ?>

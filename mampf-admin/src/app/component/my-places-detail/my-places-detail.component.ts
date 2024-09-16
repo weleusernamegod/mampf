@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
 
 @Component({
   selector: 'mampf-my-places-detail',
@@ -7,4 +8,12 @@ import { Component } from '@angular/core';
   templateUrl: './my-places-detail.component.html',
   styleUrl: './my-places-detail.component.scss',
 })
-export class MyPlacesDetailComponent {}
+export class MyPlacesDetailComponent implements OnInit {
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit(): void {
+    this.route.params.subscribe((params: Params) => {
+      console.log(params);
+    });
+  }
+}

@@ -1,1 +1,36 @@
-<h1>my-places-list works!</h1>
+<h1 class="mb-4">My Places</h1>
+
+@if (myPlaces) {
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col" width="70"></th>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+      </tr>
+    </thead>
+    <tbody class="align-middle cursor-pointer">
+      @if (myPlaces.length === 0) {
+        <tr>
+          <td colspan="2">No entries available</td>
+        </tr>
+      } @else {
+        @for (myPlace of myPlaces; track myPlace.id) {
+          <tr (click)="onRowClicked(myPlace)">
+            <td>
+              <img
+                [src]="myPlace.logo"
+                class="rounded float-left"
+                width="50"
+                height="50" />
+            </td>
+            <td>{{ myPlace.name }}</td>
+            <td>{{ myPlace.description }}</td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+} @else {
+  <mampf-loading-spinner></mampf-loading-spinner>
+}

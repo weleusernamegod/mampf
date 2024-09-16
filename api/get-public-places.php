@@ -16,6 +16,7 @@ close_db_connection($mysqli);
 function _map_place_to_dto($place)
 {
     return [
+	    'id' => $place->id,
         'name' => $place->name,
         'description' => $place->description,
         'position' => [

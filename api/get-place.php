@@ -18,7 +18,8 @@ $mysqli = create_db_connection();
 
 $place = find_place_by_id(intval($_GET["id"]));
 
-if (!$place || $place->userId !== $_SESSION['user_id']) {
+$allowed = $place->userId === $_SESSION['user_id'] || is_admin();
+if (!$place || !$allowed) {
     http_response_code(404);
     exit();
 }

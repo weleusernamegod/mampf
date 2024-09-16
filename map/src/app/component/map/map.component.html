@@ -17,7 +17,7 @@
       (mapClick)="locate()" />
   }
 
-  @for (place of places; track place.name) {
+  @for (place of places; track place.id) {
     <map-marker
       icon="assets/marker/place.svg"
       [position]="place.position"

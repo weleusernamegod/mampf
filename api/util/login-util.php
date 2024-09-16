@@ -4,6 +4,11 @@ function hash_password($password)
   return hash("sha256", $password);
 }
 
+function is_admin()
+{
+  return $_SESSION['admin'];
+}
+
 function assert_logged_in()
 {
   session_start();

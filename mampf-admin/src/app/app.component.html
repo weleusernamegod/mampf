@@ -1,23 +1,36 @@
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Mampf</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarCollapse">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-      <ul class="navbar-nav me-auto mb-2 mb-md-0">
-        <li class="nav-item">
-          <a class="nav-link active" href="#">My Places</a>
-        </li>
-      </ul>
+@if (user) {
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Mampf</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          <li class="nav-item">
+            <a
+              routerLink="/my-places"
+              routerLinkActive="active"
+              class="nav-link"
+              >My Places</a
+            >
+          </li>
+        </ul>
+        <div class="text-white-50">
+          {{ user.mail }}
+          <button type="button" class="btn btn-outline-light">Sign Out</button>
+        </div>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
 
-<main class="container">
+  <main class="container">
     <router-outlet></router-outlet>
-</main>
+  </main>
+} @else {
+  <mampf-loading-spinner></mampf-loading-spinner>
+}
