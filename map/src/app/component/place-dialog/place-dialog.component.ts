@@ -13,11 +13,13 @@ export class PlaceDialogComponent implements OnChanges {
   @Input() place: Place | undefined = undefined;
 
   minimized = true;
-  openingHours: string | undefined = undefined;
+  openingHours: string | undefined;
+  pictureUrl: string | undefined;
 
   ngOnChanges(): void {
     if (this.place) {
       this.openingHours = this.generateOpeningHours(this.place);
+      this.pictureUrl = this.place.pictureId ? `api/get-public-picture.php?id=${this.place.pictureId}` : "assets/no-picture.jpg";
     }
   }
 

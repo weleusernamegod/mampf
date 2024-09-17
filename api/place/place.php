@@ -3,11 +3,11 @@ class Place
 {
     public $id;
     public $userId;
+    public $pictureId;
     public $name;
     public $description;
     public $lat;
     public $lng;
-    public $logoFilename;
     public $openSunday;
     public $openMonday;
     public $openTuesday;
@@ -22,15 +22,15 @@ class Place
     public $createTime;
     public $lastUpdateTime;
 
-    public function __construct($id, $userId, $name, $description, $lat, $lng, $logoFilename, $openSunday, $openMonday, $openTuesday, $openWednesday, $openThursday, $openFriday, $openSaturday, $openMorning, $openNoon, $openEvening, $openNight, $createTime, $lastUpdateTime)
+    public function __construct($id, $userId, $pictureId, $name, $description, $lat, $lng, $openSunday, $openMonday, $openTuesday, $openWednesday, $openThursday, $openFriday, $openSaturday, $openMorning, $openNoon, $openEvening, $openNight, $createTime, $lastUpdateTime)
     {
         $this->id = $id;
         $this->userId = $userId;
+		$this->pictureId = $pictureId;
         $this->name = $name;
         $this->description = $description;
         $this->lat = $lat;
         $this->lng = $lng;
-        $this->logoFilename = $logoFilename;
         $this->openSunday = $openSunday;
         $this->openMonday = $openMonday;
         $this->openTuesday = $openTuesday;

@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
   placeDialogVisible = false;
 
   ngOnInit(): void {
-    fetch('assets/tmp/places.json')
+    fetch('api/get-public-places.php')
       .then(response => response.json())
       .then(data => {
         this.places = data;

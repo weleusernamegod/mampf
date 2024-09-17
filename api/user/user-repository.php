@@ -81,6 +81,6 @@ function find_user_by_mail($mail) {
 
 
 function _map_row_to_user($row) {
-    return new User($row["id"], $row["mail"], $row["password_hash"], boolval($row["admin"]), $row["registration_time"], $row["last_login_time"]);
+    return new User(intval($row["id"]), $row["mail"], $row["password_hash"], boolval($row["admin"]), $row["registration_time"], $row["last_login_time"]);
 }
 ?>
