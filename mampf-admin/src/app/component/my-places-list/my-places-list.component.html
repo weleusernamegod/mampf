@@ -12,20 +12,20 @@
     <tbody class="align-middle cursor-pointer">
       @if (myPlaces.length === 0) {
         <tr>
-          <td colspan="2">No entries available</td>
+          <td colspan="3">No entries available</td>
         </tr>
       } @else {
-        @for (myPlace of myPlaces; track myPlace.id) {
-          <tr (click)="onRowClicked(myPlace)">
+        @for (place of myPlaces; track place.id) {
+          <tr (click)="onPlace(place)">
             <td>
               <img
-                [src]="myPlace.logo"
+                [src]="getPictureUrl(place.pictureId)"
                 class="rounded float-left"
                 width="50"
                 height="50" />
             </td>
-            <td>{{ myPlace.name }}</td>
-            <td>{{ myPlace.description }}</td>
+            <td>{{ place.name }}</td>
+            <td>{{ place.description }}</td>
           </tr>
         }
       }

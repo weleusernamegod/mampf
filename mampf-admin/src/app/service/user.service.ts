@@ -10,12 +10,15 @@ export class UserService {
   constructor() {}
 
   fetchUser(callback: (user: User) => void): void {
-    fetch('assets/tmp/user.json')
-      .then(response => response.json())
-      .then(data => {
-        if (data) {
-          this.user = data;
-          callback(data);
+    fetch('api/get-own-user.php')
+      .then(response => {
+        if (response.ok) {
+          response.json().then(data => {
+            this.user = data;
+            callback(data);
+          });
+        } else if (response.status === 401) {
+          window.location.href = '../login';
         }
       })
       .catch(error => {

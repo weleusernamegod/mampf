@@ -44,7 +44,7 @@ function find_all_places()
 function find_place_by_id($id) {
     global $mysqli;
 
-    $statement = $mysqli->prepare("SELECT id, user_id, picture_id, name, description, lat, lng, logo_filename, open_sunday, open_monday, open_tuesday, open_wednesday, open_thursday, open_friday, open_saturday, open_morning, open_noon, open_evening, open_night, create_time, last_update_time FROM tbl_place WHERE id = ? LIMIT 1");
+    $statement = $mysqli->prepare("SELECT id, user_id, picture_id, name, description, lat, lng, open_sunday, open_monday, open_tuesday, open_wednesday, open_thursday, open_friday, open_saturday, open_morning, open_noon, open_evening, open_night, create_time, last_update_time FROM tbl_place WHERE id = ? LIMIT 1");
     $statement->bind_param("i", $id);
     $statement->execute();
 
@@ -65,7 +65,7 @@ function find_places_by_user_id($user_id) {
 
     $places = array();
 
-    $statement = $mysqli->prepare("SELECT id, user_id, picture_id, name, description, lat, lng, logo_filename, open_sunday, open_monday, open_tuesday, open_wednesday, open_thursday, open_friday, open_saturday, open_morning, open_noon, open_evening, open_night, create_time, last_update_time FROM tbl_place WHERE user_id = ?");
+    $statement = $mysqli->prepare("SELECT id, user_id, picture_id, name, description, lat, lng, open_sunday, open_monday, open_tuesday, open_wednesday, open_thursday, open_friday, open_saturday, open_morning, open_noon, open_evening, open_night, create_time, last_update_time FROM tbl_place WHERE user_id = ?");
     $statement->bind_param("i", $user_id);
     $statement->execute();
     $result = $statement->get_result();

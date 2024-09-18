@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { MyPlacesDetailComponent } from './component/my-places-detail/my-places-detail.component';
+import { PlaceDetailComponent } from './component/place-detail/place-detail.component';
 import { MyPlacesListComponent } from './component/my-places-list/my-places-list.component';
 import { UserService } from './service/user.service';
 import { User } from './dto/user';
@@ -13,7 +13,7 @@ import { LoadingSpinnerComponent } from './component/loading-spinner/loading-spi
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
-    MyPlacesDetailComponent,
+    PlaceDetailComponent,
     MyPlacesListComponent,
     LoadingSpinnerComponent,
   ],

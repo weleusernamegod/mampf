@@ -19,7 +19,9 @@ export class PlaceDialogComponent implements OnChanges {
   ngOnChanges(): void {
     if (this.place) {
       this.openingHours = this.generateOpeningHours(this.place);
-      this.pictureUrl = this.place.pictureId ? `api/get-public-picture.php?id=${this.place.pictureId}` : "assets/no-picture.jpg";
+      this.pictureUrl = this.place.pictureId
+        ? `api/get-public-picture.php?id=${this.place.pictureId}`
+        : 'assets/no-picture.jpg';
     }
   }
 

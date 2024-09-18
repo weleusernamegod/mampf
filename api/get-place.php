@@ -24,7 +24,30 @@ if (!$place || !$allowed) {
     exit();
 }
 
-return_json($place);
+return_json(_map_place_to_dto($place));
 
 close_db_connection($mysqli);
+
+function _map_place_to_dto($place)
+{
+    return [
+	    'id' => $place->id,
+		'pictureId' => $place->pictureId,
+        'name' => $place->name,
+        'description' => $place->description,
+        'lat' => $place->lat,
+        'lng' => $place->lng,
+        'openSunday' => $place->openSunday,
+        'openMonday' => $place->openMonday,
+        'openTuesday' => $place->openTuesday,
+        'openWednesday' => $place->openWednesday,
+        'openThursday' => $place->openThursday,
+        'openFriday' => $place->openFriday,
+        'openSaturday' => $place->openSaturday,
+        'openMorning' => $place->openMorning,
+        'openNoon' => $place->openNoon,
+        'openEvening' => $place->openEvening,
+        'openNight' => $place->openNight
+    ];
+}
 ?>

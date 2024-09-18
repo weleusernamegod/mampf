@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MyPlace } from '../../dto/my-place';
+import { PlaceSummary } from '../../dto/place-summary';
 import { Router } from '@angular/router';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 
@@ -11,12 +11,12 @@ import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.comp
   styleUrl: './my-places-list.component.scss',
 })
 export class MyPlacesListComponent implements OnInit {
-  myPlaces: MyPlace[] = [];
+  myPlaces: PlaceSummary[] = [];
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-    fetch('assets/tmp/own-places.json')
+    fetch('api/get-own-places.php')
       .then(response => response.json())
       .then(data => {
         this.myPlaces = data;
@@ -26,7 +26,13 @@ export class MyPlacesListComponent implements OnInit {
       });
   }
 
-  onRowClicked(myPlace: MyPlace) {
-    this.router.navigate(['my-places', myPlace.id]);
+  onPlace(place: PlaceSummary) {
+    this.router.navigate(['place', place.id]);
+  }
+
+  getPictureUrl(pictureId: number | undefined) {
+    return pictureId
+      ? `api/get-public-picture.php?id=${pictureId}`
+      : 'assets/no-picture.jpg';
   }
 }

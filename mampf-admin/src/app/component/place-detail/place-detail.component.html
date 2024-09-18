@@ -1,0 +1,43 @@
+@if (place) {
+  <h1 class="mb-4">Place: {{ place.name }}</h1>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="mb-3">
+          <label for="input-name" class="form-label">Name</label>
+          <input
+            type="text"
+            minlength="1"
+            maxlength="30"
+            class="form-control"
+            id="input-name" />
+        </div>
+
+        <div class="mb-3">
+          <label for="input-description" class="form-label"
+            >Short Description</label
+          >
+          <input
+            type="text"
+            minlength="3"
+            maxlength="50"
+            class="form-control"
+            id="input-description" />
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <p><strong>Open Days</strong></p>
+
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="checkbox-monday" />
+          <label class="form-check-label" for="checkbox-monday"
+            >Monday</label
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <mampf-loading-spinner></mampf-loading-spinner>
+}

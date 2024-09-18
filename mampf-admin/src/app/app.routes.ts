@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
 import { MyPlacesListComponent } from './component/my-places-list/my-places-list.component';
-import { MyPlacesDetailComponent } from './component/my-places-detail/my-places-detail.component';
+import { PlaceDetailComponent } from './component/place-detail/place-detail.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'my-places', pathMatch: 'full' },
   { path: 'my-places', component: MyPlacesListComponent },
-  { path: 'my-places/:id', component: MyPlacesDetailComponent },
+  { path: 'place/:id', component: PlaceDetailComponent },
 ];
