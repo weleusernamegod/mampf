@@ -26,6 +26,16 @@ function update_place($place)
     return $place;
 }
 
+function delete_place_by_id($id)
+{
+    global $mysqli;
+
+    $statement = $mysqli->prepare("DELETE FROM tbl_place WHERE id = ?");
+    $statement->bind_param("i", $id);
+    $statement->execute();
+    $statement->close();
+}
+
 function find_all_places()
 {
     global $mysqli;
@@ -41,7 +51,8 @@ function find_all_places()
     return $places;
 }
 
-function find_place_by_id($id) {
+function find_place_by_id($id)
+{
     global $mysqli;
 
     $statement = $mysqli->prepare("SELECT id, user_id, picture_id, name, description, lat, lng, open_sunday, open_monday, open_tuesday, open_wednesday, open_thursday, open_friday, open_saturday, open_morning, open_noon, open_evening, open_night, create_time, last_update_time FROM tbl_place WHERE id = ? LIMIT 1");
@@ -50,9 +61,9 @@ function find_place_by_id($id) {
 
     $row = $statement->get_result()->fetch_assoc();
     if (!$row) {
-        return null;
+        return NULL;
     }
-    
+
     $place = _map_row_to_place($row);
 
     $statement->close();
@@ -60,7 +71,8 @@ function find_place_by_id($id) {
     return $place;
 }
 
-function find_places_by_user_id($user_id) {
+function find_places_by_user_id($user_id)
+{
     global $mysqli;
 
     $places = array();
@@ -80,8 +92,9 @@ function find_places_by_user_id($user_id) {
     return $places;
 }
 
-function _map_row_to_place($row) {
-	$pictureId = $row["picture_id"] ? intval($row["picture_id"]) : NULL;
+function _map_row_to_place($row)
+{
+    $pictureId = $row["picture_id"] ? intval($row["picture_id"]) : NULL;
     return new Place(intval($row["id"]), intval($row["user_id"]), $pictureId, $row["name"], $row["description"], floatval($row["lat"]), floatval($row["lng"]), boolval($row["open_sunday"]), boolval($row["open_monday"]), boolval($row["open_tuesday"]), boolval($row["open_wednesday"]), boolval($row["open_thursday"]), boolval($row["open_friday"]), boolval($row["open_saturday"]), boolval($row["open_morning"]), boolval($row["open_noon"]), boolval($row["open_evening"]), boolval($row["open_night"]), $row["create_time"], $row["last_update_time"]);
 }
 ?>

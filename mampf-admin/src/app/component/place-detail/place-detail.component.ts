@@ -69,7 +69,7 @@ export class PlaceDetailComponent implements OnInit {
     this.newPictureData = pictureData;
   }
 
-  onFormSubmitted(event: SubmitEvent) {
+  onFormSubmitted() {
     this.actionStatus = ActionStatus.Loading;
 
     const savePlace = {
@@ -93,20 +93,22 @@ export class PlaceDetailComponent implements OnInit {
       openNight: this.openNight,
     } as SavePlace;
 
-    fetch('api/post-place.php', {
+    fetch('/api/post-place.php', {
       method: 'post',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(savePlace),
-    }).then((response) => {
-      this.actionStatus = response.ok ? ActionStatus.CompletedSuccess : ActionStatus.CompletedError;
-    }).catch(() => {
-      this.actionStatus = ActionStatus.CompletedError;
-    });
-
-    event.preventDefault();
+    })
+      .then(response => {
+        this.actionStatus = response.ok
+          ? ActionStatus.CompletedSuccess
+          : ActionStatus.CompletedError;
+      })
+      .catch(() => {
+        this.actionStatus = ActionStatus.CompletedError;
+      });
   }
 
   private initFromExistingPlace(id: number) {

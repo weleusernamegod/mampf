@@ -26,7 +26,7 @@ class Place
     {
         $this->id = $id;
         $this->userId = $userId;
-		$this->pictureId = $pictureId;
+        $this->pictureId = $pictureId;
         $this->name = $name;
         $this->description = $description;
         $this->lat = $lat;

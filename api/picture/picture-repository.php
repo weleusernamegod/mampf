@@ -26,8 +26,9 @@ function update_picture($picture)
     return $picture;
 }
 
-function delete_picture_by_id($id) {
-	global $mysqli;
+function delete_picture_by_id($id)
+{
+    global $mysqli;
 
     $statement = $mysqli->prepare("DELETE FROM tbl_picture WHERE id = ?");
     $statement->bind_param("i", $id);
@@ -35,7 +36,8 @@ function delete_picture_by_id($id) {
     $statement->close();
 }
 
-function find_picture_by_id($id) {
+function find_picture_by_id($id)
+{
     global $mysqli;
 
     $statement = $mysqli->prepare("SELECT id, data, type, width, height FROM tbl_picture WHERE id = ? LIMIT 1");
@@ -44,7 +46,7 @@ function find_picture_by_id($id) {
 
     $row = $statement->get_result()->fetch_assoc();
     if (!$row) {
-        return null;
+        return NULL;
     }
 
     $picture = _map_row_to_picture($row);
@@ -54,7 +56,8 @@ function find_picture_by_id($id) {
     return $picture;
 }
 
-function _map_row_to_picture($row) {
+function _map_row_to_picture($row)
+{
     return new Picture(intval($row["id"]), $row["data"], $row["type"], intval($row["width"]), intval($row["height"]));
 }
 ?>

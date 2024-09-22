@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mampf Registrierung</title>
+
+    <link href="bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        .form-register {
+            max-width: 330px;
+            padding: 1rem;
+        }
+
+        .form-register .form-floating:focus-within {
+            z-index: 2;
+        }
+
+        #mail {
+            margin-bottom: 10px;
+		}
+		
+        #password {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        #password2 {
+            margin-bottom: 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    </style>
+</head>
+
+<body class="d-flex align-items-center py-4 bg-body-tertiary">
+    <main class="form-register w-100 m-auto text-center">
+        <form onsubmit="onFormSubmit(event)">
+            <img class="mb-3" src="logo.svg" alt="" width="250">
+            <h1 class="h4 mb-3 fw-normal">Jetzt registrieren</h1>
+
+            <div class="form-floating">
+                <input type="email" class="form-control" id="mail" placeholder="name@example.com" maxlength="128" minlength="5" required>
+                <label for="mail">E-Mail</label>
+            </div>
+
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password" placeholder="Password" maxlength="128" minlength="6" required>
+                <label for="password">Passwort</label>
+            </div>
+			
+			<div class="form-floating">
+                <input type="password" class="form-control" id="password2" placeholder="Password" required>
+                <label for="password2">Passwort bestätigen</label>
+            </div>
+
+            <button id="login-button" class="btn btn-primary w-100 py-2" type="submit">Registrieren</button>
+
+            <div id="alert" class="alert alert-danger mt-3 text-start d-none" role="alert">
+                Deine Registrierung ist fehlgeschlagen. Bitte versuche es erneut.
+            </div>
+
+            <p class="mt-5 mb-3 text-body-secondary">Bereits registriert? <a href="index.html">Jetzt anmelden</a></p>
+        </form>
+    </main>
+</body>
+
+<script>
+    function onFormSubmit(event) {
+        changeAlertVisibility(false);
+
+        const mail = document.getElementById('mail').value;
+        const password = document.getElementById('password').value;
+		const password2 = document.getElementById('password2').value;
+		
+		if (password !== password2) {
+		  changeAlertVisibility(true);
+		  return;
+		}
+
+        fetch("../api/post-register.php", {
+            method: "post",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                mail, password
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = "index.html#register";
+                } else {
+                    changeAlertVisibility(true);
+                }
+            }).catch(_ => {
+                changeAlertVisibility(true);
+            });
+
+
+
+        event.preventDefault();
+        return false;
+    }
+
+    function changeAlertVisibility(visible) {
+        const alert = document.getElementById('alert');
+        if (visible) {
+            alert.classList.remove("d-none");
+        } else {
+            alert.classList.add("d-none");
+        }
+    }
+</script>
+
+</html>

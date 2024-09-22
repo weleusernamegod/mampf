@@ -23,13 +23,13 @@
             z-index: 2;
         }
 
-        .form-signin input[type="email"] {
+        #mail {
             margin-bottom: -1px;
             border-bottom-right-radius: 0;
             border-bottom-left-radius: 0;
         }
 
-        .form-signin input[type="password"] {
+        #password {
             margin-bottom: 10px;
             border-top-left-radius: 0;
             border-top-right-radius: 0;
@@ -55,18 +55,33 @@
 
             <button id="login-button" class="btn btn-primary w-100 py-2" type="submit">Anmelden</button>
 
-            <div id="alert" class="alert alert-danger mt-3 text-start d-none" role="alert">
+            <div id="alert-error" class="alert alert-danger mt-3 text-start d-none" role="alert">
                 Dein Anmeldeversuch ist fehlgeschlagen. Bitte versuche es erneut.
             </div>
+			
+			<div id="alert-register" class="alert alert-success mt-3 text-start d-none" role="alert">
+                Deine Registrierung war erfolgreich. Du kannst dich jetzt mit deinen Zugangsdaten anmelden.
+            </div>
+			
+			<div id="alert-logout" class="alert alert-success mt-3 text-start d-none" role="alert">
+                Du hast dich erfolgreich abgemeldet.
+            </div>
 
-            <p class="mt-5 mb-3 text-body-secondary">Noch kein Account? Jetzt registrieren</p>
+            <p class="mt-5 mb-3 text-body-secondary">Noch kein Account? <a href="register.html">Jetzt registrieren</a></p>
         </form>
     </main>
 </body>
 
 <script>
+	const urlFragment = window.location.hash;
+	if (urlFragment === '#logout') {
+		document.getElementById('alert-logout').classList.remove('d-none');
+	} else if (urlFragment === '#register') {
+		document.getElementById('alert-register').classList.remove('d-none');
+	}
+
     function onFormSubmit(event) {
-        changeAlertVisibility(false);
+        changeErrorAlertVisibility(false);
 
         const mail = document.getElementById('mail').value;
         const password = document.getElementById('password').value;
@@ -85,10 +100,10 @@
                 if (response.ok) {
                     window.location.href = "../admin";
                 } else {
-                    changeAlertVisibility(true);
+                    changeErrorAlertVisibility(true);
                 }
             }).catch(_ => {
-                changeAlertVisibility(true);
+                changeErrorAlertVisibility(true);
             });
 
 
@@ -97,7 +112,10 @@
         return false;
     }
 
-    function changeAlertVisibility(visible) {
+    function changeErrorAlertVisibility(visible) {
+		document.getElementById('alert-logout').classList.add('d-none');
+		document.getElementById('alert-register').classList.add('d-none');
+	
         const alert = document.getElementById('alert');
         if (visible) {
             alert.classList.remove("d-none");

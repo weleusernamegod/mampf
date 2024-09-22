@@ -41,7 +41,8 @@ function find_all_users()
     return $users;
 }
 
-function find_user_by_id($id) {
+function find_user_by_id($id)
+{
     global $mysqli;
 
     $statement = $mysqli->prepare("SELECT id, mail, password_hash, admin, registration_time, last_login_time FROM tbl_user WHERE id = ? LIMIT 1");
@@ -50,7 +51,7 @@ function find_user_by_id($id) {
 
     $row = $statement->get_result()->fetch_assoc();
     if (!$row) {
-        return null;
+        return NULL;
     }
 
     $user = _map_row_to_user($row);
@@ -60,7 +61,8 @@ function find_user_by_id($id) {
     return $user;
 }
 
-function find_user_by_mail($mail) {
+function find_user_by_mail($mail)
+{
     global $mysqli;
 
     $statement = $mysqli->prepare("SELECT id, mail, password_hash, admin, registration_time, last_login_time FROM tbl_user WHERE mail = ? LIMIT 1");
@@ -69,7 +71,7 @@ function find_user_by_mail($mail) {
 
     $row = $statement->get_result()->fetch_assoc();
     if (!$row) {
-        return null;
+        return NULL;
     }
 
     $user = _map_row_to_user($row);
@@ -79,8 +81,8 @@ function find_user_by_mail($mail) {
     return $user;
 }
 
-
-function _map_row_to_user($row) {
+function _map_row_to_user($row)
+{
     return new User(intval($row["id"]), $row["mail"], $row["password_hash"], boolval($row["admin"]), $row["registration_time"], $row["last_login_time"]);
 }
 ?>

@@ -8,7 +8,7 @@ include('user/user-repository.php');
 require_once('user/user.php');
 
 $data = get_post_body_as_json();
-if (!isset($data['mail']) || !isset($data['password'])) {
+if (!_validate_payload($data)) {
     http_response_code(400);
     exit();
 }
@@ -35,4 +35,15 @@ $_SESSION['user_id'] = $user->id;
 $_SESSION['admin'] = $user->admin;
 
 close_db_connection($mysqli);
+
+function _validate_payload($data)
+{
+    if (!isset($data['mail']) || !is_string($data['mail']) || strlen($data['mail']) < 5 || strlen($data['mail']) > 128) {
+        return FALSE;
+    }
+    if (!isset($data['password']) || !is_string($data['password']) || strlen($data['password']) < 5 || strlen($data['password']) > 128) {
+        return FALSE;
+    }
+    return TRUE;
+}
 ?>

@@ -21,7 +21,7 @@ function _map_place_to_dto($place)
 {
     return [
         'id' => $place->id,
-		'pictureId' => $place->pictureId,
+        'pictureId' => $place->pictureId,
         'name' => $place->name,
         'description' => $place->description
     ];

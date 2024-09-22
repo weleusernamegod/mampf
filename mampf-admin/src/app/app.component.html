@@ -21,8 +21,12 @@
           </li>
         </ul>
         <div class="text-white-50">
-          {{ user.mail }}
-          <button type="button" class="btn btn-outline-light">Sign Out</button>
+          <button
+            type="button"
+            class="btn btn-outline-light"
+            (click)="onSignOutClicked()">
+            Sign Out
+          </button>
         </div>
       </div>
     </div>

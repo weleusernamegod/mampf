@@ -11,9 +11,9 @@ class Picture
     {
         $this->id = $id;
         $this->data = $data;
-		$this->type = $type;
-		$this->width = $width;
-		$this->height = $height;
+        $this->type = $type;
+        $this->width = $width;
+        $this->height = $height;
     }
 }
 ?>

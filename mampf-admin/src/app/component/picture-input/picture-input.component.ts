@@ -27,7 +27,7 @@ export class PictureInputComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.imageUrl = this.originalPictureId
-      ? `api/get-public-picture.php?id=${this.originalPictureId}`
+      ? `/api/get-public-picture.php?id=${this.originalPictureId}`
       : undefined;
   }
 

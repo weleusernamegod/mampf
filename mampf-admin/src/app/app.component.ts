@@ -30,4 +30,8 @@ export class AppComponent implements OnInit {
       this.user = user;
     });
   }
+
+  onSignOutClicked(): void {
+    window.location.href = '/api/get-logout.php';
+  }
 }
