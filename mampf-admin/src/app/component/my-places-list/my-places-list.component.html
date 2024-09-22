@@ -11,7 +11,7 @@
     </thead>
     <tbody class="align-middle cursor-pointer">
       @for (place of myPlaces; track place.id) {
-        <tr (click)="onPlace(place)">
+        <tr (click)="onPlaceClicked(place)">
           <td>
             <img
               [src]="getPictureUrl(place.pictureId)"
@@ -31,7 +31,9 @@
   </table>
 
   <div class="mt-4 text-end">
-    <button type="button" class="btn btn-primary">Add</button>
+    <button type="button" class="btn btn-primary" (click)="onAddClicked()">
+      Add
+    </button>
   </div>
 } @else {
   <mampf-loading-spinner></mampf-loading-spinner>

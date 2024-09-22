@@ -1,154 +1,179 @@
-@if (place) {
-  <h1 class="mb-4">Place '{{ place.name }}'</h1>
+@if (!isLoading) {
+  <h1 class="mb-4">
+    @if (place) {
+      Place '{{ place.name }}'
+    } @else {
+      New Place
+    }
+  </h1>
 
-  <div class="row mb-2">
-    <div class="col-lg-6">
-      <div class="mb-3">
-        <label for="input-name" class="form-label">Name</label>
-        <input
-          type="text"
-          minlength="1"
-          maxlength="30"
-          required
-          class="form-control"
-          id="input-name"
-          [(ngModel)]="name" />
+  <form ngNativeValidate (submit)="onFormSubmitted($event)">
+    <div class="row mb-2">
+      <div class="col-lg-6">
+        <div class="mb-3">
+          <label for="input-name" class="form-label">Name</label>
+          <input
+            type="text"
+            minlength="2"
+            maxlength="30"
+            required
+            class="form-control"
+            id="input-name"
+            name="name"
+            [(ngModel)]="name" />
+        </div>
+
+        <div class="mb-4">
+          <label for="input-description" class="form-label"
+            >Short Description</label
+          >
+          <input
+            type="text"
+            minlength="2"
+            maxlength="50"
+            required
+            class="form-control"
+            id="input-description"
+            name="description"
+            [(ngModel)]="description" />
+        </div>
+
+        <mampf-picture-input
+          [originalPictureId]="place?.pictureId"
+          (pictureDeleted)="onPictureDeleted()"
+          (pictureUploaded)="onPictureUploaded($event)"></mampf-picture-input>
       </div>
+      <div class="col-lg-6">
+        <p class="mb-2"><strong>Open Days</strong></p>
 
-      <div class="mb-4">
-        <label for="input-description" class="form-label"
-          >Short Description</label
-        >
-        <input
-          type="text"
-          minlength="3"
-          maxlength="50"
-          required
-          class="form-control"
-          id="input-description"
-          [(ngModel)]="description" />
+        <div class="mb-2 form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="checkbox-monday"
+            name="open-monday"
+            [(ngModel)]="openMonday" />
+          <label class="form-check-label" for="checkbox-monday">Monday</label>
+        </div>
+
+        <div class="mb-2 form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="checkbox-tuesday"
+            name="open-tuesday"
+            [(ngModel)]="openTuesday" />
+          <label class="form-check-label" for="checkbox-tuesday">Tuesday</label>
+        </div>
+
+        <div class="mb-2 form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="checkbox-wednesday"
+            name="open-wednesday"
+            [(ngModel)]="openWednesday" />
+          <label class="form-check-label" for="checkbox-wednesday"
+            >Wednesday</label
+          >
+        </div>
+
+        <div class="mb-2 form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="checkbox-thursday"
+            name="open-thursday"
+            [(ngModel)]="openThursday" />
+          <label class="form-check-label" for="checkbox-thursday"
+            >Thursday</label
+          >
+        </div>
+
+        <div class="mb-2 form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="checkbox-friday"
+            name="open-friday"
+            [(ngModel)]="openFriday" />
+          <label class="form-check-label" for="checkbox-friday">Friday</label>
+        </div>
+
+        <div class="mb-2 form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="checkbox-saturday"
+            name="open-saturday"
+            [(ngModel)]="openSaturday" />
+          <label class="form-check-label" for="checkbox-saturday"
+            >Saturday</label
+          >
+        </div>
+
+        <div class="mb-2 form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="checkbox-sunday"
+            name="open-sunday"
+            [(ngModel)]="openSunday" />
+          <label class="form-check-label" for="checkbox-sunday">Sunday</label>
+        </div>
+
+        <p class="mt-3 mb-2"><strong>Opening Times</strong></p>
+
+        <div class="mb-2 form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="checkbox-morning"
+            name="open-morning"
+            [(ngModel)]="openMorning" />
+          <label class="form-check-label" for="checkbox-morning">Morning</label>
+        </div>
+
+        <div class="mb-2 form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="checkbox-noon"
+            name="open-noon"
+            [(ngModel)]="openNoon" />
+          <label class="form-check-label" for="checkbox-noon">Noon</label>
+        </div>
+
+        <div class="mb-2 form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="checkbox-evening"
+            name="open-evening"
+            [(ngModel)]="openEvening" />
+          <label class="form-check-label" for="checkbox-evening">Evening</label>
+        </div>
+
+        <div class="mb-2 form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="checkbox-night"
+            name="open-night"
+            [(ngModel)]="openNight" />
+          <label class="form-check-label" for="checkbox-night">Night</label>
+        </div>
       </div>
-
-      <mampf-picture-input
-        [originalPictureId]="place.pictureId"
-        (pictureDeleted)="onPictureDeleted()"
-        (pictureUploaded)="onPictureUploaded($event)"></mampf-picture-input>
     </div>
-    <div class="col-lg-6">
-      <p class="mb-2"><strong>Open Days</strong></p>
 
-      <div class="mb-2 form-check">
-        <input
-          type="checkbox"
-          class="form-check-input"
-          id="checkbox-monday"
-          [(ngModel)]="openMonday" />
-        <label class="form-check-label" for="checkbox-monday">Monday</label>
-      </div>
+    <mampf-location-input [(lat)]="lat" [(lng)]="lng"></mampf-location-input>
 
-      <div class="mb-2 form-check">
-        <input
-          type="checkbox"
-          class="form-check-input"
-          id="checkbox-tuesday"
-          [(ngModel)]="openTuesday" />
-        <label class="form-check-label" for="checkbox-tuesday">Tuesday</label>
-      </div>
-
-      <div class="mb-2 form-check">
-        <input
-          type="checkbox"
-          class="form-check-input"
-          id="checkbox-wednesday"
-          [(ngModel)]="openWednesday" />
-        <label class="form-check-label" for="checkbox-wednesday"
-          >Wednesday</label
-        >
-      </div>
-
-      <div class="mb-2 form-check">
-        <input
-          type="checkbox"
-          class="form-check-input"
-          id="checkbox-thursday"
-          [(ngModel)]="openThursday" />
-        <label class="form-check-label" for="checkbox-thursday">Thursday</label>
-      </div>
-
-      <div class="mb-2 form-check">
-        <input
-          type="checkbox"
-          class="form-check-input"
-          id="checkbox-friday"
-          [(ngModel)]="openFriday" />
-        <label class="form-check-label" for="checkbox-friday">Friday</label>
-      </div>
-
-      <div class="mb-2 form-check">
-        <input
-          type="checkbox"
-          class="form-check-input"
-          id="checkbox-saturday"
-          [(ngModel)]="openSaturday" />
-        <label class="form-check-label" for="checkbox-saturday">Saturday</label>
-      </div>
-
-      <div class="mb-2 form-check">
-        <input
-          type="checkbox"
-          class="form-check-input"
-          id="checkbox-sunday"
-          [(ngModel)]="openSunday" />
-        <label class="form-check-label" for="checkbox-sunday">Sunday</label>
-      </div>
-
-      <p class="mt-3 mb-2"><strong>Opening Times</strong></p>
-
-      <div class="mb-2 form-check">
-        <input
-          type="checkbox"
-          class="form-check-input"
-          id="checkbox-morning"
-          [(ngModel)]="openMorning" />
-        <label class="form-check-label" for="checkbox-morning">Morning</label>
-      </div>
-
-      <div class="mb-2 form-check">
-        <input
-          type="checkbox"
-          class="form-check-input"
-          id="checkbox-noon"
-          [(ngModel)]="openNoon" />
-        <label class="form-check-label" for="checkbox-noon">Noon</label>
-      </div>
-
-      <div class="mb-2 form-check">
-        <input
-          type="checkbox"
-          class="form-check-input"
-          id="checkbox-evening"
-          [(ngModel)]="openEvening" />
-        <label class="form-check-label" for="checkbox-evening">Evening</label>
-      </div>
-
-      <div class="mb-2 form-check">
-        <input
-          type="checkbox"
-          class="form-check-input"
-          id="checkbox-night"
-          [(ngModel)]="openNight" />
-        <label class="form-check-label" for="checkbox-night">Night</label>
-      </div>
+    <div class="mt-4 text-end">
+      <button type="submit" class="btn btn-primary">Save</button>
     </div>
-  </div>
-
-  <mampf-location-input [(lat)]="lat" [(lng)]="lng"></mampf-location-input>
-
-  <div class="mt-4 text-end">
-    <button type="button" class="btn btn-primary" (click)="onSaveClicked()">
-      Save
-    </button>
-  </div>
+  </form>
 } @else {
   <mampf-loading-spinner></mampf-loading-spinner>
 }
+
+<mampf-action-status-modal [title]="'Saving place'" [status]="actionStatus"></mampf-action-status-modal>

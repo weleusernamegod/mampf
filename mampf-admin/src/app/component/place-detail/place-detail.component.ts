@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Place } from '../../dto/place';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, FormSubmittedEvent } from '@angular/forms';
 import { PictureInputComponent } from '../picture-input/picture-input.component';
 import { LocationInputComponent } from '../location-input/location-input.component';
+import { ActionStatusModalComponent } from '../action-status-modal/action-status-modal.component';
+import { ActionStatus } from '../action-status-modal/action-status';
+import { SavePlace } from '../../dto/save-place';
 
 @Component({
   selector: 'mampf-place-detail',
@@ -13,12 +16,16 @@ import { LocationInputComponent } from '../location-input/location-input.compone
     LoadingSpinnerComponent,
     PictureInputComponent,
     LocationInputComponent,
+    ActionStatusModalComponent,
     FormsModule,
   ],
   templateUrl: './place-detail.component.html',
   styleUrl: './place-detail.component.scss',
 })
 export class PlaceDetailComponent implements OnInit {
+  isLoading = false;
+  actionStatus: ActionStatus = ActionStatus.NoOperation;
+
   place: Place | undefined;
 
   pictureChanged = false;
@@ -47,7 +54,7 @@ export class PlaceDetailComponent implements OnInit {
     this.route.params.subscribe((params: Params) => {
       const id = params['id'];
       if (id) {
-        this.initFormFromPlace(id);
+        this.initFromExistingPlace(id);
       }
     });
   }
@@ -62,9 +69,49 @@ export class PlaceDetailComponent implements OnInit {
     this.newPictureData = pictureData;
   }
 
-  onSaveClicked() {}
+  onFormSubmitted(event: SubmitEvent) {
+    this.actionStatus = ActionStatus.Loading;
 
-  private initFormFromPlace(id: number) {
+    const savePlace = {
+      id: this.place ? this.place.id : -1,
+      updatePicture: this.pictureChanged,
+      pictureData: this.newPictureData,
+      name: this.name,
+      description: this.description,
+      lat: this.lat,
+      lng: this.lng,
+      openSunday: this.openSunday,
+      openMonday: this.openMonday,
+      openTuesday: this.openTuesday,
+      openWednesday: this.openWednesday,
+      openThursday: this.openThursday,
+      openFriday: this.openFriday,
+      openSaturday: this.openSaturday,
+      openMorning: this.openMorning,
+      openNoon: this.openNoon,
+      openEvening: this.openEvening,
+      openNight: this.openNight,
+    } as SavePlace;
+
+    fetch('api/post-place.php', {
+      method: 'post',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(savePlace),
+    }).then((response) => {
+      this.actionStatus = response.ok ? ActionStatus.CompletedSuccess : ActionStatus.CompletedError;
+    }).catch(() => {
+      this.actionStatus = ActionStatus.CompletedError;
+    });
+
+    event.preventDefault();
+  }
+
+  private initFromExistingPlace(id: number) {
+    this.isLoading = true;
+
     fetch(`api/get-place.php?id=${id}`)
       .then(response => response.json())
       .then(data => {
@@ -84,6 +131,8 @@ export class PlaceDetailComponent implements OnInit {
         this.openNoon = data.openNoon;
         this.openEvening = data.openEvening;
         this.openNight = data.openNight;
+
+        this.isLoading = false;
       })
       .catch(error => {
         console.error('Could not fetch place', error);

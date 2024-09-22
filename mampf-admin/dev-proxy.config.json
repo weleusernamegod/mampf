@@ -5,12 +5,6 @@
     "logLevel": "debug",
     "changeOrigin": false
   },
-  "/map": {
-    "target": "http://localhost",
-    "secure": false,
-    "logLevel": "debug",
-    "changeOrigin": false
-  },
   "/login": {
     "target": "http://localhost",
     "secure": false,

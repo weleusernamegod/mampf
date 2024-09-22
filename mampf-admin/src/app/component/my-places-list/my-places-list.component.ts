@@ -26,8 +26,12 @@ export class MyPlacesListComponent implements OnInit {
       });
   }
 
-  onPlace(place: PlaceSummary) {
+  onPlaceClicked(place: PlaceSummary) {
     this.router.navigate(['place', place.id]);
+  }
+
+  onAddClicked() {
+    this.router.navigate(['place', 'new']);
   }
 
   getPictureUrl(pictureId: number | undefined) {

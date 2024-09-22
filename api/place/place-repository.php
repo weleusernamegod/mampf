@@ -6,7 +6,7 @@ function create_place($place)
     global $mysqli;
 
     $statement = $mysqli->prepare("INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, open_sunday, open_monday, open_tuesday, open_wednesday, open_thursday, open_friday, open_saturday, open_morning, open_noon, open_evening, open_night, create_time, last_update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $statement->bind_param("iissddiiiiiiiiiiis", $place->userId, $place->pictureId, $place->name, $place->description, $place->lat, $place->lng, $place->openSunday, $place->openMonday, $place->openTuesday, $place->openWednesday, $place->openThursday, $place->openFriday, $place->openSaturday, $place->openMorning, $place->openNoon, $place->openEvening, $place->openNight, $place->createTime, $place->lastUpdateTime);
+    $statement->bind_param("iissddiiiiiiiiiiiss", $place->userId, $place->pictureId, $place->name, $place->description, $place->lat, $place->lng, $place->openSunday, $place->openMonday, $place->openTuesday, $place->openWednesday, $place->openThursday, $place->openFriday, $place->openSaturday, $place->openMorning, $place->openNoon, $place->openEvening, $place->openNight, $place->createTime, $place->lastUpdateTime);
     $statement->execute();
     $statement->close();
 
@@ -19,7 +19,7 @@ function update_place($place)
     global $mysqli;
 
     $statement = $mysqli->prepare("UPDATE tbl_place SET user_id = ?, picture_id = ?, name = ?, description = ?, lat = ?, lng = ?, open_sunday = ?, open_monday = ?, open_tuesday = ?, open_wednesday = ?, open_thursday = ?, open_friday = ?, open_saturday = ?, open_morning = ?, open_noon = ?, open_evening = ?, open_night = ?, last_update_time = ?, create_time = ? WHERE id = ?");
-    $statement->bind_param("iissddiiiiiiiiiiisi", $place->userId, $place->pictureId, $place->name, $place->description, $place->lat, $place->lng, $place->openSunday, $place->openMonday, $place->openTuesday, $place->openWednesday, $place->openThursday, $place->openFriday, $place->openSaturday, $place->openMorning, $place->openNoon, $place->openEvening, $place->openNight, $place->lastUpdateTime, $place->createTime, $place->id);
+    $statement->bind_param("iissddiiiiiiiiiiissi", $place->userId, $place->pictureId, $place->name, $place->description, $place->lat, $place->lng, $place->openSunday, $place->openMonday, $place->openTuesday, $place->openWednesday, $place->openThursday, $place->openFriday, $place->openSaturday, $place->openMorning, $place->openNoon, $place->openEvening, $place->openNight, $place->lastUpdateTime, $place->createTime, $place->id);
     $statement->execute();
     $statement->close();
 

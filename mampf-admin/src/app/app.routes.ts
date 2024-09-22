@@ -5,5 +5,6 @@ import { PlaceDetailComponent } from './component/place-detail/place-detail.comp
 export const routes: Routes = [
   { path: '', redirectTo: 'my-places', pathMatch: 'full' },
   { path: 'my-places', component: MyPlacesListComponent },
+  { path: 'place/new', component: PlaceDetailComponent },
   { path: 'place/:id', component: PlaceDetailComponent },
 ];
