@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 07. Sep 2024 um 21:41
+-- Erstellungszeit: 22. Sep 2024 um 22:27
 -- Server-Version: 10.4.32-MariaDB
 -- PHP-Version: 8.2.12
 
@@ -24,17 +24,31 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `tbl_picture`
+--
+
+CREATE TABLE `tbl_picture` (
+  `id` int(11) NOT NULL,
+  `data` mediumblob NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `width` int(11) NOT NULL,
+  `height` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `tbl_place`
 --
 
 CREATE TABLE `tbl_place` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `picture_id` int(11) DEFAULT NULL,
   `name` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
   `lat` double NOT NULL,
   `lng` double NOT NULL,
-  `logo_filename` varchar(255) NOT NULL,
   `open_sunday` tinyint(4) NOT NULL,
   `open_monday` tinyint(4) NOT NULL,
   `open_tuesday` tinyint(4) NOT NULL,
@@ -66,22 +80,22 @@ CREATE TABLE `tbl_user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Daten für Tabelle `tbl_user`
---
-
-INSERT INTO `tbl_user` (`id`, `mail`, `password_hash`, `admin`, `registration_time`, `last_login_time`) VALUES
-(1, 'ebbejan@gmail.com', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 1, '2024-09-07 15:54:26', '2024-09-07 21:38:24');
-
---
 -- Indizes der exportierten Tabellen
 --
+
+--
+-- Indizes für die Tabelle `tbl_picture`
+--
+ALTER TABLE `tbl_picture`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indizes für die Tabelle `tbl_place`
 --
 ALTER TABLE `tbl_place`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_place_user` (`user_id`);
+  ADD KEY `fk_place_user` (`user_id`),
+  ADD KEY `fk_place_picture` (`picture_id`);
 
 --
 -- Indizes für die Tabelle `tbl_user`
@@ -95,16 +109,22 @@ ALTER TABLE `tbl_user`
 --
 
 --
+-- AUTO_INCREMENT für Tabelle `tbl_picture`
+--
+ALTER TABLE `tbl_picture`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT für Tabelle `tbl_place`
 --
 ALTER TABLE `tbl_place`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT für Tabelle `tbl_user`
 --
 ALTER TABLE `tbl_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints der exportierten Tabellen
@@ -114,6 +134,7 @@ ALTER TABLE `tbl_user`
 -- Constraints der Tabelle `tbl_place`
 --
 ALTER TABLE `tbl_place`
+  ADD CONSTRAINT `fk_place_picture` FOREIGN KEY (`picture_id`) REFERENCES `tbl_picture` (`id`),
   ADD CONSTRAINT `fk_place_user` FOREIGN KEY (`user_id`) REFERENCES `tbl_user` (`id`);
 COMMIT;
 

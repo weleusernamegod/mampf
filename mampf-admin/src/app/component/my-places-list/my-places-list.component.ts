@@ -29,7 +29,7 @@ export class MyPlacesListComponent implements OnInit {
   onPlaceDeleteClicked(place: PlaceSummary) {
     this.actionStatus = ActionStatus.Loading;
 
-    fetch(`api/delete-place.php?id=${place.id}`, {
+    fetch(`/api/delete-place.php?id=${place.id}`, {
       method: 'delete',
     })
       .then(response => {
@@ -51,7 +51,7 @@ export class MyPlacesListComponent implements OnInit {
 
   getPictureUrl(pictureId: number | undefined) {
     return pictureId
-      ? `api/get-public-picture.php?id=${pictureId}`
+      ? `/api/get-public-picture.php?id=${pictureId}`
       : 'assets/no-picture.jpg';
   }
 

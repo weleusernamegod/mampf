@@ -75,6 +75,8 @@
 
 <script>
     function onFormSubmit(event) {
+		event.preventDefault();
+	
         changeAlertVisibility(false);
 
         const mail = document.getElementById('mail').value;
@@ -83,7 +85,7 @@
 		
 		if (password !== password2) {
 		  changeAlertVisibility(true);
-		  return;
+		  return false;
 		}
 
         fetch("../api/post-register.php", {
@@ -106,9 +108,6 @@
                 changeAlertVisibility(true);
             });
 
-
-
-        event.preventDefault();
         return false;
     }
 

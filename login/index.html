@@ -81,6 +81,8 @@
 	}
 
     function onFormSubmit(event) {
+		event.preventDefault();
+	
         changeErrorAlertVisibility(false);
 
         const mail = document.getElementById('mail').value;
@@ -106,9 +108,6 @@
                 changeErrorAlertVisibility(true);
             });
 
-
-
-        event.preventDefault();
         return false;
     }
 
@@ -116,7 +115,7 @@
 		document.getElementById('alert-logout').classList.add('d-none');
 		document.getElementById('alert-register').classList.add('d-none');
 	
-        const alert = document.getElementById('alert');
+        const alert = document.getElementById('alert-error');
         if (visible) {
             alert.classList.remove("d-none");
         } else {

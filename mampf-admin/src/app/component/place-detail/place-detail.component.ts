@@ -114,7 +114,7 @@ export class PlaceDetailComponent implements OnInit {
   private initFromExistingPlace(id: number) {
     this.isLoading = true;
 
-    fetch(`api/get-place.php?id=${id}`)
+    fetch(`/api/get-place.php?id=${id}`)
       .then(response => response.json())
       .then(data => {
         this.place = data;

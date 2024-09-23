@@ -10,7 +10,7 @@ export class UserService {
   constructor() {}
 
   fetchUser(callback: (user: User) => void): void {
-    fetch('api/get-own-user.php')
+    fetch('/api/get-own-user.php')
       .then(response => {
         if (response.ok) {
           response.json().then(data => {
