@@ -1,6 +1,64 @@
 <div id="wrapper">
   <div id="dialog" class="overlay">
-    <img src="assets/logo.svg" width="280" height="124" />
-    <p id="footer">Copyright &copy; 2024 Yves / Jan<br />Version 0.0.0</p>
+    <div id="header">
+      <img src="assets/logo.svg" width="250" height="110" alt="mampf" />
+    </div>
+
+    <ul id="actions">
+      <li>
+        <button type="button" class="action" (click)="share($event)">
+          <span class="circle"><span class="icon icon-share"></span></span>
+          <span class="text">
+            mit Freund:in teilen
+            @if (shareHint) {
+              <small>{{ shareHint }}</small>
+            }
+          </span>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="action" (click)="addToHomeScreen($event)">
+          <span class="circle"><span class="icon icon-add"></span></span>
+          <span class="text">
+            zum Home-Bildschirm
+            @if (homeScreenHint) {
+              <small>{{ homeScreenHint }}</small>
+            }
+          </span>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="action" (click)="showSoon($event, 'language')">
+          <span class="circle language">de</span>
+          <span class="text">
+            Sprache
+            @if (soonHint === 'language') {
+              <small>Weitere Sprachen folgen bald.</small>
+            }
+          </span>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="action" (click)="showSoon($event, 'color')">
+          <span class="circle color"></span>
+          <span class="text">
+            Oberflächenfarbe
+            @if (soonHint === 'color') {
+              <small>Weitere Farben folgen bald.</small>
+            }
+          </span>
+        </button>
+      </li>
+    </ul>
+
+    <div id="footer">
+      <p class="links">
+        <a (click)="$event.stopPropagation()">Nutzungsbedingungen</a> und
+        <a (click)="$event.stopPropagation()">Datenschutzerklärung</a>
+      </p>
+      <p class="copyright">
+        Copyright &copy; 2024 Jan Ebbe / Yves Geiser<br />Version 0.0.0
+      </p>
+    </div>
   </div>
 </div>

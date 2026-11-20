@@ -9,15 +9,140 @@
 
 #dialog {
   width: 339px;
-
-  padding: 20px 0 20px 0;
+  max-height: 100%;
+  overflow: hidden auto;
 
   text-align: center;
 }
 
-#footer {
-  margin-top: 10px;
+#header {
+  padding: 25px 0 20px 0;
 
+  img {
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+// Graue Liste mit Teilen, Home-Bildschirm, Sprache, Farbe
+#actions {
+  margin: 0;
+  padding: 12px 0;
+
+  list-style: none;
+
+  background-color: #f2f2f2;
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  width: 100%;
+  padding: 7px 28px;
+  border: none;
+
+  background: none;
+
+  color: var(--grey3);
+  font-family: inherit;
+  font-size: 16px;
+  text-align: left;
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.circle {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+
+  background-color: var(--white);
+
+  transition: transform 0.15s ease;
+}
+
+.action:active .circle {
+  transform: scale(0.92);
+}
+
+.icon {
+  width: 100%;
+  height: 100%;
+
+  background-color: var(--grey2);
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 130%;
+  mask-size: 130%;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+.icon-share {
+  -webkit-mask-image: url('/assets/icons/share.svg');
+  mask-image: url('/assets/icons/share.svg');
+}
+
+.icon-add {
+  -webkit-mask-image: url('/assets/icons/add.svg');
+  mask-image: url('/assets/icons/add.svg');
+}
+
+.circle.language {
   color: var(--grey2);
+  font-size: 18px;
+}
+
+.circle.color {
+  box-shadow: 0 0 0 3px var(--white);
+  border: 2px solid var(--white);
+  box-sizing: border-box;
+
+  background-color: var(--teal);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+
+  small {
+    margin-top: 2px;
+
+    color: var(--teal);
+    font-size: 12px;
+  }
+}
+
+#footer {
+  padding: 18px 10px 20px 10px;
+
   font-size: 13px;
+
+  p {
+    margin: 0;
+  }
+
+  .links {
+    color: var(--grey2);
+
+    a {
+      color: var(--teal);
+      cursor: pointer;
+    }
+  }
+
+  .copyright {
+    margin-top: 14px;
+
+    color: var(--grey2);
+  }
 }
