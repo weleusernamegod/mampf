@@ -8,4 +8,4 @@ cd "$(dirname "$0")"
 # api/config.php (lokal, nicht im Git) immer frisch nach dist kopieren
 cp ./api/config.php ./dist/api/config.php
 echo "mampf läuft auf http://localhost:8080  (Stoppen mit Ctrl-C)"
-php -S localhost:8080 -t ./dist
+php -S localhost:8080 -t ./dist ./dev-router.php

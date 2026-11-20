@@ -1,0 +1,12 @@
+# Apache-Einstellungen für den Admin-Bereich (/admin)
+
+# Unterseiten wie /admin/place/new gibt es nur in der Angular-App.
+# Alles, was keine echte Datei ist, wird deshalb an index.html übergeben,
+# damit auch Neuladen und direkte Links funktionieren.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  RewriteRule ^ index.html [L]
+</IfModule>

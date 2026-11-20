@@ -20,11 +20,13 @@ mkdir ./dist
 # Karte
 (cd ./map && npm ci && npm run build)
 cp -R ./map/dist/map/browser/* ./dist
+cp ./map/public/.htaccess ./dist/.htaccess   # Angular kopiert keine versteckten Dateien
 
 # Admin
 mkdir ./dist/admin
 (cd ./mampf-admin && npm ci && npm run build)
 cp -R ./mampf-admin/dist/mampf-admin/browser/* ./dist/admin
+cp ./mampf-admin/public/.htaccess ./dist/admin/.htaccess
 
 # Login & API (ohne Editor-/Systemdateien und ohne Vorlage)
 rsync -a --exclude '.DS_Store' ./login/ ./dist/login/

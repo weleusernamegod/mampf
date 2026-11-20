@@ -1,0 +1,10 @@
+# Apache-Einstellungen für mampf.io (liegt im Webroot, gilt auch für /admin und /login)
+
+# Die HTML-Seiten (index.html usw.) nie ungeprüft aus dem Cache nehmen.
+# So bekommen alle Besucher nach einem Upload sofort die neue Version.
+# Die JS/CSS-Dateien haben eindeutige Namen (main-XYZ.js) und dürfen gecacht werden.
+<IfModule mod_headers.c>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
