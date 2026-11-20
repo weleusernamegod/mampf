@@ -1,0 +1,49 @@
+# Baut mampf und lädt es per FTPS auf den Hostpoint-Server.
+# Läuft automatisch bei jedem Push auf "main" und kann auf GitHub
+# unter "Actions" > "Deploy" > "Run workflow" auch manuell gestartet werden.
+#
+# Einstellungen (GitHub > Settings > Secrets and variables > Actions):
+#   Variables: FTP_SERVER, FTP_USERNAME, FTP_SERVER_DIR
+#   Secrets:   FTP_PASSWORD
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Nie zwei Uploads gleichzeitig
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            map/package-lock.json
+            mampf-admin/package-lock.json
+
+      - name: Build
+        run: ./build.sh
+
+      - name: Upload per FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ vars.FTP_SERVER }}
+          username: ${{ vars.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./dist/
+          server-dir: ${{ vars.FTP_SERVER_DIR }}
+          # Die Live-config.php auf dem Server nie anfassen
+          exclude: |
+            **/.DS_Store
+            api/config.php
