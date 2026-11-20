@@ -26,9 +26,226 @@
       property="og:description"
       content="Foodtrucks, Imbisse und Take-aways auf einer Karte. Sieh auf einen Blick, wer heute offen hat." />
     <meta property="og:image" content="https://mampf.io/icon-512.png" />
+
+    <!--
+      Splashscreen: animiertes Logo beim Laden, mit durchsichtigem Hintergrund
+      (die Karte lädt dahinter). Am Ende der Animation werden aus "mampf" sieben
+      Ringe, die genau über den Punkten MO–SO des Tages-Wählers liegen.
+
+      Ausrichtung (Logo-Datei assets/logo-animated.svg, viewBox 1700 x 750):
+      - Die Ringe liegen am Ende 220 Einheiten auseinander, die Tages-Punkte 47px.
+        Skalierung also 47 / 220 = 0.213636 -> Logo 1700 * 0.213636 = 363.18px breit.
+      - Der mittlere Ring (DO) liegt bei x = 833, y = 199 und muss auf den DO-Punkt:
+        waagrecht in der Bildmitte, senkrecht 28.5px über der Unterkante des
+        Tages-Wählers (57px hoch, Punkt-Mitte 28.5px unter seiner Oberkante).
+      - left   = 50% - 833 * 0.213636 = 50% - 177.96px
+      - bottom = --day-selector-bottom + 28.5px - (750 - 199) * 0.213636
+               = --day-selector-bottom + 28.5px - 117.71px
+      --day-selector-bottom steht in src/vars.scss (gilt für Wähler und Splash).
+    -->
+    <style>
+      #splash {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        overflow: hidden;
+        pointer-events: none; /* Karte bleibt bedienbar */
+      }
+      #splash svg {
+        position: absolute;
+        z-index: 1; /* vor dem Band */
+        left: calc(50% - 177.96px);
+        bottom: calc(var(--day-selector-bottom, 80px) + 28.5px - 117.71px);
+        width: 363.18px;
+        height: 160.23px;
+        transition: opacity var(--logo-fade, 700ms) ease;
+      }
+      /* Logo blendet aus, kurz nachdem die grauen Punkte einzublenden beginnen */
+      #splash.fade-logo svg {
+        opacity: 0;
+      }
+      /*
+        Weisses Band hinter dem Logo, von Anfang an mit runden Ecken wie der
+        Tages-Wähler. Am Anfang ist es grösser als der Bildschirm (Ecken liegen
+        ausserhalb), dann zieht es sich auf die Grösse des Tages-Wählers zusammen
+        (339 x 57px). Zeiten relativ zur Logo-Animation (--splash-duration):
+          0–8 %    Band blendet ein
+          25–78 %  Band wird gleichzeitig flacher und schmaler, während sich die
+                   Buchstaben in Ringe verwandeln (bei 83 % sind die Ringe fertig)
+        Nachgerechnet: So schneidet das Band das Logo nie an (mind. 10px Abstand).
+      */
+      #splash-band {
+        position: absolute;
+        left: -40px;
+        bottom: -40px;
+        width: calc(100% + 80px);
+        height: 200px; /* Oberkante 160px über dem Rand */
+        border-radius: 28.5px;
+        background-color: #ffffff;
+        box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.2); /* wie die Leiste */
+        opacity: 0;
+      }
+      #splash.play #splash-band {
+        animation:
+          splash-band-in var(--splash-duration, 4.5s) linear forwards,
+          splash-band-shrink var(--splash-duration, 4.5s) linear forwards;
+      }
+      @keyframes splash-band-in {
+        0% {
+          opacity: 0;
+        }
+        8%,
+        100% {
+          opacity: 1;
+        }
+      }
+      @keyframes splash-band-shrink {
+        0%,
+        25% {
+          left: -40px;
+          bottom: -40px;
+          width: calc(100% + 80px);
+          height: 200px;
+          animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+        }
+        78%,
+        100% {
+          left: calc(50% - 169.5px);
+          bottom: var(--day-selector-bottom, 80px);
+          width: 339px;
+          height: 57px;
+        }
+      }
+      /*
+        Intro des Tages-Wählers nach dem Logo, gesteuert über Klassen auf <html>:
+          intro          Leiste leer: keine Punkte, kein Tageskreis, kein Wochenende
+          intro-hidden   Leiste ganz unsichtbar (solange das Band sie verdeckt)
+          intro-dots     graue Punkte blenden ein
+          intro-thumb    Kreis des aktuellen Tages wächst von klein auf
+          intro-weekend  hellgraue Wochenend-Markierung blendet ein
+        Die Dauern kommen aus dem Skript unten (--intro-...).
+      */
+      html.intro mampf-day-selector {
+        transition: none !important; /* Austausch Band -> Leiste ohne Flackern */
+      }
+      html.intro-hidden mampf-day-selector {
+        opacity: 0 !important;
+      }
+      /* Punkte über die Farbe einblenden (weiss -> grau), nicht über die Deckkraft:
+         Eine Deckkraft-Animation legt die Punkte in manchen Browsern (Safari)
+         kurz auf eine eigene Ebene über dem Tageskreis. */
+      html.intro mampf-day-selector .day {
+        background-color: var(--white, #ffffff);
+        transition: background-color var(--intro-dots, 600ms) ease;
+      }
+      html.intro.intro-dots mampf-day-selector .day {
+        background-color: var(--grey2, #b1b1b1);
+      }
+      html.intro mampf-day-selector .thumb {
+        scale: 0;
+        transition: scale var(--intro-thumb, 500ms) cubic-bezier(0.3, 1.4, 0.5, 1) !important;
+      }
+      html.intro.intro-thumb mampf-day-selector .thumb {
+        scale: 1;
+      }
+      html.intro mampf-day-selector .wrapper-saturday,
+      html.intro mampf-day-selector .wrapper-sunday {
+        background-color: transparent;
+        outline-color: transparent;
+        transition:
+          background-color var(--intro-weekend, 800ms) ease,
+          outline-color var(--intro-weekend, 800ms) ease;
+      }
+      html.intro.intro-weekend mampf-day-selector .wrapper-saturday,
+      html.intro.intro-weekend mampf-day-selector .wrapper-sunday {
+        background-color: var(--grey1, #dedede);
+        outline-color: var(--grey1, #dedede);
+      }
+    </style>
   </head>
   <body>
     <app-root></app-root>
+
+    <div id="splash"><div id="splash-band"></div></div>
+    <script>
+      (() => {
+        /** Dauer der Logo-Animation. Die Datei ist auf 3000 ms gebaut, hier etwas langsamer. */
+        const DURATION = 4500;
+        /** Das Band hat bei 78 % die Grösse des Tages-Wählers (siehe @keyframes splash-band-shrink). */
+        const BAND_DONE = DURATION * 0.78;
+        /** Die Ringe sind bei 83 % fertig. */
+        const RINGS_DONE = DURATION * 0.83;
+        /** Graue Punkte einblenden, sobald die Ringe fertig sind (sie passen genau in die Ringe). */
+        const DOTS_FADE = 600;
+        /** Logo beginnt so viel später auszublenden als die Punkte einzublenden ... */
+        const LOGO_DELAY = 150;
+        /** ... und braucht so lange dafür. */
+        const LOGO_FADE = 500;
+        /**
+         * Der Kreis des aktuellen Tages wächst erst, wenn das Logo ganz weg ist:
+         * Das Logo liegt über allem, sonst wäre der Ring über dem wachsenden Kreis.
+         */
+        const THUMB_DELAY = 0;
+        const THUMB_GROW = 500;
+        /** Minim nach dem Tageskreis blendet die Wochenend-Markierung langsam ein. */
+        const WEEKEND_DELAY = 300;
+        const WEEKEND_FADE = 1000;
+
+        const splash = document.getElementById('splash');
+        const html = document.documentElement;
+        html.classList.add('intro', 'intro-hidden');
+        splash.style.setProperty('--splash-duration', DURATION + 'ms');
+        html.style.setProperty('--intro-dots', DOTS_FADE + 'ms');
+        html.style.setProperty('--logo-fade', LOGO_FADE + 'ms');
+        html.style.setProperty('--intro-thumb', THUMB_GROW + 'ms');
+        html.style.setProperty('--intro-weekend', WEEKEND_FADE + 'ms');
+
+        const at = (ms, step) => setTimeout(step, ms);
+
+        const cleanUp = () => {
+          splash.remove();
+          html.classList.remove('intro', 'intro-hidden', 'intro-dots', 'intro-thumb', 'intro-weekend');
+        };
+
+        // Das Logo wird als Code in die Seite eingefügt (nicht als Bild):
+        // So startet die Animation bei jedem Laden von vorn. Ein Bild würde der
+        // Browser samt abgelaufener Animation aus dem Zwischenspeicher nehmen.
+        fetch('assets/logo-animated.svg')
+          .then(response => response.text())
+          .then(svg => {
+            // Ohne Animationswunsch (Bedienungshilfen) gleich die fertige Seite zeigen
+            if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+              cleanUp();
+              return;
+            }
+            svg = svg
+              .replace(/stroke="#000(000)?"/g, 'stroke="#2e9991"') // Schwarz -> mampf-Grün
+              .replace(/3000ms/g, DURATION + 'ms'); // Tempo anpassen
+            splash.insertAdjacentHTML('beforeend', svg);
+            splash.classList.add('play'); // Band-Animation gleichzeitig starten
+
+            // 1. Band hat die Grösse der Leiste -> gegen die (noch leere) Leiste tauschen
+            at(BAND_DONE, () => {
+              html.classList.remove('intro-hidden');
+              document.getElementById('splash-band')?.remove();
+            });
+            // 2. Ringe fertig -> graue Punkte blenden ein, das Logo kurz danach aus
+            const dots = RINGS_DONE;
+            at(dots, () => html.classList.add('intro-dots'));
+            at(dots + LOGO_DELAY, () => splash.classList.add('fade-logo'));
+            // 3. Sobald das Logo weg ist, wächst der Tageskreis auf
+            const thumb = dots + LOGO_DELAY + LOGO_FADE + THUMB_DELAY;
+            at(thumb, () => html.classList.add('intro-thumb'));
+            // 4. Minim später blendet die Wochenend-Markierung langsam ein
+            const weekend = thumb + WEEKEND_DELAY;
+            at(weekend, () => html.classList.add('intro-weekend'));
+            // 5. Aufräumen, wenn alles fertig ist
+            const end = Math.max(weekend + WEEKEND_FADE, thumb + THUMB_GROW, dots + LOGO_DELAY + LOGO_FADE);
+            at(end + 100, cleanUp);
+          })
+          .catch(cleanUp);
+      })();
+    </script>
 
     <script>
       (g => {

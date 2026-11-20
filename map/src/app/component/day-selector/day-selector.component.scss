@@ -6,7 +6,7 @@
   justify-content: center;
 
   padding: 5px;
-  margin: 0px auto 17px auto;
+  margin: 0px auto var(--day-selector-bottom) auto;
 
   border-radius: 50px;
 
@@ -30,6 +30,9 @@
 }
 
 .day {
+  position: relative;
+  z-index: 1;
+
   width: 19px;
   height: 19px;
 
@@ -58,7 +61,7 @@
   position: absolute;
   top: 8px;
   left: 8px;
-  z-index: 1;
+  z-index: 2; // immer über den grauen Punkten (die liegen auf Ebene 1)
 
   width: 41px;
   height: 41px;
@@ -75,9 +78,11 @@
   pointer-events: none;
 
   // Der Punkt springt immer direkt von Tag zu Tag (beim Ziehen, Klicken und per Tastatur).
+  // Position über "translate" (nicht "transform"), damit "scale" im Splashscreen
+  // den Kreis an Ort und Stelle wachsen lässt.
   transition:
-    transform 0.25s cubic-bezier(0.3, 1.3, 0.5, 1),
-    background-color 0.25s ease;
+    translate 0.35s cubic-bezier(0.35, 1.1, 0.5, 1),
+    background-color 0.35s ease;
 
   &.weekend {
     background-color: var(--weekend);
