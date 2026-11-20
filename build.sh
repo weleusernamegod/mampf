@@ -1,28 +1,34 @@
 #!/bin/bash
+# Baut die komplette Website nach ./dist (so wie sie auf dem Server liegt):
+#   dist/            -> Karte (map)
+#   dist/admin/      -> Admin-App (mampf-admin)
+#   dist/login/      -> Login-Seiten
+#   dist/api/        -> PHP-API
+set -e
+cd "$(dirname "$0")"
 
-# create output directory
-if [ -d "./dist" ]; then
-  rm -rf "./dist"
+# Angular 18 braucht Node <= 22. Lokal Homebrew-node@22 verwenden, falls vorhanden.
+if [ -d "/opt/homebrew/opt/node@22/bin" ]; then
+  export PATH="/opt/homebrew/opt/node@22/bin:$PATH"
 fi
-mkdir "./dist"
+echo "Node $(node --version)"
 
-# build & add map
-cd "./map"
-npm install
-npm run build
-cp -R ./dist/map/browser/* ../dist
-cd ..
+# Ausgabeordner neu anlegen
+rm -rf ./dist
+mkdir ./dist
 
-# add login
-cp -R ./login ./dist
+# Karte
+(cd ./map && npm ci && npm run build)
+cp -R ./map/dist/map/browser/* ./dist
 
-# add api
-cp -R ./api ./dist
+# Admin
+mkdir ./dist/admin
+(cd ./mampf-admin && npm ci && npm run build)
+cp -R ./mampf-admin/dist/mampf-admin/browser/* ./dist/admin
 
-# add admin
-mkdir "./dist/admin"
-cd "./mampf-admin"
-npm install
-npm run build
-cp -R ./dist/mampf-admin/browser/* ../dist/admin
-cd ..
+# Login & API (ohne Editor-/Systemdateien und ohne Vorlage)
+rsync -a --exclude '.DS_Store' ./login/ ./dist/login/
+rsync -a --exclude '.DS_Store' --exclude '.vscode' --exclude '.gitignore' \
+  --exclude 'config.example.php' ./api/ ./dist/api/
+
+echo "Fertig: ./dist"
