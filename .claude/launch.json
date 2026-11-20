@@ -6,6 +6,12 @@
       "runtimeExecutable": "./dev.sh",
       "runtimeArgs": ["--no-build"],
       "port": 8080
+    },
+    {
+      "name": "map-dev",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "export PATH=/opt/homebrew/opt/node@22/bin:$PATH && cd map && npm start"],
+      "port": 4200
     }
   ]
 }

@@ -1,4 +1,5 @@
 #day-selector {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(7, 47px);
   grid-template-rows: 47px;
@@ -8,6 +9,24 @@
   margin: 0px auto 17px auto;
 
   border-radius: 50px;
+
+  cursor: grab;
+  // Verhindert, dass beim Ziehen auf dem Handy die Seite/Karte mitscrollt.
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 3px;
+  }
+
+  &.dragging {
+    cursor: grabbing;
+  }
 }
 
 .day {
@@ -18,33 +37,6 @@
   border-radius: 19px;
 
   background-color: var(--grey2);
-
-  color: transparent;
-  font-size: 0px;
-  line-height: 17px;
-  text-align: center;
-
-  transition-timing-function: ease;
-  transition-property: background-color, width, height, margin, color, font-size,
-    line-height;
-  transition-duration: 0.5s;
-}
-
-.day.active {
-  width: 37px;
-  height: 37px;
-
-  margin: 5px 0px 0px 5px;
-
-  background-color: var(--teal);
-
-  color: var(--white);
-  font-size: 19px;
-  line-height: 37px;
-}
-
-.wrapper {
-  cursor: pointer;
 }
 
 .wrapper-saturday {
@@ -59,4 +51,41 @@
   border-radius: 0px 50px 50px 0px;
 
   background-color: var(--grey1);
+}
+
+// Der grüne Punkt, den man von Tag zu Tag ziehen kann.
+.thumb {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+
+  width: 37px;
+  height: 37px;
+  border-radius: 50%;
+
+  background-color: var(--teal);
+  box-shadow: 0px 1px 3px 0px var(--shadow);
+
+  color: var(--white);
+  font-size: 19px;
+  line-height: 37px;
+  text-align: center;
+
+  pointer-events: none;
+
+  // Einrasten nach dem Loslassen (oder beim Klick / per Tastatur).
+  transition:
+    transform 0.3s cubic-bezier(0.3, 1.4, 0.5, 1),
+    box-shadow 0.2s ease,
+    scale 0.2s ease;
+}
+
+// Während dem Ziehen folgt der Punkt direkt dem Finger und wird leicht angehoben.
+.dragging .thumb {
+  scale: 1.12;
+  box-shadow: 0px 3px 8px 0px var(--shadow);
+  transition:
+    box-shadow 0.2s ease,
+    scale 0.2s ease;
 }

@@ -1,23 +1,31 @@
-<div id="day-selector" class="overlay">
-  <div class="wrapper" (click)="onDaySelected(1)">
-    <div class="day" [class.active]="selectedDay === 1">MO</div>
-  </div>
-  <div class="wrapper" (click)="onDaySelected(2)">
-    <div class="day" [class.active]="selectedDay === 2">DI</div>
-  </div>
-  <div class="wrapper" (click)="onDaySelected(3)">
-    <div class="day" [class.active]="selectedDay === 3">MI</div>
-  </div>
-  <div class="wrapper" (click)="onDaySelected(4)">
-    <div class="day" [class.active]="selectedDay === 4">DO</div>
-  </div>
-  <div class="wrapper" (click)="onDaySelected(5)">
-    <div class="day" [class.active]="selectedDay === 5">FR</div>
-  </div>
-  <div class="wrapper wrapper-saturday" (click)="onDaySelected(6)">
-    <div class="day" [class.active]="selectedDay === 6">SA</div>
-  </div>
-  <div class="wrapper wrapper-sunday" (click)="onDaySelected(0)">
-    <div class="day" [class.active]="selectedDay === 0">SO</div>
+<div
+  id="day-selector"
+  class="overlay"
+  #track
+  role="slider"
+  tabindex="0"
+  aria-label="Wochentag"
+  aria-valuemin="0"
+  [attr.aria-valuemax]="days.length - 1"
+  [attr.aria-valuenow]="index"
+  [attr.aria-valuetext]="days[index].name"
+  [class.dragging]="dragging"
+  (pointerdown)="onPointerDown($event)"
+  (pointermove)="onPointerMove($event)"
+  (pointerup)="onPointerUp()"
+  (pointercancel)="onPointerUp()"
+  (lostpointercapture)="onPointerUp()"
+  (keydown)="onKeyDown($event)">
+  @for (day of days; track day.value) {
+    <div
+      class="wrapper"
+      [class.wrapper-saturday]="day.value === 6"
+      [class.wrapper-sunday]="day.value === 0">
+      <div class="day"></div>
+    </div>
+  }
+
+  <div class="thumb" [style.transform]="'translateX(' + thumbX + 'px)'">
+    {{ days[index].label }}
   </div>
 </div>
