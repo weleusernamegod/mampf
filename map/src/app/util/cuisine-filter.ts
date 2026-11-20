@@ -49,6 +49,11 @@ export function hasCuisine(place: Place, cuisine: Cuisine): boolean {
   return cuisine.keywords.some(keyword => text.includes(keyword));
 }
 
+/** Alle Küchen, die zu einem Shop passen (z.B. für die Infobox). */
+export function cuisinesOf(place: Place): Cuisine[] {
+  return CUISINES.filter(cuisine => hasCuisine(place, cuisine));
+}
+
 /** Shops, die zu mindestens einer gewählten Küche passen. Nichts gewählt = alle. */
 export function filterByCuisines(places: Place[], cuisineIds: string[]): Place[] {
   if (cuisineIds.length === 0) return places;

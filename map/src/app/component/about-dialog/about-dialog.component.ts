@@ -1,4 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
+import { VERSION } from '../../version';
 
 /** Vom Browser angebotene Installation als App (nur Chrome/Android, mit Web-App-Manifest). */
 interface InstallPromptEvent extends Event {
@@ -11,6 +12,9 @@ window.addEventListener('beforeinstallprompt', event => {
   installPrompt = event as InstallPromptEvent;
 });
 
+/** Die Zeilen im Dialog. */
+type Row = 'share' | 'home' | 'language' | 'color';
+
 @Component({
   selector: 'mampf-about-dialog',
   standalone: true,
@@ -19,10 +23,10 @@ window.addEventListener('beforeinstallprompt', event => {
   styleUrl: './about-dialog.component.scss',
 })
 export class AboutDialogComponent implements OnDestroy {
-  /** Kurzer Hinweis unter einem Eintrag, z.B. "Link kopiert". */
-  shareHint = '';
-  homeScreenHint = '';
-  soonHint: 'language' | 'color' | '' = '';
+  readonly version = VERSION;
+
+  /** Kurzer Hinweis, der für ein paar Sekunden den Text einer Zeile ersetzt. */
+  hint: { row: Row; text: string } | undefined = undefined;
 
   private timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -35,7 +39,11 @@ export class AboutDialogComponent implements OnDestroy {
     const url = window.location.origin;
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'mampf', text: 'Foodtrucks und Imbisse auf der Karte', url });
+        await navigator.share({
+          title: 'mampf',
+          text: 'Foodtrucks und Imbisse auf der Karte',
+          url,
+        });
       } catch {
         // Teilen abgebrochen: nichts tun
       }
@@ -43,9 +51,9 @@ export class AboutDialogComponent implements OnDestroy {
     }
     try {
       await navigator.clipboard.writeText(url);
-      this.showHint(() => (this.shareHint = 'Link kopiert!'), () => (this.shareHint = ''));
+      this.showHint('share', 'Link kopiert!');
     } catch {
-      this.showHint(() => (this.shareHint = url), () => (this.shareHint = ''));
+      this.showHint('share', url);
     }
   }
 
@@ -56,26 +64,20 @@ export class AboutDialogComponent implements OnDestroy {
       installPrompt = undefined;
       return;
     }
-    // Ohne Installations-Angebot des Browsers: Anleitung anzeigen
+    // Ohne Installations-Angebot des Browsers: kurze Anleitung
     const iOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-    const text = iOS
-      ? 'Unten auf „Teilen“ tippen, dann „Zum Home-Bildschirm“.'
-      : 'Im Browser-Menü ⋮ „Zum Startbildschirm hinzufügen“ wählen.';
-    this.showHint(() => (this.homeScreenHint = text), () => (this.homeScreenHint = ''), 6000);
+    this.showHint('home', iOS ? 'Teilen → Zum Home-Bildschirm' : 'Menü ⋮ → Zum Startbildschirm', 5000);
   }
 
   /** Platzhalter für Funktionen, die es noch nicht gibt. */
-  showSoon(event: Event, which: 'language' | 'color') {
+  showSoon(event: Event, row: 'language' | 'color') {
     event.stopPropagation();
-    this.showHint(() => (this.soonHint = which), () => (this.soonHint = ''));
+    this.showHint(row, 'folgt bald');
   }
 
-  private showHint(show: () => void, hide: () => void, duration = 3000) {
+  private showHint(row: Row, text: string, duration = 3000) {
     clearTimeout(this.timer);
-    this.shareHint = '';
-    this.homeScreenHint = '';
-    this.soonHint = '';
-    show();
-    this.timer = setTimeout(hide, duration);
+    this.hint = { row, text };
+    this.timer = setTimeout(() => (this.hint = undefined), duration);
   }
 }

@@ -73,6 +73,10 @@ export class MapComponent implements OnInit, OnChanges {
   @Input() places: Place[] = [];
   /** Gewählter Wochentag wie Date.getDay(): 0 = Sonntag, 1 = Montag, ... */
   @Input() day: number = new Date().getDay();
+  /** Platzieren-Modus: Shops ausblenden, roter Punkt in der Kartenmitte. */
+  @Input() placing = false;
+  /** Klick auf eine leere Stelle der Karte (nicht auf einen Shop). */
+  @Output() mapClicked: EventEmitter<void> = new EventEmitter<void>();
   @Output() placeClicked: EventEmitter<Place> = new EventEmitter<Place>();
 
   ngOnInit(): void {
@@ -91,11 +95,28 @@ export class MapComponent implements OnInit, OnChanges {
     }
   }
 
+  /** Wird die Karte gerade verschoben? Dann hebt sich der rote Punkt leicht an. */
+  mapMoving = false;
+  private map: google.maps.Map | undefined = undefined;
+
   ngOnChanges(): void {
+    this.placesOverlay?.setHidden(this.placing);
     this.placesOverlay?.update(this.places, this.day);
   }
 
+  /** Aktuelle Kartenmitte = Position des roten Punkts im Platzieren-Modus. */
+  getCenter(): google.maps.LatLngLiteral | undefined {
+    return this.map?.getCenter()?.toJSON();
+  }
+
   onMapInitialized(map: google.maps.Map) {
+    this.map = map;
+    map.addListener('dragstart', () =>
+      this.zone.run(() => (this.mapMoving = true))
+    );
+    map.addListener('dragend', () =>
+      this.zone.run(() => (this.mapMoving = false))
+    );
     // Ohne "anchor" setzt Google den Ankerpunkt unten in die Mitte (wie bei
     // einer Stecknadel), dann sitzt die Kugel über dem echten Standort.
     // Das Bild ist 26x26px, die Mitte also bei 13/13.
@@ -106,6 +127,7 @@ export class MapComponent implements OnInit, OnChanges {
     this.placesOverlay = createPlacesOverlay(map, place =>
       this.zone.run(() => this.onPlaceClicked(place))
     );
+    this.placesOverlay.setHidden(this.placing);
     this.placesOverlay.update(this.places, this.day);
   }
 

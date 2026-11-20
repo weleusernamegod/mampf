@@ -1,51 +1,40 @@
 <div id="wrapper">
   <div id="dialog" class="overlay">
     <div id="header">
-      <img src="assets/logo.svg" width="250" height="110" alt="mampf" />
+      <img src="assets/logo.svg" width="200" height="88" alt="mampf" />
     </div>
 
+    <!-- Ein Hinweis ersetzt kurz den Text der Zeile, damit nichts springt -->
     <ul id="actions">
       <li>
         <button type="button" class="action" (click)="share($event)">
           <span class="circle"><span class="icon icon-share"></span></span>
-          <span class="text">
-            mit Freund:in teilen
-            @if (shareHint) {
-              <small>{{ shareHint }}</small>
-            }
+          <span class="text" [class.hint]="hint?.row === 'share'">
+            {{ hint?.row === 'share' ? hint?.text : 'mit Freund:in teilen' }}
           </span>
         </button>
       </li>
       <li>
         <button type="button" class="action" (click)="addToHomeScreen($event)">
           <span class="circle"><span class="icon icon-add"></span></span>
-          <span class="text">
-            zum Home-Bildschirm
-            @if (homeScreenHint) {
-              <small>{{ homeScreenHint }}</small>
-            }
+          <span class="text" [class.hint]="hint?.row === 'home'">
+            {{ hint?.row === 'home' ? hint?.text : 'zum Home-Bildschirm' }}
           </span>
         </button>
       </li>
       <li>
         <button type="button" class="action" (click)="showSoon($event, 'language')">
           <span class="circle language">de</span>
-          <span class="text">
-            Sprache
-            @if (soonHint === 'language') {
-              <small>Weitere Sprachen folgen bald.</small>
-            }
+          <span class="text" [class.hint]="hint?.row === 'language'">
+            {{ hint?.row === 'language' ? hint?.text : 'Sprache' }}
           </span>
         </button>
       </li>
       <li>
         <button type="button" class="action" (click)="showSoon($event, 'color')">
           <span class="circle color"></span>
-          <span class="text">
-            Oberflächenfarbe
-            @if (soonHint === 'color') {
-              <small>Weitere Farben folgen bald.</small>
-            }
+          <span class="text" [class.hint]="hint?.row === 'color'">
+            {{ hint?.row === 'color' ? hint?.text : 'Oberflächenfarbe' }}
           </span>
         </button>
       </li>
@@ -56,9 +45,7 @@
         <a (click)="$event.stopPropagation()">Nutzungsbedingungen</a> und
         <a (click)="$event.stopPropagation()">Datenschutzerklärung</a>
       </p>
-      <p class="copyright">
-        Copyright &copy; 2024 Jan Ebbe / Yves Geiser<br />Version 0.0.0
-      </p>
+      <p class="copyright">Copyright &copy; 2026 Yves Geiser · Version {{ version }}</p>
     </div>
   </div>
 </div>

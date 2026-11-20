@@ -4,9 +4,9 @@
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $file = $_SERVER['DOCUMENT_ROOT'] . $path;
 
-// /admin ohne Schrägstrich -> /admin/ (wie Apache)
-if ($path === '/admin') {
-    header('Location: /admin/', true, 301);
+// /admin bzw. /login ohne Schrägstrich -> mit Schrägstrich (wie Apache)
+if ($path === '/admin' || $path === '/login') {
+    header('Location: ' . $path . '/', true, 301);
     exit;
 }
 

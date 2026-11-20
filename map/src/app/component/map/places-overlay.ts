@@ -15,6 +15,8 @@ import { isPlaceOpenOnDay } from '../../util/place-util';
 export interface PlacesOverlay {
   /** Zeigt die Shops an: offene grün und gross, geschlossene grau und klein. */
   update(places: Place[], day: number): void;
+  /** Alle Shops ausblenden (z.B. im Platzieren-Modus) oder wieder einblenden. */
+  setHidden(hidden: boolean): void;
 }
 
 interface Marker {
@@ -97,6 +99,7 @@ export function createPlacesOverlay(
     /** Sichtbare Blasen, Schlüssel = ID des ersten Shops darin. */
     private clusters = new Map<number, Cluster>();
     private lastZoom: number | undefined = undefined;
+    private hidden = false;
 
     override onAdd() {
       this.getPanes()?.overlayMouseTarget.appendChild(this.container);
@@ -113,6 +116,13 @@ export function createPlacesOverlay(
         this.lastZoom = zoom;
         this.updateClusters();
       }
+      this.position();
+    }
+
+    setHidden(hidden: boolean) {
+      if (hidden === this.hidden) return;
+      this.hidden = hidden;
+      this.updateClusters();
       this.position();
     }
 
@@ -140,7 +150,8 @@ export function createPlacesOverlay(
     private updateClusters() {
       if (!this.getProjection() || !map.getProjection()) return;
 
-      const groups = this.groupNearby();
+      // Ausgeblendet: keine Gruppen, alle Shops verschwinden
+      const groups = this.hidden ? [] : this.groupNearby();
       const hidden = new Set<Marker>();
       const keys = new Set<number>();
 
@@ -167,7 +178,9 @@ export function createPlacesOverlay(
         this.worldPixel(this.center(cluster.members))
       );
       for (const marker of this.markers.values()) {
-        if (marker.open) {
+        if (this.hidden) {
+          this.setVisible(marker, false);
+        } else if (marker.open) {
           this.setVisible(marker, !hidden.has(marker));
         } else {
           const point = this.worldPixel(marker.latLng);

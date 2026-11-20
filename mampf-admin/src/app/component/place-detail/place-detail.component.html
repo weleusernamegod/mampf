@@ -166,6 +166,11 @@
       </div>
     </div>
 
+    @if (positionFromMap) {
+      <div class="alert alert-success py-2 small">
+        Location taken from the map. Drag the marker to adjust it.
+      </div>
+    }
     <mampf-location-input [(lat)]="lat" [(lng)]="lng"></mampf-location-input>
 
     <div class="mt-4 text-end">

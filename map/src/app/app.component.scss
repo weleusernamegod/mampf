@@ -14,3 +14,20 @@ main,
 
   pointer-events: none;
 }
+
+mampf-day-selector {
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+/* Im Platzieren-Modus nach unten weggleiten */
+mampf-day-selector.hidden {
+  transform: translateY(120%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+mampf-day-selector.hidden ::ng-deep .overlay {
+  pointer-events: none;
+}

@@ -9,14 +9,46 @@
     (click)="onFilterClicked()">
     <span class="icon icon-filter"></span>
   </div>
-  <div class="overlay button" title="Ort hinzufügen" (click)="onAddClicked()">
+  <div
+    class="overlay button"
+    title="Ort hinzufügen"
+    [class.active]="placing"
+    (click)="onAddClicked()">
     <span class="icon icon-add"></span>
   </div>
   <div class="overlay button" title="Über mampf" (click)="onAboutClicked()">
     <span class="icon icon-about"></span>
   </div>
 
-  @if (filterActive) {
+  @if (placing) {
+    <!-- Platzieren-Modus: Position bestätigen oder abbrechen -->
+    <div class="overlay confirm-cancel">
+      <button
+        type="button"
+        class="half"
+        title="Position bestätigen"
+        (click)="onPlaceConfirmed()">
+        <span class="icon icon-yes"></span>
+      </button>
+      <button
+        type="button"
+        class="half"
+        title="Abbrechen"
+        (click)="onPlaceCancelled()">
+        <span class="icon icon-close"></span>
+      </button>
+    </div>
+  } @else if (aboutOpen) {
+    <div class="overlay button close" title="Schliessen" (click)="onCloseClicked()">
+      <span class="icon icon-close"></span>
+    </div>
+  }
+
+  @if (placing) {
+    <div id="active-filters">
+      <div class="overlay filter-chip hint">Karte verschieben, um den Ort festzulegen</div>
+    </div>
+  } @else if (filterActive) {
     <div id="active-filters">
       @for (cuisine of activeCuisines; track cuisine.id) {
         <div class="overlay filter-chip">

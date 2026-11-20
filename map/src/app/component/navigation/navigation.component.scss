@@ -3,6 +3,7 @@
   grid-template-columns: repeat(4, 52px);
   grid-template-rows: 52px; // Knöpfe
   grid-auto-rows: auto; // aktive Filter darunter
+  grid-auto-columns: 52px; // Platz für das X bzw. ✓ ✕ rechts
   gap: 11px;
 
   margin: 17px 17px 0px 17px;
@@ -22,6 +23,36 @@
 
 .button:hover {
   box-shadow: 0px 1px 2px 0px var(--shadow);
+}
+
+// ✓ und ✕ im Platzieren-Modus, zusammen in einem Knopf
+.confirm-cancel {
+  grid-row: 1;
+  grid-column: 5; // ragt bewusst über die Spalte hinaus (88px breit)
+
+  display: flex;
+  width: 88px;
+
+  animation: chip-pop 0.3s ease-out;
+
+  .half {
+    flex: 1;
+    padding: 0;
+    border: none;
+
+    background: none;
+
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+// X rechts neben dem Benutzer-Icon, nur bei offener About-Seite
+.close {
+  grid-row: 1;
+  grid-column: 5;
+
+  animation: chip-pop 0.3s ease-out;
 }
 
 // Aktive Filter unter den Knöpfen, z.B. "Griechisch ×"
@@ -66,6 +97,14 @@
   }
 }
 
+// Hinweis im Platzieren-Modus
+.filter-chip.hint {
+  padding-right: 12px;
+  white-space: nowrap;
+
+  color: var(--grey3);
+}
+
 @keyframes chip-pop {
   from {
     transform: scale(0.6);
@@ -77,6 +116,7 @@
 // Die Form kommt aus der SVG-Datei, die Farbe aus background-color.
 // So braucht es pro Icon nur eine Datei, egal in welcher Farbe.
 .icon {
+  display: block;
   width: 100%;
   height: 100%;
 
@@ -116,4 +156,12 @@
 
 .icon-about {
   @include icon('about');
+}
+
+.icon-close {
+  @include icon('no');
+}
+
+.icon-yes {
+  @include icon('yes');
 }

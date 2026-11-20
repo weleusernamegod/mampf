@@ -8,6 +8,7 @@ import { LocationInputComponent } from '../location-input/location-input.compone
 import { ActionStatusModalComponent } from '../action-status-modal/action-status-modal.component';
 import { ActionStatus } from '../action-status-modal/action-status';
 import { SavePlace } from '../../dto/save-place';
+import { takePendingPosition } from '../../util/pending-position';
 
 @Component({
   selector: 'mampf-place-detail',
@@ -33,6 +34,8 @@ export class PlaceDetailComponent implements OnInit {
 
   lat = 47.3769;
   lng = 8.5417;
+  /** Position kommt aus dem Platzieren-Modus der Karte. */
+  positionFromMap = false;
 
   name = '';
   description = '';
@@ -55,6 +58,14 @@ export class PlaceDetailComponent implements OnInit {
       const id = params['id'];
       if (id) {
         this.initFromExistingPlace(id);
+      } else {
+        // Neuer Ort: auf der Karte gewählte Position übernehmen, falls vorhanden
+        const position = takePendingPosition();
+        if (position) {
+          this.lat = position.lat;
+          this.lng = position.lng;
+          this.positionFromMap = true;
+        }
       }
     });
   }

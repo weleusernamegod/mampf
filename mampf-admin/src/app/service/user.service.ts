@@ -18,7 +18,7 @@ export class UserService {
             callback(data);
           });
         } else if (response.status === 401) {
-          window.location.href = '../login';
+          window.location.href = '/login/'; // mit / am Ende, sonst fehlen der Login-Seite die Styles
         }
       })
       .catch(error => {

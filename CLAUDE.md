@@ -43,6 +43,8 @@ Web-App mit einer Karte von Foodtrucks/Imbissständen. Live unter https://mampf.
 - Der Besitzer ist kein Profi-Entwickler: Schritte auf Deutsch und einfach erklären.
 - Änderungen erst lokal testen (localhost:8080), dann committen.
 - Commit-Nachrichten auf Deutsch, kurz und beschreibend.
+- Versionsnummer in `map/src/app/version.ts` bei **jedem Commit** um 1 hochzählen
+  (0.0.001 → 0.0.002 → …, immer dreistellig). Sie erscheint auf der About-Seite.
 
 ## Bekannte Baustellen
 

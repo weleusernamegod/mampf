@@ -7,6 +7,7 @@ import { AboutDialogComponent } from './component/about-dialog/about-dialog.comp
 import { PlaceDialogComponent } from './component/place-dialog/place-dialog.component';
 import { FilterDialogComponent } from './component/filter-dialog/filter-dialog.component';
 import { filterByCuisines } from './util/cuisine-filter';
+import { savePendingPosition } from './util/pending-position';
 
 @Component({
   selector: 'app-root',
@@ -36,6 +37,8 @@ export class AppComponent implements OnInit {
   aboutDialogVisible = false;
   placeDialogVisible = false;
   filterDialogVisible = false;
+  /** Platzieren-Modus: neuen Ort mit dem roten Punkt in der Kartenmitte wählen. */
+  placing = false;
 
   ngOnInit(): void {
     fetch('api/get-public-places.php')
@@ -47,6 +50,12 @@ export class AppComponent implements OnInit {
       .catch(error => {
         console.error('Could not fetch places', error);
       });
+  }
+
+  /** Klick auf eine leere Stelle der Karte: About-Seite und Infobox schliessen. */
+  onMapClicked() {
+    this.aboutDialogVisible = false;
+    this.placeDialogVisible = false;
   }
 
   onPlaceClicked(place: Place) {
@@ -70,6 +79,7 @@ export class AppComponent implements OnInit {
   }
 
   onFilterClicked() {
+    this.placing = false;
     this.placeDialogVisible = false;
     this.aboutDialogVisible = false;
     this.filterDialogVisible = !this.filterDialogVisible;
@@ -87,12 +97,28 @@ export class AppComponent implements OnInit {
   }
 
   onAboutClicked() {
+    this.placing = false;
     this.placeDialogVisible = false;
     this.filterDialogVisible = false;
     this.aboutDialogVisible = !this.aboutDialogVisible;
   }
 
   onAddClicked() {
-    window.location.href = './admin';
+    // "+" schaltet den Platzieren-Modus ein bzw. wieder aus
+    this.placing = !this.placing;
+    this.placeDialogVisible = false;
+    this.aboutDialogVisible = false;
+    this.filterDialogVisible = false;
+  }
+
+  /** ✓ im Platzieren-Modus: Position merken und Formular "Ort hinzufügen" öffnen. */
+  onPlaceConfirmed() {
+    const center = this.mapComponent?.getCenter();
+    if (center) {
+      savePendingPosition(center);
+    }
+    // Ohne Login leitet der Admin-Bereich zuerst zum Login weiter.
+    // Die Position bleibt im Browser gespeichert.
+    window.location.href = './admin/place/new';
   }
 }

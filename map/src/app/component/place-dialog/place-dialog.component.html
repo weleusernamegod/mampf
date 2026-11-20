@@ -1,23 +1,44 @@
-<div id="wrapper">
+<div id="wrapper" #wrapper>
   <div
     id="dialog"
+    #dialog
     class="overlay cursor-pointer"
-    [class.minimized]="minimized"
-    (click)="toggleSize()">
+    [class.expanded]="expanded"
+    [class.scrollable]="scrollable"
+    (click)="toggleSize()"
+    (transitionend)="onTransitionEnd($event)">
+    <button
+      type="button"
+      class="close"
+      aria-label="Schliessen"
+      (click)="$event.stopPropagation(); closed.emit()"></button>
+
     <hr />
-    <div id="summary">
-      <img id="logo" [src]="pictureUrl" width="70" height="70" />
+    <div id="summary" #summary>
+      <img id="logo" [src]="pictureUrl" width="70" height="70" alt="" />
       <div id="info">
-        <strong>{{ place?.name }}</strong
-        ><br />
-        <span>{{ place?.description }}</span
-        ><br />
+        <strong>{{ place?.name }}</strong><br />
+        <span>{{ place?.description }}</span><br />
         <span>{{ openingHours }}</span>
       </div>
     </div>
 
-    <mampf-open-days
-      class="section block"
-      [openDays]="place?.openDays"></mampf-open-days>
+    <!-- Erscheint beim Aufschieben -->
+    <div id="details">
+      @if (cuisines.length > 0) {
+        <div class="section">
+          <strong class="title">Küche</strong>
+          <div id="cuisines">
+            @for (cuisine of cuisines; track cuisine.id) {
+              <span class="cuisine">{{ cuisine.label }}</span>
+            }
+          </div>
+        </div>
+      }
+
+      <mampf-open-days
+        class="section block"
+        [openDays]="place?.openDays"></mampf-open-days>
+    </div>
   </div>
 </div>

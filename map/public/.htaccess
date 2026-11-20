@@ -8,3 +8,6 @@
     Header set Cache-Control "no-cache"
   </FilesMatch>
 </IfModule>
+
+# Web-App-Manifest (Name und Icon für den Home-Bildschirm) mit richtigem Typ ausliefern
+AddType application/manifest+json .webmanifest

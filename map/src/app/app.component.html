@@ -3,7 +3,9 @@
     id="map"
     [places]="visiblePlaces"
     [day]="selectedDay"
-    (placeClicked)="onPlaceClicked($event)"></mampf-map>
+    [placing]="placing"
+    (placeClicked)="onPlaceClicked($event)"
+    (mapClicked)="onMapClicked()"></mampf-map>
 
   <div id="grid">
     <div>
@@ -14,7 +16,12 @@
         (locateClicked)="onLocateClicked()"
         (filterClicked)="onFilterClicked()"
         (addClicked)="onAddClicked()"
-        (aboutClicked)="onAboutClicked()"></mampf-navigation>
+        [aboutOpen]="aboutDialogVisible"
+        [placing]="placing"
+        (placeConfirmed)="onPlaceConfirmed()"
+        (placeCancelled)="placing = false"
+        (aboutClicked)="onAboutClicked()"
+        (closeClicked)="aboutDialogVisible = false"></mampf-navigation>
     </div>
     <div>
       @if (aboutDialogVisible) {
@@ -30,12 +37,15 @@
       } @else if (placeDialogVisible) {
         <mampf-place-dialog
           class="block full-height"
-          [place]="selectedPlace"></mampf-place-dialog>
+          [place]="selectedPlace"
+          (closed)="placeDialogVisible = false"></mampf-place-dialog>
       }
     </div>
     <div class="align-center">
+      <!-- Im Platzieren-Modus ausgeblendet (bleibt aber erhalten, damit der Tag bleibt) -->
       <mampf-day-selector
         class="inline-block"
+        [class.hidden]="placing"
         (daySelected)="onDaySelected($event)"></mampf-day-selector>
     </div>
   </div>

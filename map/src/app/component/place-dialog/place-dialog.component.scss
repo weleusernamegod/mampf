@@ -8,17 +8,54 @@
 }
 
 #dialog {
+  position: relative;
+  box-sizing: border-box;
   width: 339px;
+  height: 110px; // wird per JavaScript gesetzt (zu- und aufgeklappt)
 
   padding: 10px 15px 15px 15px;
 
-  overflow-y: auto;
+  overflow: hidden;
+
+  // Erscheinen: von unten hereingleiten
+  animation: slide-in 0.3s ease-out;
+  // Aufschieben / Zuklappen
+  transition: height 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  // Erst nach dem Aufschieben scrollbar, falls nötig
+  &.scrollable {
+    overflow-y: auto;
+  }
 }
 
-#dialog.minimized {
-  height: 110px;
+@keyframes slide-in {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+}
 
-  overflow-y: hidden;
+// Kleines X oben rechts
+.close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+
+  background-color: var(--grey2);
+  -webkit-mask: url('/assets/icons/no.svg') center / contain no-repeat;
+  mask: url('/assets/icons/no.svg') center / contain no-repeat;
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    background-color: var(--grey3);
+  }
 }
 
 #summary {
@@ -26,6 +63,8 @@
   grid-template-columns: 70px auto;
   grid-template-rows: auto;
   gap: 15px;
+
+  padding-right: 20px; // Platz für das X
 
   font-size: 14px;
 }
@@ -46,6 +85,46 @@ hr {
   line-height: 1.6;
 }
 
+// Weitere Infos: blenden beim Aufschieben sanft ein
+#details {
+  opacity: 0;
+  transform: translateY(10px);
+
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.expanded #details {
+  opacity: 1;
+  transform: none;
+
+  transition-delay: 0.1s;
+}
+
 .section {
   margin-top: 15px;
+}
+
+.title {
+  display: inline-block;
+  margin-bottom: 7px;
+
+  font-size: 14px;
+}
+
+#cuisines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cuisine {
+  padding: 3px 10px;
+  border-radius: 50px;
+
+  background-color: var(--teal_light);
+
+  color: var(--grey3);
+  font-size: 13px;
 }
