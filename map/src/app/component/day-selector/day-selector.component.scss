@@ -30,11 +30,11 @@
 }
 
 .day {
-  width: 17px;
-  height: 17px;
+  width: 19px;
+  height: 19px;
 
-  margin: 15px 0px 0px 15px;
-  border-radius: 19px;
+  margin: 14px 0px 0px 14px;
+  border-radius: 50%;
 
   background-color: var(--grey2);
 }
@@ -56,36 +56,30 @@
 // Der grüne Punkt, den man von Tag zu Tag ziehen kann.
 .thumb {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 8px;
+  left: 8px;
   z-index: 1;
 
-  width: 37px;
-  height: 37px;
+  width: 41px;
+  height: 41px;
   border-radius: 50%;
 
   background-color: var(--teal);
   box-shadow: 0px 1px 3px 0px var(--shadow);
 
   color: var(--white);
-  font-size: 19px;
-  line-height: 37px;
+  font-size: 17px;
+  line-height: 41px;
   text-align: center;
 
   pointer-events: none;
 
-  // Einrasten nach dem Loslassen (oder beim Klick / per Tastatur).
+  // Der Punkt springt immer direkt von Tag zu Tag (beim Ziehen, Klicken und per Tastatur).
   transition:
-    transform 0.3s cubic-bezier(0.3, 1.4, 0.5, 1),
-    box-shadow 0.2s ease,
-    scale 0.2s ease;
-}
+    transform 0.25s cubic-bezier(0.3, 1.3, 0.5, 1),
+    background-color 0.25s ease;
 
-// Während dem Ziehen folgt der Punkt direkt dem Finger und wird leicht angehoben.
-.dragging .thumb {
-  scale: 1.12;
-  box-shadow: 0px 3px 8px 0px var(--shadow);
-  transition:
-    box-shadow 0.2s ease,
-    scale 0.2s ease;
+  &.weekend {
+    background-color: var(--weekend);
+  }
 }

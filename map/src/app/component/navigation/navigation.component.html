@@ -1,5 +1,33 @@
 <nav id="navigation">
-  <div class="overlay button icon-add" (click)="onAddClicked()"></div>
-  <div class="overlay button icon-locate" (click)="onLocateClicked()"></div>
-  <div class="overlay button icon-about" (click)="onAboutClicked()"></div>
+  <div class="overlay button" title="Mein Standort" (click)="onLocateClicked()">
+    <span class="icon icon-locate"></span>
+  </div>
+  <div
+    class="overlay button"
+    title="Filtern"
+    [class.active]="filterActive"
+    (click)="onFilterClicked()">
+    <span class="icon icon-filter"></span>
+  </div>
+  <div class="overlay button" title="Ort hinzufügen" (click)="onAddClicked()">
+    <span class="icon icon-add"></span>
+  </div>
+  <div class="overlay button" title="Über mampf" (click)="onAboutClicked()">
+    <span class="icon icon-about"></span>
+  </div>
+
+  @if (filterActive) {
+    <div id="active-filters">
+      @for (cuisine of activeCuisines; track cuisine.id) {
+        <div class="overlay filter-chip">
+          <span>{{ cuisine.label }}</span>
+          <button
+            type="button"
+            class="remove"
+            [attr.aria-label]="cuisine.label + ' entfernen'"
+            (click)="onCuisineRemoved(cuisine.id)"></button>
+        </div>
+      }
+    </div>
+  }
 </nav>

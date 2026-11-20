@@ -1,18 +1,17 @@
 #navigation {
   display: grid;
-  grid-template-columns: repeat(3, 52px);
-  grid-template-rows: 52px;
+  grid-template-columns: repeat(4, 52px);
+  grid-template-rows: 52px; // Knöpfe
+  grid-auto-rows: auto; // aktive Filter darunter
   gap: 11px;
 
   margin: 17px 17px 0px 17px;
 }
 
 .button {
-  padding: 8px;
-
-  background-repeat: no-repeat;
-  background-size: fill;
-  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   cursor: pointer;
 
@@ -25,18 +24,96 @@
   box-shadow: 0px 1px 2px 0px var(--shadow);
 }
 
-.icon-locate {
-  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iaWNvbnMiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDUxMiA1MTIiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6ICNiMWIxYjE7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTI4MSwzOTIuNzRMMTI2LjcyLDEyNi43MmwyNjYuMDIsMTU0LjI4aC0xMTEuNzR2MTExLjc0Wm0tMTEwLjI1LTIyMS45OWw5NC4yNSwxNjIuNTF2LTY4LjI2aDY4LjI2bC0xNjIuNTEtOTQuMjVaIi8+Cjwvc3ZnPg==');
+// Aktive Filter unter den Knöpfen, z.B. "Griechisch ×"
+#active-filters {
+  grid-column: 1 / -1;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.icon-about {
-  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iaWNvbnMiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDUxMiA1MTIiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6ICNiMWIxYjE7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTI4OS40NSwyNTQuMTZjMTcuMTUtMTEuMDQsMjguNTUtMzAuMjksMjguNTUtNTIuMTYsMC0zNC4xOS0yNy44MS02Mi02Mi02MnMtNjIsMjcuODEtNjIsNjJjMCwyMS44NywxMS4zOSw0MS4xMiwyOC41NSw1Mi4xNi0zNS4zNiwxMy41MS02MC41NSw0Ny43OS02MC41NSw4Ny44NGgxNmMwLTQzLjAxLDM0Ljk5LTc4LDc4LTc4czc4LDM0Ljk5LDc4LDc4aDE2YzAtNDAuMDUtMjUuMTgtNzQuMzMtNjAuNTUtODcuODRabS03OS40NS01Mi4xNmMwLTI1LjM2LDIwLjY0LTQ2LDQ2LTQ2czQ2LDIwLjY0LDQ2LDQ2LTIwLjY0LDQ2LTQ2LDQ2LTQ2LTIwLjY0LTQ2LTQ2WiIvPgo8L3N2Zz4=');
+.filter-chip {
+  display: flex;
+  align-items: center;
+
+  height: 30px;
+  padding-left: 12px;
+  border-radius: 50px;
+
+  color: var(--teal);
+  font-size: 14px;
+
+  animation: chip-pop 0.3s ease-out;
+
+  .remove {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+
+    background-color: var(--grey2);
+    -webkit-mask: url('/assets/icons/no.svg') center / contain no-repeat;
+    mask: url('/assets/icons/no.svg') center / contain no-repeat;
+
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: var(--grey3);
+    }
+  }
+}
+
+@keyframes chip-pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+}
+
+// Die Icons (public/assets/icons/*.svg) werden als Maske verwendet:
+// Die Form kommt aus der SVG-Datei, die Farbe aus background-color.
+// So braucht es pro Icon nur eine Datei, egal in welcher Farbe.
+.icon {
+  width: 100%;
+  height: 100%;
+
+  background-color: var(--grey2);
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  transition: background-color 0.3s ease;
+}
+
+// Aktiver Knopf (z.B. Filter eingeschaltet): Icon in Grün.
+.active .icon {
+  background-color: var(--teal);
+}
+
+@mixin icon($name) {
+  -webkit-mask-image: url('/assets/icons/#{$name}.svg');
+  mask-image: url('/assets/icons/#{$name}.svg');
+}
+
+.icon-locate {
+  @include icon('locate');
+}
+
+.icon-filter {
+  @include icon('filter');
 }
 
 .icon-add {
-  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iaWNvbnMiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDUxMiA1MTIiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6ICNiMWIxYjE7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxwb2x5Z29uIGNsYXNzPSJjbHMtMSIgcG9pbnRzPSIzNjYuNSAyNDggMjY0LjUgMjQ4IDI2NC41IDE0NiAyNDguNSAxNDYgMjQ4LjUgMjQ4IDE0Ni41IDI0OCAxNDYuNSAyNjQgMjQ4LjUgMjY0IDI0OC41IDM2NiAyNjQuNSAzNjYgMjY0LjUgMjY0IDM2Ni41IDI2NCAzNjYuNSAyNDgiLz4KPC9zdmc+');
+  @include icon('add');
 }
 
-.icon-share {
-  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iaWNvbnMiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDUxMiA1MTIiPgogIDxkZWZzPgogICAgPHN0eWxlPgogICAgICAuY2xzLTEgewogICAgICAgIGZpbGw6ICNiMWIxYjE7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTMxNCwyMzYuOTloLTMzdjE2aDMzYzIuMjEsMCw0LDEuNzksNCw0djYzYzAsMi4yMS0xLjc5LDQtNCw0aC0xMTZjLTIuMjEsMC00LTEuNzktNC00di02M2MwLTIuMjEsMS43OS00LDQtNGgzM3YtMTZoLTMzYy0xMS4wMywwLTIwLDguOTctMjAsMjB2NjNjMCwxMS4wMyw4Ljk3LDIwLDIwLDIwaDExNmMxMS4wMywwLDIwLTguOTcsMjAtMjB2LTYzYzAtMTEuMDMtOC45Ny0yMC0yMC0yMFoiLz4KICA8cG9seWdvbiBjbGFzcz0iY2xzLTEiIHBvaW50cz0iMjQ4IDE4MC40MyAyNDggMjk0LjYzIDI2NCAyOTQuNjMgMjY0IDE4MC40NCAyOTAuMjEgMjA3Ljk1IDMwMS43OSAxOTYuOTIgMjU2IDE0OC44NCAyMTAuMjEgMTk2LjkyIDIyMS43OSAyMDcuOTUgMjQ4IDE4MC40MyIvPgo8L3N2Zz4=');
+.icon-about {
+  @include icon('about');
 }

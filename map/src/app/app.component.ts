@@ -5,6 +5,8 @@ import { DaySelectorComponent } from './component/day-selector/day-selector.comp
 import { NavigationComponent } from './component/navigation/navigation.component';
 import { AboutDialogComponent } from './component/about-dialog/about-dialog.component';
 import { PlaceDialogComponent } from './component/place-dialog/place-dialog.component';
+import { FilterDialogComponent } from './component/filter-dialog/filter-dialog.component';
+import { filterByCuisines } from './util/cuisine-filter';
 
 @Component({
   selector: 'app-root',
@@ -15,6 +17,7 @@ import { PlaceDialogComponent } from './component/place-dialog/place-dialog.comp
     NavigationComponent,
     AboutDialogComponent,
     PlaceDialogComponent,
+    FilterDialogComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -22,21 +25,24 @@ import { PlaceDialogComponent } from './component/place-dialog/place-dialog.comp
 export class AppComponent implements OnInit {
   @ViewChild(MapComponent) mapComponent: MapComponent | undefined = undefined;
 
+  /** Alle Shops vom Server. */
   places: Place[] = [];
-  filteredPlaces: Place[] = [];
+  /** Shops, die zum Küchen-Filter passen (alle, wenn kein Filter aktiv). */
+  visiblePlaces: Place[] = [];
+  /** Angewendeter Küchen-Filter, z.B. ['thai', 'greek']. */
+  selectedCuisines: string[] = [];
+  selectedDay: number = new Date().getDay();
   selectedPlace: Place | undefined = undefined;
   aboutDialogVisible = false;
   placeDialogVisible = false;
+  filterDialogVisible = false;
 
   ngOnInit(): void {
     fetch('api/get-public-places.php')
       .then(response => response.json())
       .then(data => {
         this.places = data;
-        this.filteredPlaces = this.filterPlaces(
-          this.places,
-          new Date().getDay()
-        );
+        this.visiblePlaces = filterByCuisines(this.places, this.selectedCuisines);
       })
       .catch(error => {
         console.error('Could not fetch places', error);
@@ -47,51 +53,46 @@ export class AppComponent implements OnInit {
     this.selectedPlace = place;
 
     this.aboutDialogVisible = false;
+    this.filterDialogVisible = false;
     this.placeDialogVisible = true;
   }
 
   onDaySelected(day: number) {
     this.placeDialogVisible = false;
     this.aboutDialogVisible = false;
+    this.filterDialogVisible = false;
 
-    this.filteredPlaces = this.filterPlaces(this.places, day);
+    this.selectedDay = day;
   }
 
   onLocateClicked() {
     this.mapComponent?.locate();
   }
 
+  onFilterClicked() {
+    this.placeDialogVisible = false;
+    this.aboutDialogVisible = false;
+    this.filterDialogVisible = !this.filterDialogVisible;
+  }
+
+  onFilterApplied(cuisines: string[]) {
+    this.selectedCuisines = cuisines;
+    this.visiblePlaces = filterByCuisines(this.places, cuisines);
+    this.filterDialogVisible = false;
+  }
+
+  /** Einzelnen Filter über das X unter der Navigation entfernen. */
+  onCuisineRemoved(id: string) {
+    this.onFilterApplied(this.selectedCuisines.filter(cuisine => cuisine !== id));
+  }
+
   onAboutClicked() {
     this.placeDialogVisible = false;
+    this.filterDialogVisible = false;
     this.aboutDialogVisible = !this.aboutDialogVisible;
   }
 
   onAddClicked() {
     window.location.href = './admin';
-  }
-
-  private filterPlaces(places: Place[], dayFilter: number): Place[] {
-    return this.places.filter(place => this.isPlaceOpenOnDay(place, dayFilter));
-  }
-
-  private isPlaceOpenOnDay(place: Place, day: number): boolean {
-    switch (day) {
-      case 0:
-        return place.openDays.sunday;
-      case 1:
-        return place.openDays.monday;
-      case 2:
-        return place.openDays.tuesday;
-      case 3:
-        return place.openDays.wednesday;
-      case 4:
-        return place.openDays.thursday;
-      case 5:
-        return place.openDays.friday;
-      case 6:
-        return place.openDays.saturday;
-      default:
-        return false;
-    }
   }
 }

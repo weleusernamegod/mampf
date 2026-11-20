@@ -2,3 +2,45 @@
 ::ng-deep google-map div {
   border: none !important;
 }
+
+/* Shop-Marker (werden in places-overlay.ts erzeugt) */
+::ng-deep .place-marker {
+  position: absolute;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* grosse Klickfläche, auch für die kleinen grauen Punkte */
+  width: 26px;
+  height: 26px;
+  transform: translate(-50%, -50%);
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  /* geschlossen: grau und klein. Der weisse Rand ist ein Schatten-Ring,
+     weil "border" in der Karte oben ausgeschaltet wird. */
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--white);
+
+    background-color: var(--grey2);
+  }
+
+  /* offen: grün und gross, liegt über den geschlossenen */
+  &.open {
+    z-index: 2;
+
+    .dot {
+      width: 20px;
+      height: 20px;
+      box-shadow: 0 0 0 3px var(--white);
+
+      background-color: var(--teal);
+    }
+  }
+}

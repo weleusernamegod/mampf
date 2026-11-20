@@ -1,22 +1,32 @@
 <main>
   <mampf-map
     id="map"
-    [places]="filteredPlaces"
+    [places]="visiblePlaces"
+    [day]="selectedDay"
     (placeClicked)="onPlaceClicked($event)"></mampf-map>
 
   <div id="grid">
     <div>
       <mampf-navigation
         class="inline-block"
-        (aboutClicked)="onAboutClicked()"
+        [selectedCuisines]="selectedCuisines"
+        (cuisineRemoved)="onCuisineRemoved($event)"
+        (locateClicked)="onLocateClicked()"
+        (filterClicked)="onFilterClicked()"
         (addClicked)="onAddClicked()"
-        (locateClicked)="onLocateClicked()"></mampf-navigation>
+        (aboutClicked)="onAboutClicked()"></mampf-navigation>
     </div>
     <div>
       @if (aboutDialogVisible) {
         <mampf-about-dialog
           class="block full-height cursor-pointer"
           (click)="onAboutClicked()"></mampf-about-dialog>
+      } @else if (filterDialogVisible) {
+        <mampf-filter-dialog
+          class="block full-height"
+          [places]="places"
+          [selectedCuisines]="selectedCuisines"
+          (filterApplied)="onFilterApplied($event)"></mampf-filter-dialog>
       } @else if (placeDialogVisible) {
         <mampf-place-dialog
           class="block full-height"

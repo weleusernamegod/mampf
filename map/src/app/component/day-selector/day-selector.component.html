@@ -25,7 +25,10 @@
     </div>
   }
 
-  <div class="thumb" [style.transform]="'translateX(' + thumbX + 'px)'">
+  <div
+    class="thumb"
+    [class.weekend]="days[index].weekend"
+    [style.transform]="'translateX(' + thumbX + 'px)'">
     {{ days[index].label }}
   </div>
 </div>

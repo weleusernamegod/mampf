@@ -9,14 +9,21 @@ import {
 /** Breite einer Tages-Spalte in px (muss zu grid-template-columns im SCSS passen). */
 const STEP = 47;
 /** Durchmesser des grünen Punkts in px. */
-const THUMB = 37;
-/** Abstand vom Rand des Menüs bis zum ersten Punkt (Padding 5px + Margin 5px). */
-const OFFSET = 10;
+const THUMB = 41;
+/** Abstand vom Rand des Menüs bis zum grünen Punkt auf Montag (Padding 5px + Rand 3px). */
+const OFFSET = 8;
+/**
+ * Wie weit man ziehen muss, bis der Punkt zum nächsten Tag springt
+ * (Anteil einer Spalte). Über 0.5 = "sticky": Der Punkt bleibt etwas länger
+ * stehen und springt nicht beim kleinsten Wackeln hin und her.
+ */
+const STICKY = 0.65;
 
 interface Day {
   value: number; // wie Date.getDay(): 0 = Sonntag, 1 = Montag, ...
   label: string;
   name: string;
+  weekend?: boolean;
 }
 
 @Component({
@@ -33,24 +40,25 @@ export class DaySelectorComponent {
     { value: 3, label: 'MI', name: 'Mittwoch' },
     { value: 4, label: 'DO', name: 'Donnerstag' },
     { value: 5, label: 'FR', name: 'Freitag' },
-    { value: 6, label: 'SA', name: 'Samstag' },
-    { value: 0, label: 'SO', name: 'Sonntag' },
+    { value: 6, label: 'SA', name: 'Samstag', weekend: true },
+    { value: 0, label: 'SO', name: 'Sonntag', weekend: true },
   ];
 
   /** Position im Menü (0 = Montag ... 6 = Sonntag). */
   index: number = (new Date().getDay() + 6) % 7;
 
   dragging = false;
-  private dragX = 0;
-  private grabOffset = THUMB / 2;
+  /** Wo der Finger beim Antippen war und auf welchem Tag der Punkt da stand. */
+  private startX = 0;
+  private startIndex = 0;
 
   @ViewChild('track', { static: true }) track!: ElementRef<HTMLElement>;
 
   @Output() daySelected: EventEmitter<number> = new EventEmitter<number>();
 
-  /** Horizontale Verschiebung des grünen Punkts in px. */
+  /** Horizontale Verschiebung des grünen Punkts in px – immer genau auf einem Tag. */
   get thumbX(): number {
-    return this.dragging ? this.dragX : this.index * STEP;
+    return this.index * STEP;
   }
 
   onPointerDown(event: PointerEvent) {
@@ -59,40 +67,51 @@ export class DaySelectorComponent {
 
     const x = this.pointerX(event);
     const thumbLeft = this.index * STEP;
+    const onThumb = x >= thumbLeft && x <= thumbLeft + THUMB;
 
-    // Punkt direkt angefasst: Abstand zum Finger beibehalten, damit er nicht springt.
-    // Daneben geklickt: Punkt springt mittig unter den Finger.
-    this.grabOffset =
-      x >= thumbLeft && x <= thumbLeft + THUMB ? x - thumbLeft : THUMB / 2;
+    // Daneben geklickt: direkt auf den nächstgelegenen Tag springen.
+    // Wie genau man den Tag getroffen hat, spielt keine Rolle.
+    if (!onThumb) {
+      this.select(this.clamp(Math.round((x - THUMB / 2) / STEP)));
+    }
 
+    // Ab hier zählt nur noch, wie weit der Finger von hier aus geschoben wird.
+    this.startX = x;
+    this.startIndex = this.index;
     this.dragging = true;
     this.track.nativeElement.setPointerCapture(event.pointerId);
-    this.moveTo(x);
   }
 
   onPointerMove(event: PointerEvent) {
     if (!this.dragging) return;
-    this.moveTo(this.pointerX(event));
+
+    // Geschobene Strecke, umgerechnet in "Tage" (z.B. 1.3 = gut ein Tag nach rechts).
+    const position =
+      this.startIndex + (this.pointerX(event) - this.startX) / STEP;
+
+    // Erst springen, wenn man deutlich über die Mitte zum Nachbartag gezogen hat.
+    let index = this.index;
+    while (position > index + STICKY && index < this.days.length - 1) index++;
+    while (position < index - STICKY && index > 0) index--;
+    this.select(index);
   }
 
   onPointerUp() {
-    // Loslassen: Punkt rastet auf dem nächsten Tag ein.
     this.dragging = false;
   }
 
   onKeyDown(event: KeyboardEvent) {
-    const last = this.days.length - 1;
     const keys: Record<string, number> = {
       ArrowLeft: this.index - 1,
       ArrowDown: this.index - 1,
       ArrowRight: this.index + 1,
       ArrowUp: this.index + 1,
       Home: 0,
-      End: last,
+      End: this.days.length - 1,
     };
     if (!(event.key in keys)) return;
     event.preventDefault();
-    this.select(Math.min(last, Math.max(0, keys[event.key])));
+    this.select(this.clamp(keys[event.key]));
   }
 
   private pointerX(event: PointerEvent): number {
@@ -100,10 +119,8 @@ export class DaySelectorComponent {
     return event.clientX - rect.left - OFFSET;
   }
 
-  private moveTo(x: number) {
-    const max = (this.days.length - 1) * STEP;
-    this.dragX = Math.min(max, Math.max(0, x - this.grabOffset));
-    this.select(Math.round(this.dragX / STEP));
+  private clamp(index: number): number {
+    return Math.min(this.days.length - 1, Math.max(0, index));
   }
 
   private select(index: number) {

@@ -1,0 +1,31 @@
+<div id="wrapper">
+  <div id="dialog" class="overlay">
+    <h2>Filtern</h2>
+    <p class="label">Küche</p>
+
+    <div id="chips">
+      @for (option of options; track option.cuisine.id) {
+        <button
+          type="button"
+          class="chip"
+          [class.selected]="draft.has(option.cuisine.id)"
+          [attr.aria-pressed]="draft.has(option.cuisine.id)"
+          (click)="toggle(option.cuisine.id)">
+          {{ option.cuisine.label }}
+          <span class="count">{{ option.count }}</span>
+        </button>
+      }
+    </div>
+
+    <div id="actions">
+      <button
+        type="button"
+        class="reset"
+        [disabled]="draft.size === 0"
+        (click)="reset()">
+        Zurücksetzen
+      </button>
+      <button type="button" class="apply" (click)="apply()">Anwenden</button>
+    </div>
+  </div>
+</div>
