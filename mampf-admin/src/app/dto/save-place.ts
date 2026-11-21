@@ -1,3 +1,5 @@
+import { Opening, PlaceLocation } from './opening';
+
 export interface SavePlace {
   id: number;
   updatePicture: boolean;
@@ -6,15 +8,7 @@ export interface SavePlace {
   description: string;
   lat: number;
   lng: number;
-  openSunday: boolean;
-  openMonday: boolean;
-  openTuesday: boolean;
-  openWednesday: boolean;
-  openThursday: boolean;
-  openFriday: boolean;
-  openSaturday: boolean;
-  openMorning: boolean;
-  openNoon: boolean;
-  openEvening: boolean;
-  openNight: boolean;
+  opening: Opening[];
+  /** Leer = nur ein Standort (lat/lng). */
+  locations: PlaceLocation[];
 }

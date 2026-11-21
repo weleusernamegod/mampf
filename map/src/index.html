@@ -161,6 +161,14 @@
         background-color: var(--grey1, #dedede);
         outline-color: var(--grey1, #dedede);
       }
+      /* Schalter Mittag/Abend erscheint zusammen mit der Wochenend-Markierung */
+      html.intro mampf-slot-selector {
+        opacity: 0;
+        transition: opacity var(--intro-weekend, 800ms) ease;
+      }
+      html.intro.intro-weekend mampf-slot-selector {
+        opacity: 1;
+      }
     </style>
   </head>
   <body>

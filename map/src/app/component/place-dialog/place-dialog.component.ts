@@ -10,6 +10,7 @@ import {
 import { Place } from '../../dto/place';
 import { Cuisine, cuisinesOf } from '../../util/cuisine-filter';
 import { OpenDaysComponent } from './open-days/open-days.component';
+import { SLOTS, WEEKDAYS, hasOpening } from '../../util/place-util';
 
 /** Abstand unter dem Inhalt der zugeklappten Infobox in px (wie padding-bottom im SCSS). */
 const BOTTOM_PADDING = 15;
@@ -23,6 +24,8 @@ const BOTTOM_PADDING = 15;
 })
 export class PlaceDialogComponent implements OnChanges {
   @Input() place: Place | undefined = undefined;
+  /** Im Slider gewählter Wochentag (0 = Sonntag, 1 = Montag, ...). */
+  @Input() day: number = new Date().getDay();
   /** Klick auf das kleine X */
   @Output() closed: EventEmitter<void> = new EventEmitter<void>();
 
@@ -35,13 +38,17 @@ export class PlaceDialogComponent implements OnChanges {
   /** Erst nach dem Aufschieben scrollbar, falls der Inhalt zu hoch ist. */
   scrollable = false;
 
+  /** Kurz für den gewählten Tag, z.B. "Heute: Mittag, Abend". */
   openingHours: string | undefined;
+  /** Nur bei mehreren Standorten, z.B. "Mo Helvetiaplatz · Fr Bahnhof Altstetten". */
+  locations: string | undefined;
   pictureUrl: string | undefined;
   cuisines: Cuisine[] = [];
 
   ngOnChanges(): void {
     if (this.place) {
-      this.openingHours = this.generateOpeningHours(this.place);
+      this.openingHours = this.generateOpeningHours(this.place, this.day);
+      this.locations = this.generateLocations(this.place);
       this.pictureUrl = this.place.pictureId
         ? `api/get-public-picture.php?id=${this.place.pictureId}`
         : 'assets/no-picture.jpg';
@@ -92,20 +99,46 @@ export class PlaceDialogComponent implements OnChanges {
     if (this.dialog) this.dialog.nativeElement.style.height = `${px}px`;
   }
 
-  private generateOpeningHours(place: Place): string {
-    const array = [];
-    if (place.openingHours.morning) {
-      array.push('Morgens');
+  /** Öffnungszeiten am gewählten Tag, bei Foodtrucks mit dem Standort dieses Tages. */
+  private generateOpeningHours(place: Place, day: number): string {
+    const dayName =
+      day === new Date().getDay()
+        ? 'Heute'
+        : WEEKDAYS.find(weekday => weekday.value === day)?.name ?? '';
+    const slots = SLOTS.filter(slot => hasOpening(place.opening, day, slot.value)).map(
+      slot => slot.name
+    );
+    const labels = place.locations
+      .filter(location => location.weekday === day && location.label)
+      .map(location => location.label);
+
+    if (slots.length === 0) {
+      return `${dayName} geschlossen`;
     }
-    if (place.openingHours.noon) {
-      array.push('Mittags');
+    const text = `${dayName}: ${slots.join(', ')}`;
+    return labels.length > 0 ? `${text} · ${labels.join(' / ')}` : text;
+  }
+
+  /**
+   * Standorte eines Foodtrucks, Tage mit gleichem Standort zusammengefasst:
+   * "Mo, Mi Helvetiaplatz · Fr Bahnhof Altstetten".
+   */
+  private generateLocations(place: Place): string | undefined {
+    if (place.locations.length === 0) {
+      return undefined;
     }
-    if (place.openingHours.evening) {
-      array.push('Abends');
+    const groups = new Map<string, string[]>();
+    for (const weekday of WEEKDAYS) {
+      for (const location of place.locations) {
+        if (location.weekday !== weekday.value) continue;
+        const label = location.label ?? '(ohne Bezeichnung)';
+        const days = groups.get(label) ?? [];
+        if (!days.includes(weekday.short)) days.push(weekday.short);
+        groups.set(label, days);
+      }
     }
-    if (place.openingHours.night) {
-      array.push('Nachts');
-    }
-    return array.join(', ');
+    return [...groups.entries()]
+      .map(([label, days]) => `${days.join(', ')} ${label}`)
+      .join(' · ');
   }
 }

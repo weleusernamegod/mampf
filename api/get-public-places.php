@@ -24,21 +24,15 @@ function _map_place_to_dto($place)
             'lat' => $place->lat,
             'lng' => $place->lng
         ],
-        'openDays' => [
-            'sunday' => $place->openSunday,
-            'monday' => $place->openMonday,
-            'tuesday' => $place->openTuesday,
-            'wednesday' => $place->openWednesday,
-            'thursday' => $place->openThursday,
-            'friday' => $place->openFriday,
-            'saturday' => $place->openSaturday
-        ],
-        'openingHours' => [
-            'morning' => $place->openMorning,
-            'noon' => $place->openNoon,
-            'evening' => $place->openEvening,
-            'night' => $place->openNight
-        ]
+        'opening' => $place->opening,
+        'locations' => array_map(fn($location) => [
+            'weekday' => $location['weekday'],
+            'position' => [
+                'lat' => $location['lat'],
+                'lng' => $location['lng']
+            ],
+            'label' => $location['label']
+        ], $place->locations)
     ];
 }
 ?>

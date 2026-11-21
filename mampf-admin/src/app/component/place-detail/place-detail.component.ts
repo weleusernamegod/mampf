@@ -9,6 +9,11 @@ import { ActionStatusModalComponent } from '../action-status-modal/action-status
 import { ActionStatus } from '../action-status-modal/action-status';
 import { SavePlace } from '../../dto/save-place';
 import { takePendingPosition } from '../../util/pending-position';
+import { OpeningInputComponent } from '../opening-input/opening-input.component';
+import { Opening, PlaceLocation, WEEKDAYS } from '../../dto/opening';
+
+/** So viele Standorte pro Tag sind möglich (Sonderfall: zwei Orte am gleichen Tag). */
+const MAX_LOCATIONS_PER_DAY = 2;
 
 @Component({
   selector: 'mampf-place-detail',
@@ -17,6 +22,7 @@ import { takePendingPosition } from '../../util/pending-position';
     LoadingSpinnerComponent,
     PictureInputComponent,
     LocationInputComponent,
+    OpeningInputComponent,
     ActionStatusModalComponent,
     FormsModule,
   ],
@@ -39,17 +45,16 @@ export class PlaceDetailComponent implements OnInit {
 
   name = '';
   description = '';
-  openSunday = false;
-  openMonday = false;
-  openTuesday = false;
-  openWednesday = false;
-  openThursday = false;
-  openFriday = false;
-  openSaturday = false;
-  openMorning = false;
-  openNoon = false;
-  openEvening = false;
-  openNight = false;
+  /** Kreuze in der Öffnungszeiten-Matrix. */
+  opening: Opening[] = [];
+  /** Foodtruck: pro Wochentag ein eigener Standort. */
+  multipleLocations = false;
+  /** Standorte pro Tag (nur bei multipleLocations). Kann auch Tage enthalten,
+   *  die inzwischen geschlossen sind; gespeichert werden nur offene Tage. */
+  locations: PlaceLocation[] = [];
+  readonly MAX_LOCATIONS_PER_DAY = MAX_LOCATIONS_PER_DAY;
+  /** Hinweis, wenn "Mehrere Standorte" an ist, aber kein Tag offen. */
+  locationError = false;
 
   constructor(private route: ActivatedRoute) {}
 
@@ -80,7 +85,101 @@ export class PlaceDetailComponent implements OnInit {
     this.newPictureData = pictureData;
   }
 
+  /** Offene Tage (mindestens ein Kreuz), Montag bis Sonntag. */
+  get openDays() {
+    return WEEKDAYS.filter(day =>
+      this.opening.some(entry => entry.weekday === day.value)
+    );
+  }
+
+  locationsFor(weekday: number): PlaceLocation[] {
+    return this.locations.filter(location => location.weekday === weekday);
+  }
+
+  onOpeningChanged(opening: Opening[]) {
+    this.opening = opening;
+    this.syncLocations();
+  }
+
+  onMultipleLocationsChanged(on: boolean) {
+    this.multipleLocations = on;
+    this.syncLocations();
+  }
+
+  /** Jeder offene Tag braucht einen Standort: neue Tage starten wie der Tag davor. */
+  private syncLocations() {
+    this.locationError = false;
+    if (!this.multipleLocations) return;
+    let previous: PlaceLocation | undefined;
+    for (const day of this.openDays) {
+      const existing = this.locationsFor(day.value);
+      if (existing.length === 0) {
+        this.locations = [
+          ...this.locations,
+          {
+            weekday: day.value,
+            lat: previous?.lat ?? this.lat,
+            lng: previous?.lng ?? this.lng,
+            label: previous?.label ?? null,
+          },
+        ];
+      }
+      previous = this.locationsFor(day.value)[0];
+    }
+  }
+
+  /** Name des offenen Tages vor diesem (für den Knopf "wie Montag"). */
+  previousOpenDay(weekday: number) {
+    const days = this.openDays;
+    const index = days.findIndex(day => day.value === weekday);
+    return index > 0 ? days[index - 1] : undefined;
+  }
+
+  /** Knopf "wie Montag": Standort und Bezeichnung vom Tag davor übernehmen. */
+  copyFromPreviousDay(location: PlaceLocation) {
+    const previousDay = this.previousOpenDay(location.weekday);
+    const source = previousDay && this.locationsFor(previousDay.value)[0];
+    if (!source) return;
+    location.lat = source.lat;
+    location.lng = source.lng;
+    location.label = source.label;
+  }
+
+  /** Sonderfall: zweiter Standort am gleichen Tag. */
+  addLocation(weekday: number) {
+    const first = this.locationsFor(weekday)[0];
+    this.locations = [
+      ...this.locations,
+      {
+        weekday,
+        lat: first?.lat ?? this.lat,
+        lng: first?.lng ?? this.lng,
+        label: null,
+      },
+    ];
+  }
+
+  removeLocation(location: PlaceLocation) {
+    this.locations = this.locations.filter(other => other !== location);
+  }
+
   onFormSubmitted() {
+    // Nur Standorte von offenen Tagen speichern
+    const openWeekdays = this.openDays.map(day => day.value);
+    const locations = this.multipleLocations
+      ? this.locations.filter(location => openWeekdays.includes(location.weekday))
+      : [];
+    if (this.multipleLocations && locations.length === 0) {
+      this.locationError = true;
+      return;
+    }
+    if (locations.length > 0) {
+      // Der normale Standort ist der erste Tages-Standort
+      // (z.B. für die Liste der eigenen Orte).
+      this.lat = locations[0].lat;
+      this.lng = locations[0].lng;
+    }
+
     this.actionStatus = ActionStatus.Loading;
 
     const savePlace = {
@@ -91,17 +190,11 @@ export class PlaceDetailComponent implements OnInit {
       description: this.description,
       lat: this.lat,
       lng: this.lng,
-      openSunday: this.openSunday,
-      openMonday: this.openMonday,
-      openTuesday: this.openTuesday,
-      openWednesday: this.openWednesday,
-      openThursday: this.openThursday,
-      openFriday: this.openFriday,
-      openSaturday: this.openSaturday,
-      openMorning: this.openMorning,
-      openNoon: this.openNoon,
-      openEvening: this.openEvening,
-      openNight: this.openNight,
+      opening: this.opening,
+      locations: locations.map(location => ({
+        ...location,
+        label: location.label?.trim() || null,
+      })),
     } as SavePlace;
 
     fetch('/api/post-place.php', {
@@ -133,17 +226,9 @@ export class PlaceDetailComponent implements OnInit {
         this.description = data.description;
         this.lat = data.lat;
         this.lng = data.lng;
-        this.openSunday = data.openSunday;
-        this.openMonday = data.openMonday;
-        this.openTuesday = data.openTuesday;
-        this.openWednesday = data.openWednesday;
-        this.openThursday = data.openThursday;
-        this.openFriday = data.openFriday;
-        this.openSaturday = data.openSaturday;
-        this.openMorning = data.openMorning;
-        this.openNoon = data.openNoon;
-        this.openEvening = data.openEvening;
-        this.openNight = data.openNight;
+        this.opening = data.opening;
+        this.locations = data.locations;
+        this.multipleLocations = data.locations.length > 0;
 
         this.isLoading = false;
       })

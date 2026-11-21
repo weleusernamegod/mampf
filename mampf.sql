@@ -49,19 +49,38 @@ CREATE TABLE `tbl_place` (
   `description` varchar(255) NOT NULL,
   `lat` double NOT NULL,
   `lng` double NOT NULL,
-  `open_sunday` tinyint(4) NOT NULL,
-  `open_monday` tinyint(4) NOT NULL,
-  `open_tuesday` tinyint(4) NOT NULL,
-  `open_wednesday` tinyint(4) NOT NULL,
-  `open_thursday` tinyint(4) NOT NULL,
-  `open_friday` tinyint(4) NOT NULL,
-  `open_saturday` tinyint(4) NOT NULL,
-  `open_morning` tinyint(4) NOT NULL,
-  `open_noon` tinyint(4) NOT NULL,
-  `open_evening` tinyint(4) NOT NULL,
-  `open_night` tinyint(4) NOT NULL,
   `create_time` datetime NOT NULL,
   `last_update_time` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `tbl_place_opening`
+-- Öffnungszeiten: eine Zeile pro Kreuz. weekday: 0 = Sonntag, 1 = Montag, … 6 = Samstag
+--
+
+CREATE TABLE `tbl_place_opening` (
+  `place_id` int(11) NOT NULL,
+  `weekday` tinyint(4) NOT NULL,
+  `slot` enum('morning','noon','evening') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `tbl_place_location`
+-- Standorte pro Wochentag (nur Foodtrucks mit "Mehrere Standorte").
+-- Leer = der normale Standort tbl_place.lat/lng gilt.
+--
+
+CREATE TABLE `tbl_place_location` (
+  `id` int(11) NOT NULL,
+  `place_id` int(11) NOT NULL,
+  `weekday` tinyint(4) NOT NULL,
+  `lat` double NOT NULL,
+  `lng` double NOT NULL,
+  `label` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -98,6 +117,19 @@ ALTER TABLE `tbl_place`
   ADD KEY `fk_place_picture` (`picture_id`);
 
 --
+-- Indizes für die Tabelle `tbl_place_opening`
+--
+ALTER TABLE `tbl_place_opening`
+  ADD PRIMARY KEY (`place_id`,`weekday`,`slot`);
+
+--
+-- Indizes für die Tabelle `tbl_place_location`
+--
+ALTER TABLE `tbl_place_location`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_location_place` (`place_id`,`weekday`);
+
+--
 -- Indizes für die Tabelle `tbl_user`
 --
 ALTER TABLE `tbl_user`
@@ -121,6 +153,12 @@ ALTER TABLE `tbl_place`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT für Tabelle `tbl_place_location`
+--
+ALTER TABLE `tbl_place_location`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT für Tabelle `tbl_user`
 --
 ALTER TABLE `tbl_user`
@@ -136,6 +174,18 @@ ALTER TABLE `tbl_user`
 ALTER TABLE `tbl_place`
   ADD CONSTRAINT `fk_place_picture` FOREIGN KEY (`picture_id`) REFERENCES `tbl_picture` (`id`),
   ADD CONSTRAINT `fk_place_user` FOREIGN KEY (`user_id`) REFERENCES `tbl_user` (`id`);
+
+--
+-- Constraints der Tabelle `tbl_place_opening`
+--
+ALTER TABLE `tbl_place_opening`
+  ADD CONSTRAINT `fk_opening_place` FOREIGN KEY (`place_id`) REFERENCES `tbl_place` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints der Tabelle `tbl_place_location`
+--
+ALTER TABLE `tbl_place_location`
+  ADD CONSTRAINT `fk_location_place` FOREIGN KEY (`place_id`) REFERENCES `tbl_place` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

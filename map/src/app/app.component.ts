@@ -2,6 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Place } from './dto/place';
 import { MapComponent } from './component/map/map.component';
 import { DaySelectorComponent } from './component/day-selector/day-selector.component';
+import { SlotSelectorComponent } from './component/slot-selector/slot-selector.component';
+import { Slot } from './dto/opening';
 import { NavigationComponent } from './component/navigation/navigation.component';
 import { AboutDialogComponent } from './component/about-dialog/about-dialog.component';
 import { PlaceDialogComponent } from './component/place-dialog/place-dialog.component';
@@ -15,6 +17,7 @@ import { savePendingPosition } from './util/pending-position';
   imports: [
     MapComponent,
     DaySelectorComponent,
+    SlotSelectorComponent,
     NavigationComponent,
     AboutDialogComponent,
     PlaceDialogComponent,
@@ -33,6 +36,8 @@ export class AppComponent implements OnInit {
   /** Angewendeter Küchen-Filter, z.B. ['thai', 'greek']. */
   selectedCuisines: string[] = [];
   selectedDay: number = new Date().getDay();
+  /** Mittag oder Abend (Standard: Mittag). */
+  selectedSlot: Slot = 'noon';
   selectedPlace: Place | undefined = undefined;
   aboutDialogVisible = false;
   placeDialogVisible = false;
@@ -72,6 +77,14 @@ export class AppComponent implements OnInit {
     this.filterDialogVisible = false;
 
     this.selectedDay = day;
+  }
+
+  onSlotSelected(slot: Slot) {
+    this.placeDialogVisible = false;
+    this.aboutDialogVisible = false;
+    this.filterDialogVisible = false;
+
+    this.selectedSlot = slot;
   }
 
   onLocateClicked() {

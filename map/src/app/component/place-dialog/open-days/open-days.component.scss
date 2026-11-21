@@ -4,27 +4,47 @@
   font-size: 14px;
 }
 
-#open-days {
+#matrix {
   display: grid;
-  grid-template-columns: 19px auto;
-  grid-auto-rows: 19px;
-  grid-row-gap: 7px;
-  grid-column-gap: 10px;
+  grid-template-columns: 58px repeat(7, 1fr);
+  row-gap: 6px;
 
-  margin-left: 7px;
+  font-size: 13px;
+}
 
-  font-size: 14px;
+// Zeilen gehören zum Raster der Matrix (nur für Screenreader eigene Elemente)
+.row {
+  display: contents;
+}
 
-  .circle {
-    background-color: var(--grey1);
-    border-radius: 12px;
-  }
+.day,
+.cell {
+  display: grid;
+  justify-items: center;
+  align-items: center;
+}
 
-  .circle.active {
-    background-color: var(--teal);
-  }
+.day {
+  font-size: 12px;
+}
 
-  .day {
-    line-height: 19px;
-  }
+.day.current {
+  font-weight: 800;
+  color: var(--teal);
+}
+
+.slot {
+  line-height: 19px;
+}
+
+.circle {
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+
+  background-color: var(--grey1);
+}
+
+.circle.active {
+  background-color: var(--teal);
 }

@@ -25,6 +25,13 @@
 
     <!-- Erscheint beim Aufschieben -->
     <div id="details">
+      @if (locations) {
+        <div class="section">
+          <strong class="title">Standorte</strong>
+          <div class="locations">{{ locations }}</div>
+        </div>
+      }
+
       @if (cuisines.length > 0) {
         <div class="section">
           <strong class="title">Küche</strong>
@@ -38,7 +45,8 @@
 
       <mampf-open-days
         class="section block"
-        [openDays]="place?.openDays"></mampf-open-days>
+        [opening]="place?.opening ?? []"
+        [day]="day"></mampf-open-days>
     </div>
   </div>
 </div>

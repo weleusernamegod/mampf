@@ -3,6 +3,7 @@
     id="map"
     [places]="visiblePlaces"
     [day]="selectedDay"
+    [slot]="selectedSlot"
     [placing]="placing"
     (placeClicked)="onPlaceClicked($event)"
     (mapClicked)="onMapClicked()"></mampf-map>
@@ -38,15 +39,21 @@
         <mampf-place-dialog
           class="block full-height"
           [place]="selectedPlace"
+          [day]="selectedDay"
           (closed)="placeDialogVisible = false"></mampf-place-dialog>
       }
     </div>
     <div class="align-center">
       <!-- Im Platzieren-Modus ausgeblendet (bleibt aber erhalten, damit der Tag bleibt) -->
-      <mampf-day-selector
-        class="inline-block"
-        [class.hidden]="placing"
-        (daySelected)="onDaySelected($event)"></mampf-day-selector>
+      <div class="selectors" [class.hidden]="placing">
+        <mampf-slot-selector
+          class="block"
+          [slot]="selectedSlot"
+          (slotSelected)="onSlotSelected($event)"></mampf-slot-selector>
+        <mampf-day-selector
+          class="inline-block"
+          (daySelected)="onDaySelected($event)"></mampf-day-selector>
+      </div>
     </div>
   </div>
 </main>

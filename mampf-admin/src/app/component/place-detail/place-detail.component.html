@@ -44,134 +44,103 @@
           (pictureUploaded)="onPictureUploaded($event)"></mampf-picture-input>
       </div>
       <div class="col-lg-6">
-        <p class="mb-2"><strong>Open Days</strong></p>
-
-        <div class="mb-2 form-check">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            id="checkbox-monday"
-            name="open-monday"
-            [(ngModel)]="openMonday" />
-          <label class="form-check-label" for="checkbox-monday">Monday</label>
-        </div>
-
-        <div class="mb-2 form-check">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            id="checkbox-tuesday"
-            name="open-tuesday"
-            [(ngModel)]="openTuesday" />
-          <label class="form-check-label" for="checkbox-tuesday">Tuesday</label>
-        </div>
-
-        <div class="mb-2 form-check">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            id="checkbox-wednesday"
-            name="open-wednesday"
-            [(ngModel)]="openWednesday" />
-          <label class="form-check-label" for="checkbox-wednesday"
-            >Wednesday</label
+        <p class="mb-2"><strong>Öffnungszeiten</strong></p>
+        <p class="mb-2">
+          <small class="text-muted"
+            >Kästchen anklicken. Klick auf einen Tag oder eine Tageszeit
+            schaltet die ganze Zeile bzw. Spalte.</small
           >
-        </div>
-
-        <div class="mb-2 form-check">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            id="checkbox-thursday"
-            name="open-thursday"
-            [(ngModel)]="openThursday" />
-          <label class="form-check-label" for="checkbox-thursday"
-            >Thursday</label
-          >
-        </div>
-
-        <div class="mb-2 form-check">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            id="checkbox-friday"
-            name="open-friday"
-            [(ngModel)]="openFriday" />
-          <label class="form-check-label" for="checkbox-friday">Friday</label>
-        </div>
-
-        <div class="mb-2 form-check">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            id="checkbox-saturday"
-            name="open-saturday"
-            [(ngModel)]="openSaturday" />
-          <label class="form-check-label" for="checkbox-saturday"
-            >Saturday</label
-          >
-        </div>
-
-        <div class="mb-2 form-check">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            id="checkbox-sunday"
-            name="open-sunday"
-            [(ngModel)]="openSunday" />
-          <label class="form-check-label" for="checkbox-sunday">Sunday</label>
-        </div>
-
-        <p class="mt-3 mb-2"><strong>Opening Times</strong></p>
-
-        <div class="mb-2 form-check">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            id="checkbox-morning"
-            name="open-morning"
-            [(ngModel)]="openMorning" />
-          <label class="form-check-label" for="checkbox-morning">Morning</label>
-        </div>
-
-        <div class="mb-2 form-check">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            id="checkbox-noon"
-            name="open-noon"
-            [(ngModel)]="openNoon" />
-          <label class="form-check-label" for="checkbox-noon">Noon</label>
-        </div>
-
-        <div class="mb-2 form-check">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            id="checkbox-evening"
-            name="open-evening"
-            [(ngModel)]="openEvening" />
-          <label class="form-check-label" for="checkbox-evening">Evening</label>
-        </div>
-
-        <div class="mb-2 form-check">
-          <input
-            type="checkbox"
-            class="form-check-input"
-            id="checkbox-night"
-            name="open-night"
-            [(ngModel)]="openNight" />
-          <label class="form-check-label" for="checkbox-night">Night</label>
-        </div>
+        </p>
+        <mampf-opening-input
+          [opening]="opening"
+          (openingChange)="onOpeningChanged($event)"></mampf-opening-input>
       </div>
     </div>
 
-    @if (positionFromMap) {
-      <div class="alert alert-success py-2 small">
-        Location taken from the map. Drag the marker to adjust it.
+    <div class="form-check form-switch mb-3">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        role="switch"
+        id="checkbox-multiple-locations"
+        name="multiple-locations"
+        [ngModel]="multipleLocations"
+        (ngModelChange)="onMultipleLocationsChanged($event)" />
+      <label class="form-check-label" for="checkbox-multiple-locations">
+        <strong>Mehrere Standorte</strong>
+        <small class="text-muted ms-1"
+          >(Foodtruck: an jedem Tag woanders)</small
+        >
+      </label>
+    </div>
+
+    @if (!multipleLocations) {
+      @if (positionFromMap) {
+        <div class="alert alert-success py-2 small">
+          Location taken from the map. Drag the marker to adjust it.
+        </div>
+      }
+      <mampf-location-input [(lat)]="lat" [(lng)]="lng"></mampf-location-input>
+    } @else {
+      @if (openDays.length === 0 || locationError) {
+        <div class="alert py-2 small" [class.alert-info]="!locationError" [class.alert-danger]="locationError">
+          Zuerst in den Öffnungszeiten mindestens einen Tag ankreuzen.
+          Danach erscheint hier für jeden offenen Tag eine Karte.
+        </div>
+      }
+      <div class="row">
+        @for (day of openDays; track day.value) {
+          @for (location of locationsFor(day.value); track location; let index = $index) {
+            <div class="col-lg-6 mb-4">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <strong class="me-auto">
+                  Standort {{ day.name }}
+                  @if (index > 0) {
+                    ({{ index + 1 }})
+                  }
+                </strong>
+                @if (index === 0 && previousOpenDay(day.value); as previousDay) {
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    (click)="copyFromPreviousDay(location)">
+                    <i class="fa fa-clone"></i> wie {{ previousDay.name }}
+                  </button>
+                }
+                @if (index > 0) {
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger btn-sm"
+                    (click)="removeLocation(location)">
+                    <i class="fa fa-trash"></i> Entfernen
+                  </button>
+                }
+              </div>
+              <input
+                type="text"
+                maxlength="50"
+                class="form-control form-control-sm mb-2"
+                placeholder="Bezeichnung (optional), z.B. Helvetiaplatz"
+                [name]="'location-label-' + day.value + '-' + index"
+                [(ngModel)]="location.label" />
+              <mampf-location-input
+                [height]="250"
+                [showTitle]="false"
+                [(lat)]="location.lat"
+                [(lng)]="location.lng"></mampf-location-input>
+              @if (index === locationsFor(day.value).length - 1 && locationsFor(day.value).length < MAX_LOCATIONS_PER_DAY) {
+                <button
+                  type="button"
+                  class="btn btn-link btn-sm px-0"
+                  (click)="addLocation(day.value)">
+                  <i class="fa fa-plus"></i> Zweiter Standort am {{ day.name }}
+                </button>
+              }
+            </div>
+          }
+        }
       </div>
     }
-    <mampf-location-input [(lat)]="lat" [(lng)]="lng"></mampf-location-input>
 
     <div class="mt-4 text-end">
       <button type="submit" class="btn btn-primary">

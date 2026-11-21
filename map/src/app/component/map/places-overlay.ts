@@ -1,5 +1,4 @@
-import { Place } from '../../dto/place';
-import { isPlaceOpenOnDay } from '../../util/place-util';
+import { PlacePin } from '../../util/place-util';
 
 /**
  * Eigene HTML-Marker für die Shops, als Ebene über der Google-Karte.
@@ -13,14 +12,17 @@ import { isPlaceOpenOnDay } from '../../util/place-util';
  * Blase mit der Anzahl zusammengefasst ("Clustering").
  */
 export interface PlacesOverlay {
-  /** Zeigt die Shops an: offene grün und gross, geschlossene grau und klein. */
-  update(places: Place[], day: number): void;
+  /**
+   * Zeigt die Shops an: offene grün und gross, geschlossene grau und klein.
+   * Ein Foodtruck mit mehreren Standorten kann mehrere Punkte haben.
+   */
+  update(pins: PlacePin[]): void;
   /** Alle Shops ausblenden (z.B. im Platzieren-Modus) oder wieder einblenden. */
   setHidden(hidden: boolean): void;
 }
 
 interface Marker {
-  place: Place;
+  pin: PlacePin;
   latLng: google.maps.LatLng;
   element: HTMLElement; // wird auf der Karte positioniert
   dot: HTMLElement; // der sichtbare Punkt, wird animiert
@@ -89,15 +91,16 @@ function onTap(element: HTMLElement, callback: () => void) {
 
 export function createPlacesOverlay(
   map: google.maps.Map,
-  onClick: (place: Place) => void
+  onClick: (pin: PlacePin) => void
 ): PlacesOverlay {
   // Die Klasse kann erst hier definiert werden, weil google.maps vorher noch
   // nicht geladen ist.
   class Overlay extends google.maps.OverlayView implements PlacesOverlay {
     private container = document.createElement('div');
-    private markers = new Map<number, Marker>();
-    /** Sichtbare Blasen, Schlüssel = ID des ersten Shops darin. */
-    private clusters = new Map<number, Cluster>();
+    /** Schlüssel = PlacePin.key */
+    private markers = new Map<string, Marker>();
+    /** Sichtbare Blasen, Schlüssel = Schlüssel des ersten Shops darin. */
+    private clusters = new Map<string, Cluster>();
     private lastZoom: number | undefined = undefined;
     private hidden = false;
 
@@ -126,19 +129,27 @@ export function createPlacesOverlay(
       this.position();
     }
 
-    update(places: Place[], day: number) {
-      const ids = new Set(places.map(place => place.id));
-      for (const [id, marker] of this.markers) {
-        if (!ids.has(id)) {
-          this.markers.delete(id);
+    update(pins: PlacePin[]) {
+      const keys = new Set(pins.map(pin => pin.key));
+      for (const [key, marker] of this.markers) {
+        if (!keys.has(key)) {
+          this.markers.delete(key);
           this.removeAnimated(marker);
         }
       }
 
-      for (const place of places) {
-        const marker = this.markers.get(place.id) ?? this.createMarker(place);
-        marker.place = place;
-        this.setOpen(marker, isPlaceOpenOnDay(place, day));
+      for (const pin of pins) {
+        let marker = this.markers.get(pin.key);
+        if (marker && !marker.latLng.equals(new google.maps.LatLng(pin.position))) {
+          // Foodtruck steht heute woanders: am alten Ort wegschrumpfen,
+          // am neuen Ort aufploppen.
+          this.markers.delete(pin.key);
+          this.removeAnimated(marker);
+          marker = undefined;
+        }
+        marker ??= this.createMarker(pin);
+        marker.pin = pin;
+        this.setOpen(marker, pin.open);
       }
 
       this.updateClusters();
@@ -153,11 +164,11 @@ export function createPlacesOverlay(
       // Ausgeblendet: keine Gruppen, alle Shops verschwinden
       const groups = this.hidden ? [] : this.groupNearby();
       const hidden = new Set<Marker>();
-      const keys = new Set<number>();
+      const keys = new Set<string>();
 
       for (const group of groups) {
         if (group.length < 2) continue;
-        const key = group[0].place.id;
+        const key = group[0].pin.key;
         keys.add(key);
         group.forEach(marker => hidden.add(marker));
         this.showCluster(key, group);
@@ -196,7 +207,7 @@ export function createPlacesOverlay(
     private groupNearby(): Marker[][] {
       const open = [...this.markers.values()]
         .filter(marker => marker.open)
-        .sort((a, b) => a.place.id - b.place.id);
+        .sort((a, b) => a.pin.key.localeCompare(b.pin.key));
 
       if ((map.getZoom() ?? 0) >= CLUSTER_MAX_ZOOM) {
         return open.map(marker => [marker]);
@@ -221,7 +232,7 @@ export function createPlacesOverlay(
       return groups;
     }
 
-    private showCluster(key: number, members: Marker[]) {
+    private showCluster(key: string, members: Marker[]) {
       let cluster = this.clusters.get(key);
       if (!cluster) {
         const element = document.createElement('div');
@@ -298,7 +309,7 @@ export function createPlacesOverlay(
       return new google.maps.Point((point?.x ?? 0) * scale, (point?.y ?? 0) * scale);
     }
 
-        private center(members: Marker[]): google.maps.LatLng {
+    private center(members: Marker[]): google.maps.LatLng {
       const lat = members.reduce((sum, m) => sum + m.latLng.lat(), 0) / members.length;
       const lng = members.reduce((sum, m) => sum + m.latLng.lng(), 0) / members.length;
       return new google.maps.LatLng(lat, lng);
@@ -310,17 +321,17 @@ export function createPlacesOverlay(
 
     // ---------- Einzelne Shops ----------
 
-    private createMarker(place: Place): Marker {
+    private createMarker(pin: PlacePin): Marker {
       const element = document.createElement('div');
       element.className = 'place-marker';
-      element.title = place.name;
+      element.title = pin.place.name;
       const dot = document.createElement('div');
       dot.className = 'dot';
       element.appendChild(dot);
 
       const marker: Marker = {
-        place,
-        latLng: new google.maps.LatLng(place.position),
+        pin,
+        latLng: new google.maps.LatLng(pin.position),
         element,
         dot,
         open: undefined,
@@ -332,10 +343,10 @@ export function createPlacesOverlay(
       element.style.pointerEvents = 'none';
 
       // Zoomen und Verschieben der Karte soll auch über einem Marker gehen.
-      onTap(element, () => onClick(marker.place));
+      onTap(element, () => onClick(marker.pin));
 
       this.container.appendChild(element);
-      this.markers.set(place.id, marker);
+      this.markers.set(pin.key, marker);
       return marker;
     }
 

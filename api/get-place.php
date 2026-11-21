@@ -37,17 +37,8 @@ function _map_place_to_dto($place)
         'description' => $place->description,
         'lat' => $place->lat,
         'lng' => $place->lng,
-        'openSunday' => $place->openSunday,
-        'openMonday' => $place->openMonday,
-        'openTuesday' => $place->openTuesday,
-        'openWednesday' => $place->openWednesday,
-        'openThursday' => $place->openThursday,
-        'openFriday' => $place->openFriday,
-        'openSaturday' => $place->openSaturday,
-        'openMorning' => $place->openMorning,
-        'openNoon' => $place->openNoon,
-        'openEvening' => $place->openEvening,
-        'openNight' => $place->openNight
+        'opening' => $place->opening,
+        'locations' => $place->locations
     ];
 }
 ?>

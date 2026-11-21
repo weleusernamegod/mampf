@@ -1,12 +1,14 @@
 <?php
 require_once('place.php');
 
+const PLACE_COLUMNS = 'id, user_id, picture_id, name, description, lat, lng, create_time, last_update_time';
+
 function create_place($place)
 {
     global $mysqli;
 
-    $statement = $mysqli->prepare("INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, open_sunday, open_monday, open_tuesday, open_wednesday, open_thursday, open_friday, open_saturday, open_morning, open_noon, open_evening, open_night, create_time, last_update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $statement->bind_param("iissddiiiiiiiiiiiss", $place->userId, $place->pictureId, $place->name, $place->description, $place->lat, $place->lng, $place->openSunday, $place->openMonday, $place->openTuesday, $place->openWednesday, $place->openThursday, $place->openFriday, $place->openSaturday, $place->openMorning, $place->openNoon, $place->openEvening, $place->openNight, $place->createTime, $place->lastUpdateTime);
+    $statement = $mysqli->prepare("INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, create_time, last_update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $statement->bind_param("iissddss", $place->userId, $place->pictureId, $place->name, $place->description, $place->lat, $place->lng, $place->createTime, $place->lastUpdateTime);
     $statement->execute();
     $statement->close();
 
@@ -18,17 +20,56 @@ function update_place($place)
 {
     global $mysqli;
 
-    $statement = $mysqli->prepare("UPDATE tbl_place SET user_id = ?, picture_id = ?, name = ?, description = ?, lat = ?, lng = ?, open_sunday = ?, open_monday = ?, open_tuesday = ?, open_wednesday = ?, open_thursday = ?, open_friday = ?, open_saturday = ?, open_morning = ?, open_noon = ?, open_evening = ?, open_night = ?, last_update_time = ?, create_time = ? WHERE id = ?");
-    $statement->bind_param("iissddiiiiiiiiiiissi", $place->userId, $place->pictureId, $place->name, $place->description, $place->lat, $place->lng, $place->openSunday, $place->openMonday, $place->openTuesday, $place->openWednesday, $place->openThursday, $place->openFriday, $place->openSaturday, $place->openMorning, $place->openNoon, $place->openEvening, $place->openNight, $place->lastUpdateTime, $place->createTime, $place->id);
+    $statement = $mysqli->prepare("UPDATE tbl_place SET user_id = ?, picture_id = ?, name = ?, description = ?, lat = ?, lng = ?, last_update_time = ?, create_time = ? WHERE id = ?");
+    $statement->bind_param("iissddssi", $place->userId, $place->pictureId, $place->name, $place->description, $place->lat, $place->lng, $place->lastUpdateTime, $place->createTime, $place->id);
     $statement->execute();
     $statement->close();
 
     return $place;
 }
 
+/** Öffnungszeiten und Standorte eines Ortes komplett ersetzen. */
+function save_place_schedule($place)
+{
+    global $mysqli;
+
+    $statement = $mysqli->prepare("DELETE FROM tbl_place_opening WHERE place_id = ?");
+    $statement->bind_param("i", $place->id);
+    $statement->execute();
+    $statement->close();
+
+    $statement = $mysqli->prepare("INSERT INTO tbl_place_opening (place_id, weekday, slot) VALUES (?, ?, ?)");
+    foreach ($place->opening as $opening) {
+        $statement->bind_param("iis", $place->id, $opening['weekday'], $opening['slot']);
+        $statement->execute();
+    }
+    $statement->close();
+
+    $statement = $mysqli->prepare("DELETE FROM tbl_place_location WHERE place_id = ?");
+    $statement->bind_param("i", $place->id);
+    $statement->execute();
+    $statement->close();
+
+    $statement = $mysqli->prepare("INSERT INTO tbl_place_location (place_id, weekday, lat, lng, label) VALUES (?, ?, ?, ?, ?)");
+    foreach ($place->locations as $location) {
+        $statement->bind_param("iidds", $place->id, $location['weekday'], $location['lat'], $location['lng'], $location['label']);
+        $statement->execute();
+    }
+    $statement->close();
+}
+
 function delete_place_by_id($id)
 {
     global $mysqli;
+
+    // Öffnungszeiten und Standorte zuerst (wären dank ON DELETE CASCADE
+    // auch so weg, aber sicher ist sicher)
+    foreach (['tbl_place_opening', 'tbl_place_location'] as $table) {
+        $statement = $mysqli->prepare("DELETE FROM $table WHERE place_id = ?");
+        $statement->bind_param("i", $id);
+        $statement->execute();
+        $statement->close();
+    }
 
     $statement = $mysqli->prepare("DELETE FROM tbl_place WHERE id = ?");
     $statement->bind_param("i", $id);
@@ -42,33 +83,30 @@ function find_all_places()
 
     $places = array();
 
-    $result = $mysqli->query('SELECT id, user_id, picture_id, name, description, lat, lng, open_sunday, open_monday, open_tuesday, open_wednesday, open_thursday, open_friday, open_saturday, open_morning, open_noon, open_evening, open_night, create_time, last_update_time FROM tbl_place');
+    $result = $mysqli->query('SELECT ' . PLACE_COLUMNS . ' FROM tbl_place');
     while ($row = $result->fetch_assoc()) {
         $place = _map_row_to_place($row);
         array_push($places, $place);
     }
 
-    return $places;
+    return _load_schedules($places);
 }
 
 function find_place_by_id($id)
 {
     global $mysqli;
 
-    $statement = $mysqli->prepare("SELECT id, user_id, picture_id, name, description, lat, lng, open_sunday, open_monday, open_tuesday, open_wednesday, open_thursday, open_friday, open_saturday, open_morning, open_noon, open_evening, open_night, create_time, last_update_time FROM tbl_place WHERE id = ? LIMIT 1");
+    $statement = $mysqli->prepare('SELECT ' . PLACE_COLUMNS . ' FROM tbl_place WHERE id = ? LIMIT 1');
     $statement->bind_param("i", $id);
     $statement->execute();
 
     $row = $statement->get_result()->fetch_assoc();
+    $statement->close();
     if (!$row) {
         return NULL;
     }
 
-    $place = _map_row_to_place($row);
-
-    $statement->close();
-
-    return $place;
+    return _load_schedules([_map_row_to_place($row)])[0];
 }
 
 function find_places_by_user_id($user_id)
@@ -77,7 +115,7 @@ function find_places_by_user_id($user_id)
 
     $places = array();
 
-    $statement = $mysqli->prepare("SELECT id, user_id, picture_id, name, description, lat, lng, open_sunday, open_monday, open_tuesday, open_wednesday, open_thursday, open_friday, open_saturday, open_morning, open_noon, open_evening, open_night, create_time, last_update_time FROM tbl_place WHERE user_id = ?");
+    $statement = $mysqli->prepare('SELECT ' . PLACE_COLUMNS . ' FROM tbl_place WHERE user_id = ?');
     $statement->bind_param("i", $user_id);
     $statement->execute();
     $result = $statement->get_result();
@@ -89,12 +127,48 @@ function find_places_by_user_id($user_id)
 
     $statement->close();
 
+    return _load_schedules($places);
+}
+
+/** Öffnungszeiten und Standorte zu den Orten laden (je eine Abfrage für alle). */
+function _load_schedules($places)
+{
+    global $mysqli;
+
+    if (count($places) === 0) {
+        return $places;
+    }
+
+    $byId = array();
+    foreach ($places as $place) {
+        $byId[$place->id] = $place;
+    }
+    $ids = implode(',', array_map('intval', array_keys($byId)));
+
+    $result = $mysqli->query("SELECT place_id, weekday, slot FROM tbl_place_opening WHERE place_id IN ($ids) ORDER BY place_id, weekday, FIELD(slot, 'morning', 'noon', 'evening')");
+    while ($row = $result->fetch_assoc()) {
+        $byId[intval($row['place_id'])]->opening[] = [
+            'weekday' => intval($row['weekday']),
+            'slot' => $row['slot']
+        ];
+    }
+
+    $result = $mysqli->query("SELECT place_id, weekday, lat, lng, label FROM tbl_place_location WHERE place_id IN ($ids) ORDER BY place_id, weekday, id");
+    while ($row = $result->fetch_assoc()) {
+        $byId[intval($row['place_id'])]->locations[] = [
+            'weekday' => intval($row['weekday']),
+            'lat' => floatval($row['lat']),
+            'lng' => floatval($row['lng']),
+            'label' => $row['label']
+        ];
+    }
+
     return $places;
 }
 
 function _map_row_to_place($row)
 {
     $pictureId = $row["picture_id"] ? intval($row["picture_id"]) : NULL;
-    return new Place(intval($row["id"]), intval($row["user_id"]), $pictureId, $row["name"], $row["description"], floatval($row["lat"]), floatval($row["lng"]), boolval($row["open_sunday"]), boolval($row["open_monday"]), boolval($row["open_tuesday"]), boolval($row["open_wednesday"]), boolval($row["open_thursday"]), boolval($row["open_friday"]), boolval($row["open_saturday"]), boolval($row["open_morning"]), boolval($row["open_noon"]), boolval($row["open_evening"]), boolval($row["open_night"]), $row["create_time"], $row["last_update_time"]);
+    return new Place(intval($row["id"]), intval($row["user_id"]), $pictureId, $row["name"], $row["description"], floatval($row["lat"]), floatval($row["lng"]), $row["create_time"], $row["last_update_time"]);
 }
 ?>

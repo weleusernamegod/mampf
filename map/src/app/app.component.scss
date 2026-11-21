@@ -15,19 +15,19 @@ main,
   pointer-events: none;
 }
 
-mampf-day-selector {
+.selectors {
   transition:
     transform 0.3s ease,
     opacity 0.3s ease;
 }
 
-/* Im Platzieren-Modus nach unten weggleiten */
-mampf-day-selector.hidden {
+/* Im Platzieren-Modus nach unten weggleiten (Tag und Tageszeit bleiben erhalten) */
+.selectors.hidden {
   transform: translateY(120%);
   opacity: 0;
   pointer-events: none;
 }
 
-mampf-day-selector.hidden ::ng-deep .overlay {
+.selectors.hidden ::ng-deep .overlay {
   pointer-events: none;
 }

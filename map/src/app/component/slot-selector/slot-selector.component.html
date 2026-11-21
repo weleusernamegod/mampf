@@ -1,0 +1,12 @@
+<div id="slot-selector" class="overlay" role="radiogroup" aria-label="Tageszeit">
+  @for (option of options; track option.value) {
+    <button
+      type="button"
+      role="radio"
+      [class.selected]="option.value === slot"
+      [attr.aria-checked]="option.value === slot"
+      (click)="select(option.value)">
+      {{ option.label }}
+    </button>
+  }
+</div>

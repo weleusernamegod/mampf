@@ -1,3 +1,5 @@
+import { Opening, PlaceLocation } from './opening';
+
 export interface Place {
   id: number;
   pictureId: number | undefined;
@@ -5,15 +7,6 @@ export interface Place {
   description: string;
   lat: number;
   lng: number;
-  openSunday: boolean;
-  openMonday: boolean;
-  openTuesday: boolean;
-  openWednesday: boolean;
-  openThursday: boolean;
-  openFriday: boolean;
-  openSaturday: boolean;
-  openMorning: boolean;
-  openNoon: boolean;
-  openEvening: boolean;
-  openNight: boolean;
+  opening: Opening[];
+  locations: PlaceLocation[];
 }

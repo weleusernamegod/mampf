@@ -1,24 +1,32 @@
-<strong class="title">Geöffnet am</strong>
+<strong class="title">Öffnungszeiten</strong>
 
-<div id="open-days">
-  <div class="circle" [class.active]="openDays?.monday"></div>
-  <div class="day">Montag</div>
-
-  <div class="circle" [class.active]="openDays?.tuesday"></div>
-  <div class="day">Dienstag</div>
-
-  <div class="circle" [class.active]="openDays?.wednesday"></div>
-  <div class="day">Mittwoch</div>
-
-  <div class="circle" [class.active]="openDays?.thursday"></div>
-  <div class="day">Donnerstag</div>
-
-  <div class="circle" [class.active]="openDays?.friday"></div>
-  <div class="day">Freitag</div>
-
-  <div class="circle" [class.active]="openDays?.saturday"></div>
-  <div class="day">Samstag</div>
-
-  <div class="circle" [class.active]="openDays?.sunday"></div>
-  <div class="day">Sonntag</div>
+<div id="matrix" role="table" aria-label="Öffnungszeiten">
+  <div role="row" class="row">
+    <span role="columnheader"></span>
+    @for (weekday of weekdays; track weekday.value) {
+      <span
+        role="columnheader"
+        class="day"
+        [class.current]="weekday.value === day"
+        [attr.aria-label]="weekday.name"
+        >{{ weekday.short }}</span
+      >
+    }
+  </div>
+  @for (slot of slots; track slot.value) {
+    <div role="row" class="row">
+      <span role="rowheader" class="slot">{{ slot.name }}</span>
+      @for (weekday of weekdays; track weekday.value) {
+        <span
+          role="cell"
+          class="cell"
+          [class.current]="weekday.value === day"
+          [attr.aria-label]="
+            weekday.name + ' ' + slot.name + ': ' + (isOpen(weekday.value, slot.value) ? 'offen' : 'geschlossen')
+          ">
+          <span class="circle" [class.active]="isOpen(weekday.value, slot.value)"></span>
+        </span>
+      }
+    </div>
+  }
 </div>

@@ -19,19 +19,24 @@ if (!_validate_payload($data) || !_validate_picture($pictureData)) {
 	exit();
 }
 
+$opening = _normalize_opening($data['opening']);
+$locations = _normalize_locations($data['locations']);
+
 $mysqli = create_db_connection();
+$mysqli->begin_transaction();
 
 // update place
 if ($data['id'] === -1) {
 	// create new palce
-	$place = new Place(-1, $_SESSION['user_id'], NULL, $data['name'], $data['description'], $data['lat'], $data['lng'], $data['openSunday'], $data['openMonday'], $data['openTuesday'], $data['openWednesday'], $data['openThursday'], $data['openFriday'], $data['openSaturday'], $data['openMorning'], $data['openNoon'], $data['openEvening'], $data['openNight'], date("Y-m-d H:i:s"), NULL);
+	$place = new Place(-1, $_SESSION['user_id'], NULL, $data['name'], $data['description'], $data['lat'], $data['lng'], date("Y-m-d H:i:s"), NULL);
 	$place = create_place($place);
 } else {
 	// update exiting place
 	$place = find_place_by_id($data['id']);
 
-	$allowed = $place->userId === $_SESSION['user_id'] || is_admin();
-	if (!$place || !$allowed) {
+	$allowed = $place && ($place->userId === $_SESSION['user_id'] || is_admin());
+	if (!$allowed) {
+		$mysqli->rollback();
 		http_response_code(404);
 		exit();
 	}
@@ -40,20 +45,14 @@ if ($data['id'] === -1) {
 	$place->description = $data['description'];
 	$place->lat = $data['lat'];
 	$place->lng = $data['lng'];
-	$place->openSunday = $data['openSunday'];
-	$place->openMonday = $data['openMonday'];
-	$place->openTuesday = $data['openTuesday'];
-	$place->openWednesday = $data['openWednesday'];
-	$place->openThursday = $data['openThursday'];
-	$place->openFriday = $data['openFriday'];
-	$place->openSaturday = $data['openSaturday'];
-	$place->openMorning = $data['openMorning'];
-	$place->openNoon = $data['openNoon'];
-	$place->openEvening = $data['openEvening'];
-	$place->openNight = $data['openNight'];
 	$place->lastUpdateTime = date("Y-m-d H:i:s");
 	$place = update_place($place);
 }
+
+// Öffnungszeiten und Standorte
+$place->opening = $opening;
+$place->locations = $locations;
+save_place_schedule($place);
 
 // update picture
 if ($data['updatePicture']) {
@@ -88,6 +87,7 @@ if ($data['updatePicture']) {
 	}
 }
 
+$mysqli->commit();
 close_db_connection($mysqli);
 
 function _load_picture($data)
@@ -143,39 +143,85 @@ function _validate_payload($data)
 	if (!isset($data['lng']) || !is_numeric($data['lng'])) {
 		return FALSE;
 	}
-	if (!isset($data['openSunday']) || !is_bool($data['openSunday'])) {
+	if (!isset($data['opening']) || !_validate_opening($data['opening'])) {
 		return FALSE;
 	}
-	if (!isset($data['openMonday']) || !is_bool($data['openMonday'])) {
-		return FALSE;
-	}
-	if (!isset($data['openTuesday']) || !is_bool($data['openTuesday'])) {
-		return FALSE;
-	}
-	if (!isset($data['openWednesday']) || !is_bool($data['openWednesday'])) {
-		return FALSE;
-	}
-	if (!isset($data['openThursday']) || !is_bool($data['openThursday'])) {
-		return FALSE;
-	}
-	if (!isset($data['openFriday']) || !is_bool($data['openFriday'])) {
-		return FALSE;
-	}
-	if (!isset($data['openSaturday']) || !is_bool($data['openSaturday'])) {
-		return FALSE;
-	}
-	if (!isset($data['openMorning']) || !is_bool($data['openMorning'])) {
-		return FALSE;
-	}
-	if (!isset($data['openNoon']) || !is_bool($data['openNoon'])) {
-		return FALSE;
-	}
-	if (!isset($data['openEvening']) || !is_bool($data['openEvening'])) {
-		return FALSE;
-	}
-	if (!isset($data['openNight']) || !is_bool($data['openNight'])) {
+	if (!isset($data['locations']) || !_validate_locations($data['locations'])) {
 		return FALSE;
 	}
 	return TRUE;
+}
+
+/** Einfache Liste [a, b, c] (kein Objekt mit eigenen Schlüsseln) */
+function _is_list($value)
+{
+	return is_array($value) && array_keys($value) === range(0, count($value) - 1) || $value === [];
+}
+
+function _is_weekday($value)
+{
+	return is_int($value) && $value >= 0 && $value <= 6;
+}
+
+/** Öffnungszeiten: Liste von {weekday: 0–6, slot: "morning"|"noon"|"evening"} */
+function _validate_opening($opening)
+{
+	if (!is_array($opening) || !_is_list($opening) || count($opening) > 21) {
+		return FALSE;
+	}
+	foreach ($opening as $entry) {
+		if (!is_array($entry) || !isset($entry['weekday'], $entry['slot'])) {
+			return FALSE;
+		}
+		if (!_is_weekday($entry['weekday']) || !in_array($entry['slot'], ['morning', 'noon', 'evening'], TRUE)) {
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
+/** Standorte: Liste von {weekday: 0–6, lat, lng, label: string|null}, höchstens 14 */
+function _validate_locations($locations)
+{
+	if (!is_array($locations) || !_is_list($locations) || count($locations) > 14) {
+		return FALSE;
+	}
+	foreach ($locations as $entry) {
+		if (!is_array($entry) || !isset($entry['weekday'], $entry['lat'], $entry['lng'])) {
+			return FALSE;
+		}
+		if (!_is_weekday($entry['weekday']) || !is_numeric($entry['lat']) || !is_numeric($entry['lng'])) {
+			return FALSE;
+		}
+		$label = $entry['label'] ?? NULL;
+		if (!is_null($label) && (!is_string($label) || mb_strlen($label) > 50)) {
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
+/** Doppelte Kreuze entfernen */
+function _normalize_opening($opening)
+{
+	$unique = array();
+	foreach ($opening as $entry) {
+		$unique[$entry['weekday'] . '-' . $entry['slot']] = ['weekday' => $entry['weekday'], 'slot' => $entry['slot']];
+	}
+	return array_values($unique);
+}
+
+/** Leere Bezeichnung = keine Bezeichnung */
+function _normalize_locations($locations)
+{
+	return array_map(function ($entry) {
+		$label = trim($entry['label'] ?? '');
+		return [
+			'weekday' => $entry['weekday'],
+			'lat' => floatval($entry['lat']),
+			'lng' => floatval($entry['lng']),
+			'label' => $label === '' ? NULL : $label
+		];
+	}, $locations);
 }
 ?>

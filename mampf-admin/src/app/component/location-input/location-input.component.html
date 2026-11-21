@@ -1,15 +1,17 @@
-<p class="mb-1"><strong>Location</strong></p>
-<p>
-  <small
-    >Drag the <i class="fa fa-map-marker"></i> marker to change location.</small
-  >
-</p>
+@if (showTitle) {
+  <p class="mb-1"><strong>Location</strong></p>
+  <p>
+    <small
+      >Drag the <i class="fa fa-map-marker"></i> marker to change location.</small
+    >
+  </p>
+}
 
 <google-map
   width="100%"
-  height="500"
+  [height]="height"
   [options]="MAP_OPTIONS"
-  [center]="currentLocation"
+  [center]="center"
   [zoom]="15">
   <map-marker
     [position]="currentLocation"
