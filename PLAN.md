@@ -34,8 +34,24 @@ Peruanisch, Brasilianisch, Amerikanisch, Hawaiianisch
 Suppen, Sandwiches, Wraps, Hot Dogs, Momos, Banh Mi, Tacos, Curry
 
 **Zusätze:** Vegan, Vegetarisch, Glutenfrei, Laktosefrei, Halal, Koscher, Bio, Regional,
-Eigenes Geschirr willkommen, reCIRCLE, Mittagsmenü, Unter CHF 15, Sitzplätze vorhanden,
-Vorbestellung möglich
+Eigenes Geschirr willkommen, reCIRCLE, Mehrwegtopf, Mittagsmenü, Unter CHF 15, Mit Sitzplatz,
+Vorbestellung möglich, Gesund, Proteinreich, Frisch
+
+**Wartezeit** (genau eine Auswahl, in der Infobox als Info, filterbar):
+Unter 5 Minuten, 5–15 Minuten, Über 15 Minuten
+
+### Offen (Entscheid Besitzer)
+
+- Zusätze aufteilen in **Ernährung**, **Nachhaltigkeit**, **Service**, **Ort & Ambiente**?
+- Weitere Kandidaten aus dem Brainstorming (noch nicht übernommen):
+  - Ernährung: Low Carb, Zuckerfrei, Nussfrei/allergikerfreundlich, artgerechte Haltung,
+    nachhaltiger Fisch, Hausgemacht, Scharf, Kinderfreundliche Gerichte
+  - Nachhaltigkeit: Saisonal, Zero Waste, Too Good To Go, Tagesreste vergünstigt, Elektrisch betrieben
+  - Service: Online bestellen, Lieferung, Kartenzahlung, TWINT, Nur Bargeld, Grosse Portionen, Catering
+  - Ort & Ambiente: Gedeckt/wettergeschützt, Draussen sitzen, Mit Aussicht, Rollstuhlgängig,
+    Hunde willkommen, Kinderfreundlich, WC vorhanden, Gratis-Wasser, Ruhig, Treffpunkt
+  - Preis & Angebot: Unter CHF 10, Studentenrabatt, Happy Hour, Kaffee, Bier/Wein, Smoothies,
+    Dessert/Süsses, Frühstück
 
 **Art des Lokals:** Food Truck, Imbiss, Marktstand, Take-away, Mensa, Personalrestaurant,
 Bäckerei, Café, Deli, Metzgerei, Supermarkt, Food Court, Restaurant mit Take-away
