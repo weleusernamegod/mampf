@@ -34,7 +34,7 @@ Web-App mit einer Karte von Foodtrucks/Imbissständen. Live unter https://mampf.
 
 ## Git & Deployment
 
-- Repo: privat auf GitHub unter dem Account des Besitzers (`origin`). `jan` = altes Repo von Jan Ebbe (nur lesen).
+- Repo: **öffentlich** auf GitHub unter dem Account des Besitzers (`origin`). `jan` = altes Repo von Jan Ebbe (nur lesen).
 - Hosting: wahrscheinlich Hostpoint, Upload per FTP (bisher manuell mit Cyberduck).
 - Geplant: GitHub Actions deployt `dist/` automatisch (`staging` → Test-Subdomain, `main` → mampf.io).
 
@@ -50,4 +50,4 @@ Web-App mit einer Karte von Foodtrucks/Imbissständen. Live unter https://mampf.
 
 - Passwörter werden mit ungesalzenem SHA-256 gehasht (`api/util/login-util.php`), sollte `password_hash()` werden.
 - Angular 18 ist veraltet, `npm audit` meldet viele Schwachstellen in den Dev-Dependencies. Upgrade lohnt sich.
-- Das Live-DB-Passwort steht in der alten Git-History (config.php war früher eingecheckt). Es sollte beim Hoster geändert werden.
+- Das alte Live-DB-Passwort steht in der öffentlichen Git-History, wurde aber im Nov. 2026 beim Hoster geändert (ist also ungültig).
