@@ -1,31 +1,33 @@
 <strong class="title">Öffnungszeiten</strong>
 
-<div id="matrix" role="table" aria-label="Öffnungszeiten">
-  <div role="row" class="row">
-    <span role="columnheader"></span>
-    @for (weekday of weekdays; track weekday.value) {
-      <span
-        role="columnheader"
-        class="day"
-        [class.current]="weekday.value === day"
-        [attr.aria-label]="weekday.name"
-        >{{ weekday.short }}</span
-      >
-    }
-  </div>
-  @for (slot of slots; track slot.value) {
-    <div role="row" class="row">
-      <span role="rowheader" class="slot">{{ slot.name }}</span>
-      @for (weekday of weekdays; track weekday.value) {
-        <span
-          role="cell"
-          class="cell"
-          [class.current]="weekday.value === day"
-          [attr.aria-label]="
-            weekday.name + ' ' + slot.name + ': ' + (isOpen(weekday.value, slot.value) ? 'offen' : 'geschlossen')
-          ">
-          <span class="circle" [class.active]="isOpen(weekday.value, slot.value)"></span>
-        </span>
+<!--
+  Pro Tag eine senkrechte graue Pille über Morgen, Mittag und Abend.
+  Offene Tageszeiten sind grün; nebeneinander liegende verschmelzen
+  zu einem durchgehenden Balken (z.B. Mittag bis Abend).
+-->
+<div id="matrix">
+  @for (weekday of weekdays; track weekday.value; let column = $index) {
+    <span
+      class="day"
+      [class.current]="weekday.value === day"
+      [style.grid-column]="column + 2"
+      aria-hidden="true"
+      >{{ weekday.short }}</span
+    >
+  }
+
+  @for (slot of slots; track slot.value; let row = $index) {
+    <span class="slot" [style.grid-row]="row + 2" aria-hidden="true">{{ slot.name }}</span>
+  }
+
+  @for (weekday of weekdays; track weekday.value; let column = $index) {
+    <div
+      class="pill"
+      role="img"
+      [style.grid-column]="column + 2"
+      [attr.aria-label]="label(weekday.value, weekday.name)">
+      @for (run of runs(weekday.value); track run.start) {
+        <span class="bar" [style.grid-row]="run.start + 1 + ' / ' + (run.end + 2)"></span>
       }
     </div>
   }

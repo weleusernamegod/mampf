@@ -46,10 +46,20 @@
 
   @if (placing) {
     <div id="active-filters">
-      <div class="overlay filter-chip hint">Karte verschieben, um den Ort festzulegen</div>
+      <div class="overlay filter-chip hint">Karte verschieben, um neuen Ort zu erfassen</div>
     </div>
   } @else if (filterActive) {
     <div id="active-filters">
+      @if (slotLabel) {
+        <div class="overlay filter-chip">
+          <span>{{ slotLabel }}</span>
+          <button
+            type="button"
+            class="remove"
+            aria-label="Tageszeit zurücksetzen"
+            (click)="slotsReset.emit()"></button>
+        </div>
+      }
       @for (category of activeCategories; track category.id) {
         <div class="overlay filter-chip">
           <span>{{ category.name }}</span>

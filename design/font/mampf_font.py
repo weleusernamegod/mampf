@@ -10,7 +10,7 @@ Ausführen (braucht fonttools, shapely, brotli):
     python3 -m venv /tmp/fontenv && /tmp/fontenv/bin/pip install fonttools shapely brotli
     /tmp/fontenv/bin/python mampf_font.py
 Erzeugt im gleichen Ordner: Mampf-Light/Regular/Bold als .ttf und .woff2,
-mampf-fonts.js für testen.html und kopiert Regular nach map/public/assets/fonts/.
+mampf-fonts.js für testen.html und kopiert Light nach map/public/assets/fonts/.
 """
 import math
 import os
@@ -314,9 +314,9 @@ if __name__ == "__main__":
         print("gebaut:", build_font(style, ratio) + ".ttf / .woff2")
     write_test_js()
     print("gebaut: mampf-fonts.js (für testen.html)")
-    # Die Website braucht Regular für die Sprüche unter dem Logo (assets/slogan.js)
+    # Die Website braucht Light für die Sprüche unter dem Logo (assets/slogan.js)
     import shutil
     web = os.path.join(HERE, "..", "..", "map", "public", "assets", "fonts")
     os.makedirs(web, exist_ok=True)
-    shutil.copy(os.path.join(HERE, "Mampf-Regular.woff2"), web)
-    print("kopiert: Mampf-Regular.woff2 -> map/public/assets/fonts/")
+    shutil.copy(os.path.join(HERE, "Mampf-Light.woff2"), web)
+    print("kopiert: Mampf-Light.woff2 -> map/public/assets/fonts/")

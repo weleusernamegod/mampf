@@ -1,36 +1,47 @@
 <div id="wrapper">
   <div id="dialog" class="overlay">
-    <h2>Filtern</h2>
+    <!-- Titel und Knöpfe bleiben oben stehen, nur die Auswahl darunter scrollt -->
+    <div id="header">
+      <h2>Filtern</h2>
+      <div id="actions">
+        <button type="button" class="reset" (click)="reset()">Zurücksetzen</button>
+        <button type="button" class="apply" (click)="apply()">Anwenden</button>
+      </div>
+    </div>
 
-    @for (section of sections; track section.key) {
-      <p class="label">{{ section.name }}</p>
-
+    <div id="content">
+      <p class="label">Tageszeit</p>
       <div class="chips">
-        @for (option of section.options; track option.category.id) {
+        @for (option of slotOptions; track option.slot) {
           <button
             type="button"
             class="chip"
-            [class.selected]="draft.has(option.category.id)"
-            [attr.aria-pressed]="draft.has(option.category.id)"
-            (click)="toggle(option.category.id)">
-            {{ option.category.name }}
+            [class.selected]="draftSlots.has(option.slot)"
+            [attr.aria-pressed]="draftSlots.has(option.slot)"
+            (click)="toggleSlot(option.slot)">
+            {{ option.name }}
             <span class="count">{{ option.count }}</span>
           </button>
         }
       </div>
-    } @empty {
-      <p class="label">Noch keine Kategorien vorhanden.</p>
-    }
 
-    <div id="actions">
-      <button
-        type="button"
-        class="reset"
-        [disabled]="draft.size === 0"
-        (click)="reset()">
-        Zurücksetzen
-      </button>
-      <button type="button" class="apply" (click)="apply()">Anwenden</button>
+      @for (section of sections; track section.key) {
+        <p class="label">{{ section.name }}</p>
+
+        <div class="chips">
+          @for (option of section.options; track option.category.id) {
+            <button
+              type="button"
+              class="chip"
+              [class.selected]="draft.has(option.category.id)"
+              [attr.aria-pressed]="draft.has(option.category.id)"
+              (click)="toggle(option.category.id)">
+              {{ option.category.name }}
+              <span class="count">{{ option.count }}</span>
+            </button>
+          }
+        </div>
+      }
     </div>
   </div>
 </div>

@@ -15,6 +15,24 @@ import { SLOTS, WEEKDAYS, hasOpening } from '../../util/place-util';
 
 /** Abstand unter dem Inhalt der zugeklappten Infobox in px (wie padding-bottom im SCSS). */
 const BOTTOM_PADDING = 15;
+/** Ab so vielen px Fingerbewegung gilt es als Ziehen (statt Antippen). */
+const DRAG_START = 8;
+/** Zugeklappt so weit nach unten gezogen: Infobox schliessen. */
+const CLOSE_DISTANCE = 60;
+/** Schneller Wisch (px pro ms): Richtung entscheidet, egal wie weit. */
+const FLICK_SPEED = 0.4;
+
+/** Zustand während der Finger auf der Infobox liegt. */
+interface Drag {
+  startY: number;
+  startHeight: number;
+  lastY: number;
+  lastTime: number;
+  /** px pro ms, positiv = nach unten */
+  speed: number;
+  /** Erst true, wenn sich der Finger genug bewegt hat. */
+  active: boolean;
+}
 
 @Component({
   selector: 'mampf-place-dialog',
@@ -51,6 +69,10 @@ export class PlaceDialogComponent implements OnChanges {
   /** z.B. "5–15 Minuten" */
   waitingTime: string | undefined;
 
+  private drag: Drag | undefined = undefined;
+  /** Nach dem Ziehen keinen zusätzlichen Klick auswerten. */
+  private ignoreClick = false;
+
   ngOnChanges(): void {
     if (this.place) {
       this.openingHours = this.generateOpeningHours(this.place, this.day);
@@ -77,19 +99,107 @@ export class PlaceDialogComponent implements OnChanges {
     });
   }
 
-  toggleSize(): void {
+  /** Antippen / Klicken: auf- bzw. zuklappen. */
+  onClick(): void {
+    if (this.ignoreClick) return;
+    this.setExpanded(!this.expanded);
+  }
+
+  private setExpanded(expanded: boolean): void {
     const element = this.dialog.nativeElement;
-    this.expanded = !this.expanded;
+    this.expanded = expanded;
     this.scrollable = false;
 
-    if (this.expanded) {
-      // Bis zur vollen Höhe des Inhalts aufschieben, höchstens so hoch wie Platz da ist
-      const available = this.wrapper.nativeElement.clientHeight;
-      this.setHeight(Math.min(element.scrollHeight, available));
-    } else {
-      element.scrollTop = 0;
-      this.setHeight(this.minimizedHeight());
+    const target = expanded ? this.maximizedHeight() : this.minimizedHeight();
+    if (!expanded) element.scrollTop = 0;
+    if (Math.round(element.offsetHeight) === Math.round(target)) {
+      // Höhe stimmt schon (z.B. genau bis oben gezogen): es gibt keine Animation
+      this.scrollable = expanded && element.scrollHeight > element.clientHeight;
     }
+    this.setHeight(target);
+  }
+
+  // --- Mit dem Finger hochziehen / runterziehen -------------------------
+
+  onTouchStart(event: TouchEvent): void {
+    if (event.touches.length !== 1) {
+      this.drag = undefined;
+      return;
+    }
+    const y = event.touches[0].clientY;
+    this.drag = {
+      startY: y,
+      startHeight: this.dialog.nativeElement.offsetHeight,
+      lastY: y,
+      lastTime: event.timeStamp,
+      speed: 0,
+      active: false,
+    };
+  }
+
+  onTouchMove(event: TouchEvent): void {
+    const drag = this.drag;
+    if (!drag || event.touches.length !== 1) return;
+    const element = this.dialog.nativeElement;
+    const y = event.touches[0].clientY;
+    const dy = y - drag.startY; // positiv = nach unten
+
+    if (!drag.active) {
+      if (Math.abs(dy) < DRAG_START) return;
+      // Aufgeklappt mit langem Inhalt: normal scrollen. Nur wenn ganz oben
+      // nach unten gezogen wird, klappt die Infobox wieder zu.
+      if (this.scrollable && (dy < 0 || element.scrollTop > 0)) {
+        this.drag = undefined;
+        return;
+      }
+      drag.active = true;
+      element.classList.add('dragging'); // keine Animation, folgt direkt dem Finger
+    }
+
+    event.preventDefault();
+    const dt = event.timeStamp - drag.lastTime;
+    if (dt > 0) drag.speed = (y - drag.lastY) / dt;
+    drag.lastY = y;
+    drag.lastTime = event.timeStamp;
+
+    const min = this.minimizedHeight();
+    const max = this.maximizedHeight();
+    let height = drag.startHeight - dy;
+    if (height < min) {
+      height = min - (min - height) * 0.4; // unten etwas gebremst
+    }
+    this.setHeight(Math.min(height, max));
+  }
+
+  onTouchEnd(): void {
+    const drag = this.drag;
+    this.drag = undefined;
+    if (!drag?.active) return;
+
+    const element = this.dialog.nativeElement;
+    element.classList.remove('dragging');
+    this.ignoreClick = true;
+    setTimeout(() => (this.ignoreClick = false), 400);
+
+    const dy = drag.lastY - drag.startY;
+    const min = this.minimizedHeight();
+    const max = this.maximizedHeight();
+
+    // Zugeklappt nach unten gewischt: schliessen
+    if (!this.expanded && (dy > CLOSE_DISTANCE || drag.speed > FLICK_SPEED)) {
+      this.closed.emit();
+      return;
+    }
+
+    let expand: boolean;
+    if (drag.speed < -FLICK_SPEED) {
+      expand = true;
+    } else if (drag.speed > FLICK_SPEED) {
+      expand = false;
+    } else {
+      expand = element.offsetHeight > (min + max) / 2;
+    }
+    this.setExpanded(expand);
   }
 
   onTransitionEnd(event: TransitionEvent) {
@@ -107,6 +217,12 @@ export class PlaceDialogComponent implements OnChanges {
   private minimizedHeight(): number {
     const summary = this.summary.nativeElement;
     return summary.offsetTop + summary.offsetHeight + BOTTOM_PADDING;
+  }
+
+  /** Höhe aufgeklappt: ganzer Inhalt, höchstens so hoch wie Platz da ist. */
+  private maximizedHeight(): number {
+    const available = this.wrapper.nativeElement.clientHeight;
+    return Math.min(this.dialog.nativeElement.scrollHeight, available);
   }
 
   private setHeight(px: number) {

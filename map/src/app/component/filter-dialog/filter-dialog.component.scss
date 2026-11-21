@@ -7,12 +7,30 @@
   height: 100%;
 }
 
+// Spalte: oben Titel + Knöpfe (bleiben stehen), darunter die Auswahl (scrollt)
 #dialog {
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   width: 339px;
   max-height: 100%;
 
-  padding: 20px;
+  overflow: hidden;
+}
+
+#header {
+  flex: none;
+
+  padding: 20px 20px 12px 20px;
+
+  border-bottom: 1px solid var(--grey1);
+}
+
+#content {
+  flex: 1 1 auto;
+  min-height: 0;
+
+  padding: 0 20px 20px 20px;
 
   overflow-y: auto;
 }
@@ -87,7 +105,7 @@ button {
   justify-content: space-between;
   align-items: center;
 
-  margin-top: 20px;
+  margin-top: 12px;
 }
 
 .reset {
@@ -99,11 +117,6 @@ button {
 
   color: var(--grey3);
   font-size: 14px;
-
-  &:disabled {
-    color: var(--grey1);
-    cursor: default;
-  }
 }
 
 .apply {

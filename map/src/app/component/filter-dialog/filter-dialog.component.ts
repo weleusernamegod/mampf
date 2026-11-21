@@ -7,6 +7,8 @@ import {
 } from '@angular/core';
 import { Place } from '../../dto/place';
 import { Category, CategoryList } from '../../dto/category';
+import { Slot } from '../../dto/opening';
+import { DEFAULT_SLOTS, SLOTS, isPlaceOpen } from '../../util/place-util';
 
 interface CategoryOption {
   category: Category;
@@ -17,6 +19,18 @@ interface GroupSection {
   key: string;
   name: string;
   options: CategoryOption[];
+}
+
+interface SlotOption {
+  slot: Slot;
+  name: string;
+  count: number; // so viele Shops haben am gewählten Tag zu dieser Zeit offen
+}
+
+/** Was im Filter gewählt ist: Kategorien und Tageszeiten. */
+export interface FilterSelection {
+  categories: number[];
+  slots: Slot[];
 }
 
 @Component({
@@ -33,16 +47,28 @@ export class FilterDialogComponent implements OnChanges {
   @Input() categoryList: CategoryList = { groups: [], categories: [] };
   /** Aktuell angewendeter Filter (Kategorie-IDs). */
   @Input() selectedCategories: number[] = [];
+  /** Aktuell gewählte Tageszeiten. */
+  @Input() selectedSlots: Slot[] = DEFAULT_SLOTS;
+  /** Im Slider gewählter Wochentag, für die Anzahl pro Tageszeit. */
+  @Input() day: number = new Date().getDay();
 
-  /** Wird erst beim Klick auf "Anwenden" ausgelöst. */
-  @Output() filterApplied: EventEmitter<number[]> = new EventEmitter<number[]>();
+  /** "Anwenden" oder "Zurücksetzen" (dann mit leerem Filter). */
+  @Output() filterApplied = new EventEmitter<FilterSelection>();
 
   sections: GroupSection[] = [];
+  slotOptions: SlotOption[] = [];
   /** Auswahl im Dialog, noch nicht angewendet. */
   draft = new Set<number>();
+  draftSlots = new Set<Slot>();
 
   ngOnChanges(): void {
     this.draft = new Set(this.selectedCategories);
+    this.draftSlots = new Set(this.selectedSlots);
+    this.slotOptions = SLOTS.map(slot => ({
+      slot: slot.value,
+      name: slot.name,
+      count: this.places.filter(place => isPlaceOpen(place, this.day, [slot.value])).length,
+    }));
     // Pro Gruppe ein Abschnitt. Kategorien ohne Orte ausblenden
     // (ausser sie sind gerade gewählt, sonst könnte man sie nicht abwählen).
     this.sections = this.categoryList.groups
@@ -71,11 +97,22 @@ export class FilterDialogComponent implements OnChanges {
     }
   }
 
+  toggleSlot(slot: Slot) {
+    if (this.draftSlots.has(slot)) {
+      this.draftSlots.delete(slot);
+    } else {
+      this.draftSlots.add(slot);
+    }
+  }
+
+  /** Alle Filter löschen (Tageszeit wieder Mittag) und Menü schliessen. */
   reset() {
-    this.draft.clear();
+    this.filterApplied.emit({ categories: [], slots: [...DEFAULT_SLOTS] });
   }
 
   apply() {
-    this.filterApplied.emit([...this.draft]);
+    // Reihenfolge immer Morgen, Mittag, Abend
+    const slots = SLOTS.map(slot => slot.value).filter(slot => this.draftSlots.has(slot));
+    this.filterApplied.emit({ categories: [...this.draft], slots });
   }
 }

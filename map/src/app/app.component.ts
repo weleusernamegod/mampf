@@ -2,15 +2,18 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Place } from './dto/place';
 import { MapComponent } from './component/map/map.component';
 import { DaySelectorComponent } from './component/day-selector/day-selector.component';
-import { SlotSelectorComponent } from './component/slot-selector/slot-selector.component';
 import { Slot } from './dto/opening';
 import { NavigationComponent } from './component/navigation/navigation.component';
 import { AboutDialogComponent } from './component/about-dialog/about-dialog.component';
 import { PlaceDialogComponent } from './component/place-dialog/place-dialog.component';
-import { FilterDialogComponent } from './component/filter-dialog/filter-dialog.component';
+import {
+  FilterDialogComponent,
+  FilterSelection,
+} from './component/filter-dialog/filter-dialog.component';
 import { filterByCategories } from './util/category-filter';
 import { CategoryList } from './dto/category';
 import { savePendingPosition } from './util/pending-position';
+import { DEFAULT_SLOTS } from './util/place-util';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +21,6 @@ import { savePendingPosition } from './util/pending-position';
   imports: [
     MapComponent,
     DaySelectorComponent,
-    SlotSelectorComponent,
     NavigationComponent,
     AboutDialogComponent,
     PlaceDialogComponent,
@@ -39,8 +41,8 @@ export class AppComponent implements OnInit {
   /** Angewendeter Filter: IDs der gewählten Kategorien. */
   selectedCategories: number[] = [];
   selectedDay: number = new Date().getDay();
-  /** Mittag oder Abend (Standard: Mittag). */
-  selectedSlot: Slot = 'noon';
+  /** Tageszeiten aus dem Filter (Standard: Mittag). */
+  selectedSlots: Slot[] = [...DEFAULT_SLOTS];
   selectedPlace: Place | undefined = undefined;
   aboutDialogVisible = false;
   placeDialogVisible = false;
@@ -78,10 +80,14 @@ export class AppComponent implements OnInit {
     );
   }
 
-  /** Klick auf eine leere Stelle der Karte: About-Seite und Infobox schliessen. */
+  /**
+   * Klick auf eine leere Stelle der Karte (auch neben das Filter-Fenster):
+   * About-Seite, Infobox und Filter schliessen. Der Filter bleibt dabei wie er war.
+   */
   onMapClicked() {
     this.aboutDialogVisible = false;
     this.placeDialogVisible = false;
+    this.filterDialogVisible = false;
   }
 
   onPlaceClicked(place: Place) {
@@ -100,14 +106,6 @@ export class AppComponent implements OnInit {
     this.selectedDay = day;
   }
 
-  onSlotSelected(slot: Slot) {
-    this.placeDialogVisible = false;
-    this.aboutDialogVisible = false;
-    this.filterDialogVisible = false;
-
-    this.selectedSlot = slot;
-  }
-
   onLocateClicked() {
     this.mapComponent?.locate();
   }
@@ -119,15 +117,22 @@ export class AppComponent implements OnInit {
     this.filterDialogVisible = !this.filterDialogVisible;
   }
 
-  onFilterApplied(categories: number[]) {
-    this.selectedCategories = categories;
+  onFilterApplied(selection: FilterSelection) {
+    this.selectedCategories = selection.categories;
+    this.selectedSlots = selection.slots;
     this.updateVisiblePlaces();
     this.filterDialogVisible = false;
   }
 
   /** Einzelnen Filter über das X unter der Navigation entfernen. */
   onCategoryRemoved(id: number) {
-    this.onFilterApplied(this.selectedCategories.filter(category => category !== id));
+    this.selectedCategories = this.selectedCategories.filter(category => category !== id);
+    this.updateVisiblePlaces();
+  }
+
+  /** X bei der Tageszeit unter der Navigation: wieder Mittag. */
+  onSlotsReset() {
+    this.selectedSlots = [...DEFAULT_SLOTS];
   }
 
   onAboutClicked() {

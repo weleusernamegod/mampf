@@ -2,7 +2,7 @@
  * mampf: zufälliger Spruch unter dem Logo.
  *
  * Die Sprüche stehen in assets/slogans.txt, die Schrift (abgeleitet vom Logo)
- * in assets/fonts/Mampf-Regular.woff2 (erzeugt von design/font/mampf_font.py).
+ * in assets/fonts/Mampf-Light.woff2 (dünne Variante, erzeugt von design/font/mampf_font.py).
  *
  * Verwendung:
  *   <script src="/assets/slogan.js"></script>
@@ -23,14 +23,17 @@
 
   /** Freier Platz im Logo unten links (Logo-Koordinaten, viewBox 1700 x 750). */
   const AREA = { left: 178, right: 1055, bottom: 654, maxSize: 178 };
-  /** Masse der Schrift Mampf Regular pro 1000 Einheiten (siehe mampf_font.py). */
-  const FONT = { sideBearing: 64.2 - 75.9 / 2, below: 75.9 / 2, descender: 207 };
+  /**
+   * Masse der Schrift Mampf Light pro 1000 Einheiten (siehe mampf_font.py):
+   * Abstand 64.2, Strichdicke 55.2 (0.12 x 460), Unterlänge 207.
+   */
+  const FONT = { sideBearing: 64.2 - 55.2 / 2, below: 55.2 / 2, descender: 207 };
 
   let fontPromise;
   let slogansPromise;
 
   function loadFont() {
-    fontPromise ??= new FontFace(FAMILY, `url(${BASE}fonts/Mampf-Regular.woff2)`)
+    fontPromise ??= new FontFace(FAMILY, `url(${BASE}fonts/Mampf-Light.woff2)`)
       .load()
       .then(face => {
         document.fonts.add(face);
@@ -101,7 +104,7 @@
       textEl.setAttribute('class', 'mampf-slogan');
       textEl.setAttribute('fill', COLOR);
       textEl.style.fontFamily = `"${FAMILY}"`;
-      textEl.style.fontWeight = '400';
+      textEl.style.fontWeight = '300';
       svg.appendChild(textEl);
       fit(textEl, pick(slogans));
       return textEl;

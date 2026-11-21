@@ -3,7 +3,7 @@
     id="map"
     [places]="visiblePlaces"
     [day]="selectedDay"
-    [slot]="selectedSlot"
+    [slots]="selectedSlots"
     [placing]="placing"
     (placeClicked)="onPlaceClicked($event)"
     (mapClicked)="onMapClicked()"></mampf-map>
@@ -13,7 +13,9 @@
       <mampf-navigation
         class="inline-block"
         [selectedCategories]="selectedCategories"
+        [selectedSlots]="selectedSlots"
         [categoryList]="categoryList"
+        (slotsReset)="onSlotsReset()"
         (categoryRemoved)="onCategoryRemoved($event)"
         (locateClicked)="onLocateClicked()"
         (filterClicked)="onFilterClicked()"
@@ -36,6 +38,8 @@
           [places]="places"
           [categoryList]="categoryList"
           [selectedCategories]="selectedCategories"
+          [selectedSlots]="selectedSlots"
+          [day]="selectedDay"
           (filterApplied)="onFilterApplied($event)"></mampf-filter-dialog>
       } @else if (placeDialogVisible) {
         <mampf-place-dialog
@@ -49,10 +53,6 @@
     <div class="align-center">
       <!-- Im Platzieren-Modus ausgeblendet (bleibt aber erhalten, damit der Tag bleibt) -->
       <div class="selectors" [class.hidden]="placing">
-        <mampf-slot-selector
-          class="block"
-          [slot]="selectedSlot"
-          (slotSelected)="onSlotSelected($event)"></mampf-slot-selector>
         <mampf-day-selector
           class="inline-block"
           (daySelected)="onDaySelected($event)"></mampf-day-selector>

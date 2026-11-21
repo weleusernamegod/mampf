@@ -5,7 +5,7 @@ Reihenfolge der Umsetzung: 1. Öffnungszeiten + Standorte, 2. Kategorien. Jeweil
 
 **Stand:** Öffnungszeiten (2) und Standorte (3) umgesetzt in Version 0.0.004,
 Kategorien (1) in Version 0.0.005. Sicherheit (5) erledigt. Live-Datenbank (4):
-Migrationsdatei und Anleitung bereit, noch nicht live ausgeführt.
+ist umgestellt (die Live-API liefert am 21.11.2026 schon das neue Format).
 
 ## 1. Kategorien ✅ erledigt (0.0.005)
 
@@ -85,7 +85,7 @@ Bäckerei, Café, Deli, Metzgerei, Supermarkt, Food Court, Restaurant mit Take-a
 - Karte: Truck erscheint am Standort des im Slider gewählten Tages.
   Infobox: „Mo Helvetiaplatz · Fr Bahnhof Altstetten“.
 
-## 4. Datenbank-Umstellung live ⏳ vorbereitet, noch nicht ausgeführt
+## 4. Datenbank-Umstellung live ✅ erledigt
 
 - Migrationsdatei: `data/migration-2026-11.sql`, Anleitung: `data/MIGRATION.md`.
 

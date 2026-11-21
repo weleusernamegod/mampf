@@ -13,7 +13,7 @@ import { MAP_STYLES } from '../../util/map-styles';
 import { Place } from '../../dto/place';
 import { PlacesOverlay, createPlacesOverlay } from './places-overlay';
 import { Slot } from '../../dto/opening';
-import { PlacePin, pinsForDay } from '../../util/place-util';
+import { DEFAULT_SLOTS, PlacePin, pinsForDay } from '../../util/place-util';
 
 /**
  * TEMPORÄR: fester Standort Zürich Kreis 4 (Langstrasse) statt dem echten
@@ -75,8 +75,8 @@ export class MapComponent implements OnInit, OnChanges {
   @Input() places: Place[] = [];
   /** Gewählter Wochentag wie Date.getDay(): 0 = Sonntag, 1 = Montag, ... */
   @Input() day: number = new Date().getDay();
-  /** Gewählte Tageszeit (Mittag oder Abend). */
-  @Input() slot: Slot = 'noon';
+  /** Gewählte Tageszeiten aus dem Filter (Standard: Mittag). */
+  @Input() slots: Slot[] = DEFAULT_SLOTS;
   /** Platzieren-Modus: Shops ausblenden, roter Punkt in der Kartenmitte. */
   @Input() placing = false;
   /** Klick auf eine leere Stelle der Karte (nicht auf einen Shop). */
@@ -110,7 +110,7 @@ export class MapComponent implements OnInit, OnChanges {
 
   /** Punkte für den gewählten Tag (Foodtrucks am Standort dieses Tages). */
   private pins(): PlacePin[] {
-    return pinsForDay(this.places, this.day, this.slot);
+    return pinsForDay(this.places, this.day, this.slots);
   }
 
   /** Aktuelle Kartenmitte = Position des roten Punkts im Platzieren-Modus. */
@@ -147,7 +147,8 @@ export class MapComponent implements OnInit, OnChanges {
   }
 
   onPinClicked(pin: PlacePin) {
-    this.goToPosition(pin.position);
+    // Nur hinschieben, die Zoomstufe bleibt wie sie ist
+    this.map?.panTo(pin.position);
     this.placeClicked.emit(pin.place);
   }
 

@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Category, CategoryList } from '../../dto/category';
+import { Slot } from '../../dto/opening';
+import { DEFAULT_SLOTS, SLOTS, isCustomSlots } from '../../util/place-util';
 
 @Component({
   selector: 'mampf-navigation',
@@ -11,6 +13,8 @@ import { Category, CategoryList } from '../../dto/category';
 export class NavigationComponent {
   /** Angewendeter Filter (Kategorie-IDs). Wird unter den Knöpfen angezeigt. */
   @Input() selectedCategories: number[] = [];
+  /** Gewählte Tageszeiten. Erscheinen nur, wenn anders als der Standard (Mittag). */
+  @Input() selectedSlots: Slot[] = DEFAULT_SLOTS;
   /** Alle Kategorien, um die Namen der gewählten anzuzeigen. */
   @Input() categoryList: CategoryList = { groups: [], categories: [] };
   /** Ist die About-Seite offen? Dann erscheint rechts ein X zum Schliessen. */
@@ -23,6 +27,8 @@ export class NavigationComponent {
 
   /** Klick auf das X bei einem Filter: diesen Filter entfernen. */
   @Output() categoryRemoved: EventEmitter<number> = new EventEmitter<number>();
+  /** Klick auf das X bei der Tageszeit: zurück auf Mittag. */
+  @Output() slotsReset: EventEmitter<void> = new EventEmitter<void>();
   @Output() filterClicked: EventEmitter<void> = new EventEmitter<void>();
   @Output() locateClicked: EventEmitter<void> = new EventEmitter<void>();
   @Output() aboutClicked: EventEmitter<void> = new EventEmitter<void>();
@@ -31,7 +37,16 @@ export class NavigationComponent {
 
   /** Ist ein Filter aktiv? Dann wird das Filter-Icon grün. */
   get filterActive(): boolean {
-    return this.selectedCategories.length > 0;
+    return this.selectedCategories.length > 0 || isCustomSlots(this.selectedSlots);
+  }
+
+  /** z.B. "Morgen, Abend" oder "Ganzer Tag"; undefined bei Standard (Mittag). */
+  get slotLabel(): string | undefined {
+    if (!isCustomSlots(this.selectedSlots)) return undefined;
+    if (this.selectedSlots.length === 0) return 'Ganzer Tag';
+    return SLOTS.filter(slot => this.selectedSlots.includes(slot.value))
+      .map(slot => slot.name)
+      .join(', ');
   }
 
   /** Die gewählten Kategorien in der Reihenfolge wie im Filter-Dialog. */

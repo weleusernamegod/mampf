@@ -22,9 +22,18 @@
   // Aufschieben / Zuklappen
   transition: height 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 
+  // Wischen gehört der Infobox (nicht dem Browser)
+  touch-action: none;
+
   // Erst nach dem Aufschieben scrollbar, falls nötig
   &.scrollable {
     overflow-y: auto;
+    touch-action: pan-y;
+  }
+
+  // Beim Ziehen mit dem Finger folgt die Höhe direkt, ohne Animation
+  &.dragging {
+    transition: none;
   }
 }
 

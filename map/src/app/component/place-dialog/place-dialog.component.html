@@ -5,7 +5,11 @@
     class="overlay cursor-pointer"
     [class.expanded]="expanded"
     [class.scrollable]="scrollable"
-    (click)="toggleSize()"
+    (click)="onClick()"
+    (touchstart)="onTouchStart($event)"
+    (touchmove)="onTouchMove($event)"
+    (touchend)="onTouchEnd()"
+    (touchcancel)="onTouchEnd()"
     (transitionend)="onTransitionEnd($event)">
     <button
       type="button"

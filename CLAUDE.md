@@ -16,7 +16,7 @@ Web-App mit einer Karte von Foodtrucks/Imbissständen. Live unter https://mampf.
 
 Sprüche unter dem Logo: `map/public/assets/slogans.txt` (einer pro Zeile). `map/public/assets/slogan.js`
 wählt bei jedem Anzeigen des Logos zufällig einen (Splashscreen, About-Seite, Login, Registrierung).
-Schrift dafür: `map/public/assets/fonts/Mampf-Regular.woff2` (wird von `mampf_font.py` dorthin kopiert).
+Schrift dafür: `map/public/assets/fonts/Mampf-Light.woff2` (dünne Variante) (wird von `mampf_font.py` dorthin kopiert).
 
 `build.sh` baut alles nach `dist/`. Diese Struktur entspricht 1:1 dem Webroot auf dem Server.
 
