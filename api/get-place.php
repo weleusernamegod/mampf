@@ -38,7 +38,8 @@ function _map_place_to_dto($place)
         'lat' => $place->lat,
         'lng' => $place->lng,
         'opening' => $place->opening,
-        'locations' => $place->locations
+        'locations' => $place->locations,
+        'categories' => $place->categories
     ];
 }
 ?>

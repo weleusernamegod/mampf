@@ -11,6 +11,7 @@ import { SavePlace } from '../../dto/save-place';
 import { takePendingPosition } from '../../util/pending-position';
 import { OpeningInputComponent } from '../opening-input/opening-input.component';
 import { Opening, PlaceLocation, WEEKDAYS } from '../../dto/opening';
+import { Category, CategoryGroup, CategoryList } from '../../dto/category';
 
 /** So viele Standorte pro Tag sind möglich (Sonderfall: zwei Orte am gleichen Tag). */
 const MAX_LOCATIONS_PER_DAY = 2;
@@ -56,9 +57,19 @@ export class PlaceDetailComponent implements OnInit {
   /** Hinweis, wenn "Mehrere Standorte" an ist, aber kein Tag offen. */
   locationError = false;
 
+  /** Alle sichtbaren Kategorien vom Server. */
+  categoryList: CategoryList = { groups: [], categories: [] };
+  /** Gewählte Kategorien (IDs). */
+  selectedCategories = new Set<number>();
+
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
+    fetch('/api/get-categories.php')
+      .then(response => response.json())
+      .then(data => (this.categoryList = data))
+      .catch(error => console.error('Could not fetch categories', error));
+
     this.route.params.subscribe((params: Params) => {
       const id = params['id'];
       if (id) {
@@ -83,6 +94,36 @@ export class PlaceDetailComponent implements OnInit {
   onPictureUploaded(pictureData: string) {
     this.pictureChanged = true;
     this.newPictureData = pictureData;
+  }
+
+  categoriesOf(group: CategoryGroup): Category[] {
+    return this.categoryList.categories
+      .filter(category => category.group === group.key)
+      .sort((a, b) => a.order - b.order);
+  }
+
+  /** Bei "genau einer Auswahl": die gewählte ID oder null. */
+  selectedIn(group: CategoryGroup): number | null {
+    return (
+      this.categoriesOf(group).find(category =>
+        this.selectedCategories.has(category.id)
+      )?.id ?? null
+    );
+  }
+
+  selectSingle(group: CategoryGroup, id: number | null) {
+    this.categoriesOf(group).forEach(category =>
+      this.selectedCategories.delete(category.id)
+    );
+    if (id !== null) this.selectedCategories.add(id);
+  }
+
+  toggleCategory(id: number) {
+    if (this.selectedCategories.has(id)) {
+      this.selectedCategories.delete(id);
+    } else {
+      this.selectedCategories.add(id);
+    }
   }
 
   /** Offene Tage (mindestens ein Kreuz), Montag bis Sonntag. */
@@ -195,6 +236,7 @@ export class PlaceDetailComponent implements OnInit {
         ...location,
         label: location.label?.trim() || null,
       })),
+      categories: [...this.selectedCategories],
     } as SavePlace;
 
     fetch('/api/post-place.php', {
@@ -229,6 +271,7 @@ export class PlaceDetailComponent implements OnInit {
         this.opening = data.opening;
         this.locations = data.locations;
         this.multipleLocations = data.locations.length > 0;
+        this.selectedCategories = new Set(data.categories);
 
         this.isLoading = false;
       })

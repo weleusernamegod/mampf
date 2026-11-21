@@ -3,11 +3,11 @@
 Gesammelte Vorschläge (Stand 21.11.2026). Umsetzung, sobald der Besitzer wieder am Laptop ist.
 Reihenfolge der Umsetzung: 1. Öffnungszeiten + Standorte, 2. Kategorien. Jeweils eigener Commit.
 
-**Stand:** Öffnungszeiten (2) und Standorte (3) umgesetzt in Version 0.0.004.
-Sicherheit (5) erledigt. Live-Datenbank (4): Migrationsdatei und Anleitung bereit,
-noch nicht live ausgeführt. Kategorien (1): offen, wartet auf Entscheid Besitzer.
+**Stand:** Öffnungszeiten (2) und Standorte (3) umgesetzt in Version 0.0.004,
+Kategorien (1) in Version 0.0.005. Sicherheit (5) erledigt. Live-Datenbank (4):
+Migrationsdatei und Anleitung bereit, noch nicht live ausgeführt.
 
-## 1. Kategorien
+## 1. Kategorien ✅ erledigt (0.0.005)
 
 - Neue Tabellen:
   - `tbl_category` (id, gruppe, name, reihenfolge, aktiv)
@@ -37,17 +37,18 @@ Peruanisch, Brasilianisch, Amerikanisch, Hawaiianisch
 **Gerichte:** Pizza, Pasta, Burger, Kebab, Falafel, Sushi, Ramen, Poke, Bowls, Salate,
 Suppen, Sandwiches, Wraps, Hot Dogs, Momos, Banh Mi, Tacos, Curry
 
-**Zusätze:** Vegan, Vegetarisch, Glutenfrei, Laktosefrei, Halal, Koscher, Bio, Regional,
+**Präferenzen** (früher „Zusätze“): Vegan, Vegetarisch, Glutenfrei, Laktosefrei, Halal, Koscher, Bio, Regional,
 Eigenes Geschirr willkommen, reCIRCLE, Mehrwegtopf, Mittagsmenü, Unter CHF 15, Mit Sitzplatz,
 Vorbestellung möglich, Gesund, Proteinreich, Frisch
 
 **Wartezeit** (genau eine Auswahl, in der Infobox als Info, filterbar):
 Unter 5 Minuten, 5–15 Minuten, Über 15 Minuten
 
-### Offen (Entscheid Besitzer)
+### Entscheid Besitzer (21.11.2026)
 
-- Zusätze aufteilen in **Ernährung**, **Nachhaltigkeit**, **Service**, **Ort & Ambiente**?
-- Weitere Kandidaten aus dem Brainstorming (noch nicht übernommen):
+- Zusätze **nicht** aufteilen: eine Gruppe, umbenannt in **Präferenzen**.
+- **Alle** Kandidaten aus dem Brainstorming übernommen, ebenfalls unter Präferenzen
+  (Schreibweise mit Schrägstrich: „Nussfrei / allergikerfreundlich“, „Bier / Wein“ usw.):
   - Ernährung: Low Carb, Zuckerfrei, Nussfrei/allergikerfreundlich, artgerechte Haltung,
     nachhaltiger Fisch, Hausgemacht, Scharf, Kinderfreundliche Gerichte
   - Nachhaltigkeit: Saisonal, Zero Waste, Too Good To Go, Tagesreste vergünstigt, Elektrisch betrieben

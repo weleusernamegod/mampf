@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CUISINES, Cuisine } from '../../util/cuisine-filter';
+import { Category, CategoryList } from '../../dto/category';
 
 @Component({
   selector: 'mampf-navigation',
@@ -9,8 +9,10 @@ import { CUISINES, Cuisine } from '../../util/cuisine-filter';
   styleUrl: './navigation.component.scss',
 })
 export class NavigationComponent {
-  /** Angewendeter Küchen-Filter (IDs). Wird unter den Knöpfen angezeigt. */
-  @Input() selectedCuisines: string[] = [];
+  /** Angewendeter Filter (Kategorie-IDs). Wird unter den Knöpfen angezeigt. */
+  @Input() selectedCategories: number[] = [];
+  /** Alle Kategorien, um die Namen der gewählten anzuzeigen. */
+  @Input() categoryList: CategoryList = { groups: [], categories: [] };
   /** Ist die About-Seite offen? Dann erscheint rechts ein X zum Schliessen. */
   @Input() aboutOpen = false;
   /** Platzieren-Modus für einen neuen Ort aktiv? Dann erscheinen ✓ und ✕. */
@@ -20,7 +22,7 @@ export class NavigationComponent {
   @Output() placeCancelled: EventEmitter<void> = new EventEmitter<void>();
 
   /** Klick auf das X bei einem Filter: diesen Filter entfernen. */
-  @Output() cuisineRemoved: EventEmitter<string> = new EventEmitter<string>();
+  @Output() categoryRemoved: EventEmitter<number> = new EventEmitter<number>();
   @Output() filterClicked: EventEmitter<void> = new EventEmitter<void>();
   @Output() locateClicked: EventEmitter<void> = new EventEmitter<void>();
   @Output() aboutClicked: EventEmitter<void> = new EventEmitter<void>();
@@ -29,18 +31,23 @@ export class NavigationComponent {
 
   /** Ist ein Filter aktiv? Dann wird das Filter-Icon grün. */
   get filterActive(): boolean {
-    return this.selectedCuisines.length > 0;
+    return this.selectedCategories.length > 0;
   }
 
-  /** Die gewählten Küchen in der Reihenfolge wie im Filter-Dialog. */
-  get activeCuisines(): Cuisine[] {
-    return CUISINES.filter(cuisine =>
-      this.selectedCuisines.includes(cuisine.id)
-    );
+  /** Die gewählten Kategorien in der Reihenfolge wie im Filter-Dialog. */
+  get activeCategories(): Category[] {
+    const groupOrder = this.categoryList.groups.map(group => group.key);
+    return this.categoryList.categories
+      .filter(category => this.selectedCategories.includes(category.id))
+      .sort(
+        (a, b) =>
+          groupOrder.indexOf(a.group) - groupOrder.indexOf(b.group) ||
+          a.order - b.order
+      );
   }
 
-  onCuisineRemoved(id: string) {
-    this.cuisineRemoved.emit(id);
+  onCategoryRemoved(id: number) {
+    this.categoryRemoved.emit(id);
   }
 
   onLocateClicked() {

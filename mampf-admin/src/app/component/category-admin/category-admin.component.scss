@@ -1,0 +1,9 @@
+.inactive input {
+  color: var(--bs-secondary-color);
+  text-decoration: line-through;
+}
+
+// Unter der fixierten Navigationsleiste bleiben
+.message {
+  top: 70px;
+}

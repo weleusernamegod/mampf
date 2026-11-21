@@ -10,7 +10,7 @@ Web-App mit einer Karte von Foodtrucks/Imbissständen. Live unter https://mampf.
 | `mampf-admin/` | Admin-Bereich (`/admin`), eigene Orte verwalten | Angular 18, Bootstrap |
 | `login/` | Login & Registrierung (`/login`) | Plain HTML + fetch |
 | `api/` | Backend (`/api/*.php`) | PHP (mysqli), Sessions |
-| `mampf.sql` | Datenbankschema (tbl_user, tbl_place, tbl_place_opening, tbl_place_location, tbl_picture) | MySQL/MariaDB |
+| `mampf.sql` | Datenbankschema (tbl_user, tbl_place, tbl_place_opening, tbl_place_location, tbl_category, tbl_place_category, tbl_picture) | MySQL/MariaDB |
 
 `build.sh` baut alles nach `dist/`. Diese Struktur entspricht 1:1 dem Webroot auf dem Server.
 

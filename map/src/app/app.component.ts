@@ -8,7 +8,8 @@ import { NavigationComponent } from './component/navigation/navigation.component
 import { AboutDialogComponent } from './component/about-dialog/about-dialog.component';
 import { PlaceDialogComponent } from './component/place-dialog/place-dialog.component';
 import { FilterDialogComponent } from './component/filter-dialog/filter-dialog.component';
-import { filterByCuisines } from './util/cuisine-filter';
+import { filterByCategories } from './util/category-filter';
+import { CategoryList } from './dto/category';
 import { savePendingPosition } from './util/pending-position';
 
 @Component({
@@ -31,10 +32,12 @@ export class AppComponent implements OnInit {
 
   /** Alle Shops vom Server. */
   places: Place[] = [];
-  /** Shops, die zum Küchen-Filter passen (alle, wenn kein Filter aktiv). */
+  /** Shops, die zum Filter passen (alle, wenn kein Filter aktiv). */
   visiblePlaces: Place[] = [];
-  /** Angewendeter Küchen-Filter, z.B. ['thai', 'greek']. */
-  selectedCuisines: string[] = [];
+  /** Alle Kategorien und Gruppen vom Server (api/get-categories.php). */
+  categoryList: CategoryList = { groups: [], categories: [] };
+  /** Angewendeter Filter: IDs der gewählten Kategorien. */
+  selectedCategories: number[] = [];
   selectedDay: number = new Date().getDay();
   /** Mittag oder Abend (Standard: Mittag). */
   selectedSlot: Slot = 'noon';
@@ -50,11 +53,29 @@ export class AppComponent implements OnInit {
       .then(response => response.json())
       .then(data => {
         this.places = data;
-        this.visiblePlaces = filterByCuisines(this.places, this.selectedCuisines);
+        this.updateVisiblePlaces();
       })
       .catch(error => {
         console.error('Could not fetch places', error);
       });
+
+    fetch('api/get-categories.php')
+      .then(response => response.json())
+      .then(data => {
+        this.categoryList = data;
+        this.updateVisiblePlaces();
+      })
+      .catch(error => {
+        console.error('Could not fetch categories', error);
+      });
+  }
+
+  private updateVisiblePlaces() {
+    this.visiblePlaces = filterByCategories(
+      this.places,
+      this.selectedCategories,
+      this.categoryList
+    );
   }
 
   /** Klick auf eine leere Stelle der Karte: About-Seite und Infobox schliessen. */
@@ -98,15 +119,15 @@ export class AppComponent implements OnInit {
     this.filterDialogVisible = !this.filterDialogVisible;
   }
 
-  onFilterApplied(cuisines: string[]) {
-    this.selectedCuisines = cuisines;
-    this.visiblePlaces = filterByCuisines(this.places, cuisines);
+  onFilterApplied(categories: number[]) {
+    this.selectedCategories = categories;
+    this.updateVisiblePlaces();
     this.filterDialogVisible = false;
   }
 
   /** Einzelnen Filter über das X unter der Navigation entfernen. */
-  onCuisineRemoved(id: string) {
-    this.onFilterApplied(this.selectedCuisines.filter(cuisine => cuisine !== id));
+  onCategoryRemoved(id: number) {
+    this.onFilterApplied(this.selectedCategories.filter(category => category !== id));
   }
 
   onAboutClicked() {

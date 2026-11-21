@@ -113,13 +113,13 @@ hr {
   font-size: 14px;
 }
 
-#cuisines {
+.categories {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.cuisine {
+.category {
   padding: 3px 10px;
   border-radius: 50px;
 

@@ -8,7 +8,8 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Place } from '../../dto/place';
-import { Cuisine, cuisinesOf } from '../../util/cuisine-filter';
+import { CategoryList } from '../../dto/category';
+import { GroupedCategories, categoriesOf, groupCategories } from '../../util/category-filter';
 import { OpenDaysComponent } from './open-days/open-days.component';
 import { SLOTS, WEEKDAYS, hasOpening } from '../../util/place-util';
 
@@ -26,6 +27,8 @@ export class PlaceDialogComponent implements OnChanges {
   @Input() place: Place | undefined = undefined;
   /** Im Slider gewählter Wochentag (0 = Sonntag, 1 = Montag, ...). */
   @Input() day: number = new Date().getDay();
+  /** Alle Kategorien, um die Namen anzuzeigen. */
+  @Input() categoryList: CategoryList = { groups: [], categories: [] };
   /** Klick auf das kleine X */
   @Output() closed: EventEmitter<void> = new EventEmitter<void>();
 
@@ -43,7 +46,10 @@ export class PlaceDialogComponent implements OnChanges {
   /** Nur bei mehreren Standorten, z.B. "Mo Helvetiaplatz · Fr Bahnhof Altstetten". */
   locations: string | undefined;
   pictureUrl: string | undefined;
-  cuisines: Cuisine[] = [];
+  /** Kategorien des Shops nach Gruppe (ohne Wartezeit). */
+  categoryGroups: GroupedCategories[] = [];
+  /** z.B. "5–15 Minuten" */
+  waitingTime: string | undefined;
 
   ngOnChanges(): void {
     if (this.place) {
@@ -52,7 +58,15 @@ export class PlaceDialogComponent implements OnChanges {
       this.pictureUrl = this.place.pictureId
         ? `api/get-public-picture.php?id=${this.place.pictureId}`
         : 'assets/no-picture.jpg';
-      this.cuisines = cuisinesOf(this.place);
+      const groups = groupCategories(
+        this.categoryList,
+        categoriesOf(this.place, this.categoryList)
+      );
+      this.categoryGroups = groups.filter(group => group.key !== 'wartezeit');
+      this.waitingTime = groups
+        .find(group => group.key === 'wartezeit')
+        ?.categories.map(category => category.name)
+        .join(', ');
     }
     // Neuer Ort: wieder zugeklappt anfangen. Die Höhe erst messen, wenn der
     // neue Text auf der Seite steht (kurz danach).

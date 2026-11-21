@@ -19,6 +19,16 @@
               >My Places</a
             >
           </li>
+          @if (user.admin) {
+            <li class="nav-item">
+              <a
+                routerLink="/categories"
+                routerLinkActive="active"
+                class="nav-link"
+                >Kategorien</a
+              >
+            </li>
+          }
         </ul>
         <div class="text-white-50">
           <button

@@ -57,6 +57,47 @@
       </div>
     </div>
 
+    <div class="mb-4">
+      <p class="mb-2"><strong>Kategorien</strong></p>
+      @for (group of categoryList.groups; track group.key) {
+        <div class="mb-3">
+          <label class="form-label small text-muted mb-1" [for]="'category-' + group.key">
+            {{ group.name }}
+            @if (group.single) {
+              (eine Auswahl)
+            }
+          </label>
+          @if (group.single) {
+            <select
+              class="form-select form-select-sm category-select"
+              [id]="'category-' + group.key"
+              [name]="'category-' + group.key"
+              [ngModel]="selectedIn(group)"
+              (ngModelChange)="selectSingle(group, $event)">
+              <option [ngValue]="null">– keine Angabe –</option>
+              @for (category of categoriesOf(group); track category.id) {
+                <option [ngValue]="category.id">{{ category.name }}</option>
+              }
+            </select>
+          } @else {
+            <div class="d-flex flex-wrap gap-1" [id]="'category-' + group.key">
+              @for (category of categoriesOf(group); track category.id) {
+                <button
+                  type="button"
+                  class="btn btn-sm rounded-pill"
+                  [class.btn-success]="selectedCategories.has(category.id)"
+                  [class.btn-outline-secondary]="!selectedCategories.has(category.id)"
+                  [attr.aria-pressed]="selectedCategories.has(category.id)"
+                  (click)="toggleCategory(category.id)">
+                  {{ category.name }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+
     <div class="form-check form-switch mb-3">
       <input
         type="checkbox"

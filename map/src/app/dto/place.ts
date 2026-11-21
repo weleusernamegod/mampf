@@ -11,4 +11,6 @@ export interface Place {
   opening: Opening[];
   /** Nur bei "Mehrere Standorte": ein oder mehrere Standorte pro Wochentag. */
   locations: PlaceLocation[];
+  /** IDs der Kategorien (siehe api/get-categories.php). */
+  categories: number[];
 }

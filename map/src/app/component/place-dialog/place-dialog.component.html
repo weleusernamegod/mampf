@@ -32,12 +32,19 @@
         </div>
       }
 
-      @if (cuisines.length > 0) {
+      @if (waitingTime) {
         <div class="section">
-          <strong class="title">Küche</strong>
-          <div id="cuisines">
-            @for (cuisine of cuisines; track cuisine.id) {
-              <span class="cuisine">{{ cuisine.label }}</span>
+          <strong class="title">Wartezeit</strong>
+          <div class="locations">{{ waitingTime }}</div>
+        </div>
+      }
+
+      @for (group of categoryGroups; track group.key) {
+        <div class="section">
+          <strong class="title">{{ group.name }}</strong>
+          <div class="categories">
+            @for (category of group.categories; track category.id) {
+              <span class="category">{{ category.name }}</span>
             }
           </div>
         </div>

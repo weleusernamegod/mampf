@@ -11,4 +11,6 @@ export interface SavePlace {
   opening: Opening[];
   /** Leer = nur ein Standort (lat/lng). */
   locations: PlaceLocation[];
+  /** IDs der gewählten Kategorien */
+  categories: number[];
 }

@@ -22,7 +22,15 @@ if (!_validate_payload($data) || !_validate_picture($pictureData)) {
 $opening = _normalize_opening($data['opening']);
 $locations = _normalize_locations($data['locations']);
 
+$categoryIds = array_values(array_unique($data['categories']));
+
 $mysqli = create_db_connection();
+
+if (!validate_place_categories($categoryIds)) {
+	http_response_code(400);
+	exit();
+}
+
 $mysqli->begin_transaction();
 
 // update place
@@ -53,6 +61,7 @@ if ($data['id'] === -1) {
 $place->opening = $opening;
 $place->locations = $locations;
 save_place_schedule($place);
+save_place_categories($place->id, $categoryIds);
 
 // update picture
 if ($data['updatePicture']) {
@@ -148,6 +157,14 @@ function _validate_payload($data)
 	}
 	if (!isset($data['locations']) || !_validate_locations($data['locations'])) {
 		return FALSE;
+	}
+	if (!isset($data['categories']) || !_is_list($data['categories']) || count($data['categories']) > 150) {
+		return FALSE;
+	}
+	foreach ($data['categories'] as $categoryId) {
+		if (!is_int($categoryId)) {
+			return FALSE;
+		}
 	}
 	return TRUE;
 }

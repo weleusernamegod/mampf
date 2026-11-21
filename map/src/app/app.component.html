@@ -12,8 +12,9 @@
     <div>
       <mampf-navigation
         class="inline-block"
-        [selectedCuisines]="selectedCuisines"
-        (cuisineRemoved)="onCuisineRemoved($event)"
+        [selectedCategories]="selectedCategories"
+        [categoryList]="categoryList"
+        (categoryRemoved)="onCategoryRemoved($event)"
         (locateClicked)="onLocateClicked()"
         (filterClicked)="onFilterClicked()"
         (addClicked)="onAddClicked()"
@@ -33,13 +34,15 @@
         <mampf-filter-dialog
           class="block full-height"
           [places]="places"
-          [selectedCuisines]="selectedCuisines"
+          [categoryList]="categoryList"
+          [selectedCategories]="selectedCategories"
           (filterApplied)="onFilterApplied($event)"></mampf-filter-dialog>
       } @else if (placeDialogVisible) {
         <mampf-place-dialog
           class="block full-height"
           [place]="selectedPlace"
           [day]="selectedDay"
+          [categoryList]="categoryList"
           (closed)="placeDialogVisible = false"></mampf-place-dialog>
       }
     </div>

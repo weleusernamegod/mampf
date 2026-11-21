@@ -9,4 +9,5 @@ export interface Place {
   lng: number;
   opening: Opening[];
   locations: PlaceLocation[];
+  categories: number[];
 }

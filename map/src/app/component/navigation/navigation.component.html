@@ -50,14 +50,14 @@
     </div>
   } @else if (filterActive) {
     <div id="active-filters">
-      @for (cuisine of activeCuisines; track cuisine.id) {
+      @for (category of activeCategories; track category.id) {
         <div class="overlay filter-chip">
-          <span>{{ cuisine.label }}</span>
+          <span>{{ category.name }}</span>
           <button
             type="button"
             class="remove"
-            [attr.aria-label]="cuisine.label + ' entfernen'"
-            (click)="onCuisineRemoved(cuisine.id)"></button>
+            [attr.aria-label]="category.name + ' entfernen'"
+            (click)="onCategoryRemoved(category.id)"></button>
         </div>
       }
     </div>

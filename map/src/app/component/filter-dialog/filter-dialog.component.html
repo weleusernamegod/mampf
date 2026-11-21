@@ -1,21 +1,26 @@
 <div id="wrapper">
   <div id="dialog" class="overlay">
     <h2>Filtern</h2>
-    <p class="label">Küche</p>
 
-    <div id="chips">
-      @for (option of options; track option.cuisine.id) {
-        <button
-          type="button"
-          class="chip"
-          [class.selected]="draft.has(option.cuisine.id)"
-          [attr.aria-pressed]="draft.has(option.cuisine.id)"
-          (click)="toggle(option.cuisine.id)">
-          {{ option.cuisine.label }}
-          <span class="count">{{ option.count }}</span>
-        </button>
-      }
-    </div>
+    @for (section of sections; track section.key) {
+      <p class="label">{{ section.name }}</p>
+
+      <div class="chips">
+        @for (option of section.options; track option.category.id) {
+          <button
+            type="button"
+            class="chip"
+            [class.selected]="draft.has(option.category.id)"
+            [attr.aria-pressed]="draft.has(option.category.id)"
+            (click)="toggle(option.category.id)">
+            {{ option.category.name }}
+            <span class="count">{{ option.count }}</span>
+          </button>
+        }
+      </div>
+    } @empty {
+      <p class="label">Noch keine Kategorien vorhanden.</p>
+    }
 
     <div id="actions">
       <button

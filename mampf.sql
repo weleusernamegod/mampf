@@ -24,6 +24,22 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `tbl_category`
+-- Kategorien (Art des Lokals, Küche, Gerichte, Präferenzen, Wartezeit).
+-- Die Liste der Kategorien steht in data/migration-2026-11.sql (Teil 3).
+--
+
+CREATE TABLE `tbl_category` (
+  `id` int(11) NOT NULL,
+  `gruppe` varchar(30) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `reihenfolge` int(11) NOT NULL DEFAULT 0,
+  `aktiv` tinyint(4) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `tbl_picture`
 --
 
@@ -51,6 +67,17 @@ CREATE TABLE `tbl_place` (
   `lng` double NOT NULL,
   `create_time` datetime NOT NULL,
   `last_update_time` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `tbl_place_category`
+--
+
+CREATE TABLE `tbl_place_category` (
+  `place_id` int(11) NOT NULL,
+  `category_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -103,6 +130,13 @@ CREATE TABLE `tbl_user` (
 --
 
 --
+-- Indizes für die Tabelle `tbl_category`
+--
+ALTER TABLE `tbl_category`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_gruppe_name` (`gruppe`,`name`);
+
+--
 -- Indizes für die Tabelle `tbl_picture`
 --
 ALTER TABLE `tbl_picture`
@@ -115,6 +149,13 @@ ALTER TABLE `tbl_place`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_place_user` (`user_id`),
   ADD KEY `fk_place_picture` (`picture_id`);
+
+--
+-- Indizes für die Tabelle `tbl_place_category`
+--
+ALTER TABLE `tbl_place_category`
+  ADD PRIMARY KEY (`place_id`,`category_id`),
+  ADD KEY `fk_place_category_category` (`category_id`);
 
 --
 -- Indizes für die Tabelle `tbl_place_opening`
@@ -139,6 +180,12 @@ ALTER TABLE `tbl_user`
 --
 -- AUTO_INCREMENT für exportierte Tabellen
 --
+
+--
+-- AUTO_INCREMENT für Tabelle `tbl_category`
+--
+ALTER TABLE `tbl_category`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT für Tabelle `tbl_picture`
@@ -174,6 +221,13 @@ ALTER TABLE `tbl_user`
 ALTER TABLE `tbl_place`
   ADD CONSTRAINT `fk_place_picture` FOREIGN KEY (`picture_id`) REFERENCES `tbl_picture` (`id`),
   ADD CONSTRAINT `fk_place_user` FOREIGN KEY (`user_id`) REFERENCES `tbl_user` (`id`);
+
+--
+-- Constraints der Tabelle `tbl_place_category`
+--
+ALTER TABLE `tbl_place_category`
+  ADD CONSTRAINT `fk_place_category_place` FOREIGN KEY (`place_id`) REFERENCES `tbl_place` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_place_category_category` FOREIGN KEY (`category_id`) REFERENCES `tbl_category` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints der Tabelle `tbl_place_opening`

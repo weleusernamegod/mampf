@@ -6,11 +6,17 @@ import {
   Output,
 } from '@angular/core';
 import { Place } from '../../dto/place';
-import { CUISINES, Cuisine, hasCuisine } from '../../util/cuisine-filter';
+import { Category, CategoryList } from '../../dto/category';
 
-interface CuisineOption {
-  cuisine: Cuisine;
+interface CategoryOption {
+  category: Category;
   count: number; // so viele Shops passen
+}
+
+interface GroupSection {
+  key: string;
+  name: string;
+  options: CategoryOption[];
 }
 
 @Component({
@@ -21,27 +27,43 @@ interface CuisineOption {
   styleUrl: './filter-dialog.component.scss',
 })
 export class FilterDialogComponent implements OnChanges {
-  /** Alle Shops, um zu zählen, wie viele pro Küche passen. */
+  /** Alle Shops, um zu zählen, wie viele pro Kategorie passen. */
   @Input() places: Place[] = [];
-  /** Aktuell angewendeter Filter. */
-  @Input() selectedCuisines: string[] = [];
+  /** Alle Kategorien und Gruppen vom Server. */
+  @Input() categoryList: CategoryList = { groups: [], categories: [] };
+  /** Aktuell angewendeter Filter (Kategorie-IDs). */
+  @Input() selectedCategories: number[] = [];
 
   /** Wird erst beim Klick auf "Anwenden" ausgelöst. */
-  @Output() filterApplied: EventEmitter<string[]> = new EventEmitter<string[]>();
+  @Output() filterApplied: EventEmitter<number[]> = new EventEmitter<number[]>();
 
-  options: CuisineOption[] = [];
+  sections: GroupSection[] = [];
   /** Auswahl im Dialog, noch nicht angewendet. */
-  draft = new Set<string>();
+  draft = new Set<number>();
 
   ngOnChanges(): void {
-    this.options = CUISINES.map(cuisine => ({
-      cuisine,
-      count: this.places.filter(place => hasCuisine(place, cuisine)).length,
-    }));
-    this.draft = new Set(this.selectedCuisines);
+    this.draft = new Set(this.selectedCategories);
+    // Pro Gruppe ein Abschnitt. Kategorien ohne Orte ausblenden
+    // (ausser sie sind gerade gewählt, sonst könnte man sie nicht abwählen).
+    this.sections = this.categoryList.groups
+      .map(group => ({
+        key: group.key,
+        name: group.name,
+        options: this.categoryList.categories
+          .filter(category => category.group === group.key)
+          .sort((a, b) => a.order - b.order)
+          .map(category => ({
+            category,
+            count: this.places.filter(place =>
+              place.categories.includes(category.id)
+            ).length,
+          }))
+          .filter(option => option.count > 0 || this.draft.has(option.category.id)),
+      }))
+      .filter(section => section.options.length > 0);
   }
 
-  toggle(id: string) {
+  toggle(id: number) {
     if (this.draft.has(id)) {
       this.draft.delete(id);
     } else {

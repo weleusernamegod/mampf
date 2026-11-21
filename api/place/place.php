@@ -13,10 +13,12 @@ class Place
     /** Standorte pro Wochentag (nur bei "Mehrere Standorte", sonst leer):
      *  Liste von ['weekday' => 0–6, 'lat' => …, 'lng' => …, 'label' => string|null] */
     public $locations;
+    /** IDs der (sichtbaren) Kategorien */
+    public $categories;
     public $createTime;
     public $lastUpdateTime;
 
-    public function __construct($id, $userId, $pictureId, $name, $description, $lat, $lng, $createTime, $lastUpdateTime, $opening = [], $locations = [])
+    public function __construct($id, $userId, $pictureId, $name, $description, $lat, $lng, $createTime, $lastUpdateTime, $opening = [], $locations = [], $categories = [])
     {
         $this->id = $id;
         $this->userId = $userId;
@@ -29,6 +31,7 @@ class Place
         $this->lastUpdateTime = $lastUpdateTime;
         $this->opening = $opening;
         $this->locations = $locations;
+        $this->categories = $categories;
     }
 }
 ?>

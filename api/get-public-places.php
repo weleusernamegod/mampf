@@ -32,7 +32,8 @@ function _map_place_to_dto($place)
                 'lng' => $location['lng']
             ],
             'label' => $location['label']
-        ], $place->locations)
+        ], $place->locations),
+        'categories' => $place->categories
     ];
 }
 ?>

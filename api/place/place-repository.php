@@ -1,5 +1,6 @@
 <?php
 require_once('place.php');
+require_once(__DIR__ . '/../category/category-repository.php');
 
 const PLACE_COLUMNS = 'id, user_id, picture_id, name, description, lat, lng, create_time, last_update_time';
 
@@ -62,9 +63,9 @@ function delete_place_by_id($id)
 {
     global $mysqli;
 
-    // Öffnungszeiten und Standorte zuerst (wären dank ON DELETE CASCADE
-    // auch so weg, aber sicher ist sicher)
-    foreach (['tbl_place_opening', 'tbl_place_location'] as $table) {
+    // Öffnungszeiten, Standorte und Kategorien zuerst (wären dank
+    // ON DELETE CASCADE auch so weg, aber sicher ist sicher)
+    foreach (['tbl_place_opening', 'tbl_place_location', 'tbl_place_category'] as $table) {
         $statement = $mysqli->prepare("DELETE FROM $table WHERE place_id = ?");
         $statement->bind_param("i", $id);
         $statement->execute();
@@ -130,7 +131,7 @@ function find_places_by_user_id($user_id)
     return _load_schedules($places);
 }
 
-/** Öffnungszeiten und Standorte zu den Orten laden (je eine Abfrage für alle). */
+/** Öffnungszeiten, Standorte und Kategorien zu den Orten laden (je eine Abfrage für alle). */
 function _load_schedules($places)
 {
     global $mysqli;
@@ -161,6 +162,10 @@ function _load_schedules($places)
             'lng' => floatval($row['lng']),
             'label' => $row['label']
         ];
+    }
+
+    foreach (find_active_category_ids_by_place_ids(array_keys($byId)) as $placeId => $categoryIds) {
+        $byId[$placeId]->categories = $categoryIds;
     }
 
     return $places;

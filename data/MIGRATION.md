@@ -1,7 +1,8 @@
 # Datenbank-Umstellung live (November 2026)
 
 Diese Anleitung stellt die Live-Datenbank auf die neue Version um:
-Öffnungszeiten als Matrix und mehrere Standorte für Foodtrucks.
+Öffnungszeiten als Matrix, mehrere Standorte für Foodtrucks und Kategorien
+(inkl. einer ersten Zuordnung der bestehenden Orte über Stichworte).
 Die Änderungen stehen in der Datei `data/migration-2026-11.sql`.
 
 **Wichtig:** Die neue Website-Version und die neue Datenbank gehören zusammen.
@@ -71,13 +72,28 @@ SELECT COUNT(*) FROM tbl_place_opening;
 SELECT p.id, p.name FROM tbl_place p
 LEFT JOIN tbl_place_opening o ON o.place_id = p.id
 WHERE o.place_id IS NULL;
+
+-- Kategorien pro Gruppe (art 13, gericht 18, kueche 26, praeferenz 56, wartezeit 3)
+SELECT gruppe, COUNT(*) FROM tbl_category GROUP BY gruppe;
+
+-- Welche Kategorien die Orte automatisch bekommen haben (zum Nachbessern)
+SELECT p.name, GROUP_CONCAT(c.name ORDER BY c.gruppe SEPARATOR ', ') AS kategorien
+FROM tbl_place p
+LEFT JOIN tbl_place_category pc ON pc.place_id = p.id
+LEFT JOIN tbl_category c ON c.id = pc.category_id
+GROUP BY p.id ORDER BY p.name;
 ```
 
 Dann https://mampf.io öffnen:
 - Erscheinen die Orte? Mit dem Tages-Slider und dem Schalter Mittag/Abend
   ändern sich die grünen Punkte?
 - Einen Ort antippen und aufklappen: Ist die Öffnungszeiten-Matrix richtig?
-- Im Admin-Bereich einen Ort öffnen, Öffnungszeiten ändern, speichern.
+- Filter-Knopf: Erscheinen Abschnitte wie „Küche“ und „Gerichte“ mit Zahlen?
+- Im Admin-Bereich einen Ort öffnen, Öffnungszeiten und Kategorien ändern, speichern.
+- Als Admin oben auf **Kategorien**: Liste der Kategorien zum Verwalten.
+
+Die automatische Zuordnung ist nur ein Vorschlag (aus Name und Beschreibung
+erraten). Am besten die Orte danach im Admin-Bereich kurz durchgehen.
 
 ## Falls etwas schiefgeht
 
