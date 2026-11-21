@@ -12,6 +12,12 @@ Web-App mit einer Karte von Foodtrucks/Imbissständen. Live unter https://mampf.
 | `api/` | Backend (`/api/*.php`) | PHP (mysqli), Sessions |
 | `mampf.sql` | Datenbankschema (tbl_user, tbl_place, tbl_place_opening, tbl_place_location, tbl_category, tbl_place_category, tbl_picture) | MySQL/MariaDB |
 
+| `design/font/` | Mampf-Schrift (vom Logo abgeleitet), Generator `mampf_font.py`, Testseite `testen.html` | Python (fonttools, shapely) |
+
+Sprüche unter dem Logo: `map/public/assets/slogans.txt` (einer pro Zeile). `map/public/assets/slogan.js`
+wählt bei jedem Anzeigen des Logos zufällig einen (Splashscreen, About-Seite, Login, Registrierung).
+Schrift dafür: `map/public/assets/fonts/Mampf-Regular.woff2` (wird von `mampf_font.py` dorthin kopiert).
+
 `build.sh` baut alles nach `dist/`. Diese Struktur entspricht 1:1 dem Webroot auf dem Server.
 
 ## Lokal entwickeln

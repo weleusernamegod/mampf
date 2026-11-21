@@ -12,6 +12,12 @@
       "runtimeExecutable": "bash",
       "runtimeArgs": ["-c", "export PATH=/opt/homebrew/opt/node@22/bin:$PATH && cd map && npm start"],
       "port": 4200
+    },
+    {
+      "name": "font-muster",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8099", "--directory", "design/font"],
+      "port": 8099
     }
   ]
 }

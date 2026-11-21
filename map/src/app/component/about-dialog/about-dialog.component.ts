@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { VERSION } from '../../version';
 
 /** Vom Browser angebotene Installation als App (nur Chrome/Android, mit Web-App-Manifest). */
@@ -12,6 +12,13 @@ window.addEventListener('beforeinstallprompt', event => {
   installPrompt = event as InstallPromptEvent;
 });
 
+/** Zufallsspruch unter dem Logo, aus assets/slogan.js (in index.html geladen). */
+declare global {
+  interface Window {
+    MampfSlogan?: { attach(element: Element): Promise<unknown> };
+  }
+}
+
 /** Die Zeilen im Dialog. */
 type Row = 'share' | 'home' | 'language' | 'color';
 
@@ -22,13 +29,19 @@ type Row = 'share' | 'home' | 'language' | 'color';
   templateUrl: './about-dialog.component.html',
   styleUrl: './about-dialog.component.scss',
 })
-export class AboutDialogComponent implements OnDestroy {
+export class AboutDialogComponent implements AfterViewInit, OnDestroy {
   readonly version = VERSION;
+
+  @ViewChild('logo') logo?: ElementRef<HTMLElement>;
 
   /** Kurzer Hinweis, der für ein paar Sekunden den Text einer Zeile ersetzt. */
   hint: { row: Row; text: string } | undefined = undefined;
 
   private timer: ReturnType<typeof setTimeout> | undefined;
+
+  ngAfterViewInit(): void {
+    if (this.logo) window.MampfSlogan?.attach(this.logo.nativeElement);
+  }
 
   ngOnDestroy(): void {
     clearTimeout(this.timer);

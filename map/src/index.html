@@ -65,6 +65,28 @@
         opacity: 0;
       }
       /*
+        Zufallsspruch unter dem Logo (assets/slogan.js). Sichtbar nur, solange das
+        Logo ganz ist (bis 33 %) und das Band ihn noch verdeckt: Ab ca. 45 % liegt
+        das schrumpfende Band nicht mehr hinter dem Spruch.
+      */
+      #splash .mampf-slogan {
+        opacity: 0;
+        animation: splash-slogan var(--splash-duration, 4.5s) linear forwards;
+      }
+      @keyframes splash-slogan {
+        0% {
+          opacity: 0;
+        }
+        8%,
+        33% {
+          opacity: 1;
+        }
+        40%,
+        100% {
+          opacity: 0;
+        }
+      }
+      /*
         Weisses Band hinter dem Logo, von Anfang an mit runden Ecken wie der
         Tages-Wähler. Am Anfang ist es grösser als der Bildschirm (Ecken liegen
         ausserhalb), dann zieht es sich auf die Grösse des Tages-Wählers zusammen
@@ -175,6 +197,7 @@
     <app-root></app-root>
 
     <div id="splash"><div id="splash-band"></div></div>
+    <script src="assets/slogan.js"></script>
     <script>
       (() => {
         /** Dauer der Logo-Animation. Die Datei ist auf 3000 ms gebaut, hier etwas langsamer. */
@@ -231,6 +254,13 @@
               .replace(/3000ms/g, DURATION + 'ms'); // Tempo anpassen
             splash.insertAdjacentHTML('beforeend', svg);
             splash.classList.add('play'); // Band-Animation gleichzeitig starten
+
+            // Zufallsspruch unter das Logo. Kommt er etwas später (Schrift lädt noch),
+            // springt seine Animation an die richtige Stelle, damit er nicht zu lange bleibt.
+            const started = performance.now();
+            window.MampfSlogan?.attach(splash.querySelector('svg')).then(slogan => {
+              if (slogan) slogan.style.animationDelay = -(performance.now() - started) + 'ms';
+            });
 
             // 1. Band hat die Grösse der Leiste -> gegen die (noch leere) Leiste tauschen
             at(BAND_DONE, () => {

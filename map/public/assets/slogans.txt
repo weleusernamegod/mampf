@@ -1,0 +1,34 @@
+# mampf-Sprüche
+#
+# Bei jedem Laden des Logos wird zufällig einer dieser Sprüche
+# unter das Logo geschrieben (Splashscreen, About-Seite, Login).
+#
+# - Ein Spruch pro Zeile, am besten kleingeschrieben (die Schrift hat nur
+#   Kleinbuchstaben). Erlaubt sind: a-z ä ö ü é è à 0-9 ? ! . , : - ' " /
+# - Lange Sprüche werden automatisch kleiner, damit sie vor das «p» passen.
+#   Ab etwa 16 Zeichen wird es merklich kleiner.
+# - Zeilen mit # am Anfang und leere Zeilen werden ignoriert.
+# - Ausprobieren, wie ein neuer Spruch aussieht: design/font/testen.html
+
+es esch zwöufi
+wodöre gömmer?
+hunger? mampf!
+was gits hüt?
+hüt chochi ned
+mampf di satt!
+zmittag? gärn!
+endlich mittag!
+mittag esch heilig
+zmittag? mampf!
+dis zmittag rollt a
+scho wieder mittag?
+zmittag ohni abwasch
+dä herd hed frei
+pfanne blibt chalt
+hüt chochsch ned
+zmettag deheim vergässe
+zful för mealprepp
+choche chani ned
+nöchst johr chochi meh vor
+weder nüd debi
+set em 10i am hungere

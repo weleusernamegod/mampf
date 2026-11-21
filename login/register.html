@@ -44,7 +44,10 @@
 <body class="d-flex align-items-center py-4 bg-body-tertiary">
     <main class="form-register w-100 m-auto text-center">
         <form onsubmit="onFormSubmit(event)">
-            <img class="mb-3" src="logo.svg" alt="" width="250">
+            <!-- Logo mit Zufallsspruch (Sprüche: map/public/assets/slogans.txt) -->
+            <div class="mb-3 mx-auto" style="width: 250px" data-mampf-slogan>
+                <img class="d-block" src="logo.svg" alt="mampf" width="250">
+            </div>
             <h1 class="h4 mb-3 fw-normal">Jetzt registrieren</h1>
 
             <div class="form-floating">
@@ -71,6 +74,7 @@
             <p class="mt-5 mb-3 text-body-secondary">Bereits registriert? <a href="index.html">Jetzt anmelden</a></p>
         </form>
     </main>
+    <script src="/assets/slogan.js"></script>
 </body>
 
 <script>

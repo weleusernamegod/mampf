@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Mampf-Schrift testen</title>
+<style>
+  :root { --teal: #2e9991; --family: sans-serif; --weight: 400; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px -apple-system, "Segoe UI", sans-serif; color: #333; background: #f4f6f6; }
+  header { background: var(--teal); color: #fff; padding: 14px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  header h1 { font-size: 18px; margin: 0; font-weight: 600; }
+  header .built { opacity: .8; font-size: 13px; }
+  header button { margin-left: auto; }
+  button { font: inherit; border: 0; border-radius: 6px; padding: 7px 14px; background: #fff; color: var(--teal); cursor: pointer; font-weight: 600; }
+  main { max-width: 1100px; margin: 0 auto; padding: 20px 24px 60px; }
+  .controls { background: #fff; border-radius: 10px; padding: 16px 18px; display: grid; gap: 14px; }
+  .controls textarea { width: 100%; font: 22px var(--family); font-weight: var(--weight); color: var(--teal); padding: 8px 10px; border: 1px solid #ccd; border-radius: 6px; resize: vertical; }
+  .row { display: flex; gap: 22px; flex-wrap: wrap; align-items: center; }
+  .row label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+  .seg { display: inline-flex; border: 1px solid var(--teal); border-radius: 6px; overflow: hidden; }
+  .seg label { padding: 5px 12px; color: var(--teal); }
+  .seg input { display: none; }
+  .seg label:has(input:checked) { background: var(--teal); color: #fff; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #889; margin: 28px 0 8px; font-weight: 600; }
+  .card { background: #fff; border-radius: 10px; padding: 18px 22px; overflow-x: auto; }
+  .inverse .card.preview { background: var(--teal); }
+  .inverse .card.preview .t, .inverse #logo { color: #fff; }
+  .t { font-family: var(--family); font-weight: var(--weight); color: var(--teal); white-space: pre-wrap; line-height: 1.25; }
+  #logo { width: 100%; max-width: 900px; display: block; color: var(--teal); }
+  #logo .s { fill: none; stroke: currentColor; stroke-width: 40; stroke-linecap: round; stroke-linejoin: round; }
+  #area { fill: none; stroke: #e0565b; stroke-width: 3; stroke-dasharray: 12 8; }
+  .hint { font-size: 13px; color: #889; margin-top: 6px; }
+  .checks .t { font-size: 56px; margin: 4px 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Mampf-Schrift testen</h1>
+  <span class="built" id="built">lädt …</span>
+  <button id="reload" title="Nach einer Änderung an der Schrift (mampf_font.py neu laufen lassen)">Schrift neu laden</button>
+</header>
+
+<main>
+  <div class="controls">
+    <textarea id="text" rows="2" spellcheck="false">choche chani ned</textarea>
+    <div class="row">
+      <span class="seg">
+        <label><input type="radio" name="w" value="300">Light</label>
+        <label><input type="radio" name="w" value="400" checked>Regular</label>
+        <label><input type="radio" name="w" value="700">Bold</label>
+      </span>
+      <label>Grösse <input type="range" id="size" min="20" max="240" value="110"> <span id="sizeVal"></span></label>
+      <label><input type="checkbox" id="inverse"> weiss auf türkis</label>
+      <label><input type="checkbox" id="showArea"> freien Platz im Logo zeigen</label>
+    </div>
+  </div>
+
+  <h2>Im Logo (erste Zeile des Texts)</h2>
+  <div class="card preview">
+    <svg id="logo" viewBox="0 0 1700 750" xmlns="http://www.w3.org/2000/svg">
+      <g class="s">
+<g id="F">
+ <line id="eNJ3i4hIfWA3" x1="1338" y1="199" x2="1338" y2="634"/>
+ <line id="eNJ3i4hIfWA4" x1="1298" y1="434" x2="1428" y2="434"/>
+ <path d="M1468,199c0-35.9-29.1-65-65-65s-65,29.1-65,65"/>
+</g>
+<g id="P">
+ <line id="eNJ3i4hIfWA8" x1="1118" y1="199" x2="1118" y2="634"/>
+ <line id="eNJ3i4hIfWA9" x1="1248" y1="199" x2="1248" y2="369.11"/>
+ <path d="M1118,199c0-35.9,29.1-65,65-65s65,29.1,65,65"/>
+ <line id="eNJ3i4hIfWA11" x1="1183" y1="434" x2="1118" y2="434"/>
+ <path id="eNJ3i4hIfWA12" d="M1248,369c0,35.9-29.1,65-65,65"/>
+</g>
+<g id="M2">
+ <line id="eNJ3i4hIfWA15" x1="768" y1="199" x2="768" y2="434"/>
+ <line id="eNJ3i4hIfWA16" x1="898" y1="199" x2="898" y2="434"/>
+ <path d="M768,199c0-35.9,29.1-65,65-65s65,29.1,65,65"/>
+ <line id="eNJ3i4hIfWA20" x1="898" y1="199" x2="898" y2="434"/>
+ <line id="eNJ3i4hIfWA21" x1="1028" y1="199" x2="1028" y2="434"/>
+ <path d="M898,199c0-35.9,29.1-65,65-65s65,29.1,65,65"/>
+</g>
+<g id="A">
+ <line id="eNJ3i4hIfWA25" x1="678" y1="199" x2="678" y2="434"/>
+ <line id="eNJ3i4hIfWA26" x1="548" y1="199" x2="548" y2="369"/>
+ <path d="M548,199c0-35.9,29.1-65,65-65s65,29.1,65,65"/>
+ <path d="M548,369c0,35.9,29.1,65,65,65s65-29.1,65-65"/>
+</g>
+<g id="M">
+ <line id="eNJ3i4hIfWA31" x1="198" y1="199" x2="198" y2="434"/>
+ <line id="eNJ3i4hIfWA32" x1="328" y1="199" x2="328" y2="434"/>
+ <path d="M198,199c0-35.9,29.1-65,65-65s65,29.1,65,65"/>
+ <line id="eNJ3i4hIfWA36" x1="328" y1="199" x2="328" y2="434"/>
+ <line id="eNJ3i4hIfWA37" x1="458" y1="199" x2="458" y2="434"/>
+ <path d="M328,199c0-35.9,29.1-65,65-65s65,29.1,65,65"/>
+</g>
+      </g>
+      <rect id="area" x="178" y="482" width="877" height="172" visibility="hidden"/>
+      <text id="slogan" fill="currentColor"></text>
+    </svg>
+    <div class="hint" id="fitInfo"></div>
+  </div>
+
+  <h2>Gross</h2>
+  <div class="card preview"><div class="t" id="big"></div></div>
+
+  <h2>Abstände prüfen</h2>
+  <div class="card checks">
+    <div class="t">hihjhkhlh nininjnknl</div>
+    <div class="t">fgfafofl affe kaffi</div>
+    <div class="t">hamburgefonstiv</div>
+    <div class="t">abcdefghijklm nopqrstuvwxyz</div>
+    <div class="t">äöü éèà 0123456789 ?!.,:-'"/</div>
+  </div>
+</main>
+
+<script>
+/* Masse der Schrift (Font-Einheiten pro 1000), siehe mampf_font.py */
+const UNITS = { gapHalf: 64.2, desc: 207, sw: { 300: 55.2, 400: 75.9, 700: 101.2 } };
+/* Freier Platz im Logo (Logo-Koordinaten) */
+const AREA = { left: 178, right: 1055, bottom: 654, maxSize: 178 };
+
+const $ = id => document.getElementById(id);
+const html = document.documentElement;
+let fontCounter = 0;
+
+function b64ToBuffer(b64) {
+  return Uint8Array.from(atob(b64), c => c.charCodeAt(0)).buffer;
+}
+
+async function registerFonts() {
+  const family = "MampfTest" + (++fontCounter);
+  const weights = { Light: "300", Regular: "400", Bold: "700" };
+  const loads = Object.entries(weights).map(([style, weight]) => {
+    const face = new FontFace(family, b64ToBuffer(window.MAMPF_FONTS[style]), { weight });
+    document.fonts.add(face);
+    return face.load();
+  });
+  await Promise.all(loads);
+  html.style.setProperty("--family", `"${family}"`);
+  $("built").textContent = "Schrift gebaut um " + window.MAMPF_FONTS_BUILT;
+  render();
+}
+
+function loadFontScript() {
+  const old = document.querySelector("script[data-fonts]");
+  if (old) old.remove();
+  const s = document.createElement("script");
+  s.src = "mampf-fonts.js?v=" + Date.now();
+  s.dataset.fonts = "1";
+  s.onload = registerFonts;
+  s.onerror = () => { $("built").textContent = "mampf-fonts.js fehlt – zuerst mampf_font.py laufen lassen"; };
+  document.head.appendChild(s);
+}
+
+function weight() { return document.querySelector("input[name=w]:checked").value; }
+
+function renderLogo() {
+  const text = $("text").value.split("\n")[0];
+  const el = $("slogan");
+  const w = weight();
+  const sw = UNITS.sw[w];
+  el.textContent = text;
+  el.style.fontFamily = getComputedStyle(html).getPropertyValue("--family");
+  el.style.fontWeight = w;
+  if (!text.trim()) { $("fitInfo").textContent = ""; return; }
+
+  // Breite bei Grösse 100 messen, dann so gross wie möglich einpassen
+  el.setAttribute("font-size", 100);
+  const side = (UNITS.gapHalf - sw / 2) / 1000;       // Leerraum vor/nach der Tinte
+  const ink100 = el.getComputedTextLength() - 2 * side * 100;
+  const avail = AREA.right - AREA.left;
+  const size = Math.min(AREA.maxSize, avail / ink100 * 100);
+  const hasDesc = /[gjpqy,]/.test(text);
+  const below = (hasDesc ? UNITS.desc + sw / 2 : sw / 2) / 1000 * size;
+  el.setAttribute("font-size", size.toFixed(1));
+  el.setAttribute("x", (AREA.left - side * size).toFixed(1));
+  el.setAttribute("y", (AREA.bottom - below).toFixed(1));
+  const pct = Math.round(size / AREA.maxSize * 100);
+  // ab 97 % sieht man keinen Unterschied
+  $("fitInfo").textContent = pct >= 97
+    ? "Volle Grösse."
+    : `Text ist lang: auf ${pct} % verkleinert, damit er vor das «p» passt.`;
+}
+
+function render() {
+  const size = $("size").value;
+  $("sizeVal").textContent = size + " px";
+  html.style.setProperty("--weight", weight());
+  $("big").style.fontSize = size + "px";
+  $("big").textContent = $("text").value;
+  renderLogo();
+  localStorage.setItem("mampf-test", JSON.stringify({ text: $("text").value, w: weight(), size }));
+}
+
+// Letzten Stand wiederherstellen
+try {
+  const saved = JSON.parse(localStorage.getItem("mampf-test"));
+  if (saved) {
+    $("text").value = saved.text;
+    $("size").value = saved.size;
+    const r = document.querySelector(`input[name=w][value="${saved.w}"]`);
+    if (r) r.checked = true;
+  }
+} catch (e) {}
+
+$("text").addEventListener("input", render);
+$("size").addEventListener("input", render);
+document.querySelectorAll("input[name=w]").forEach(r => r.addEventListener("change", render));
+$("inverse").addEventListener("change", e => document.body.classList.toggle("inverse", e.target.checked));
+$("showArea").addEventListener("change", e => $("area").setAttribute("visibility", e.target.checked ? "visible" : "hidden"));
+$("reload").addEventListener("click", loadFontScript);
+loadFontScript();
+</script>
+</body>
+</html>
