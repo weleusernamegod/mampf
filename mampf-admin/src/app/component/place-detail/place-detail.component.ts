@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Place } from '../../dto/place';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 import { FormsModule, FormSubmittedEvent } from '@angular/forms';
@@ -15,6 +15,15 @@ import { Category, CategoryGroup, CategoryList } from '../../dto/category';
 
 /** So viele Standorte pro Tag sind möglich (Sonderfall: zwei Orte am gleichen Tag). */
 const MAX_LOCATIONS_PER_DAY = 2;
+
+/** Für die Suche: klein, ohne Akzente und Umlaut-Punkte (cafe findet Café). */
+function normalize(text: string): string {
+  return text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
 
 @Component({
   selector: 'mampf-place-detail',
@@ -61,8 +70,13 @@ export class PlaceDetailComponent implements OnInit {
   categoryList: CategoryList = { groups: [], categories: [] };
   /** Gewählte Kategorien (IDs). */
   selectedCategories = new Set<number>();
+  /** Suchfeld pro Gruppe (Küche, Gerichte ...): Gruppe -> eingetippter Text. */
+  searchTerms: Partial<Record<string, string>> = {};
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     fetch('/api/get-categories.php')
@@ -102,20 +116,24 @@ export class PlaceDetailComponent implements OnInit {
       .sort((a, b) => a.order - b.order);
   }
 
-  /** Bei "genau einer Auswahl": die gewählte ID oder null. */
-  selectedIn(group: CategoryGroup): number | null {
-    return (
-      this.categoriesOf(group).find(category =>
+  /** Chips, die zum Suchtext passen. Gewählte bleiben immer sichtbar. */
+  visibleCategoriesOf(group: CategoryGroup): Category[] {
+    const term = normalize(this.searchTerms[group.key] ?? '');
+    return this.categoriesOf(group).filter(
+      category =>
+        !term ||
+        normalize(category.name).includes(term) ||
         this.selectedCategories.has(category.id)
-      )?.id ?? null
     );
   }
 
-  selectSingle(group: CategoryGroup, id: number | null) {
+  /** Bei "genau einer Auswahl": wählen, oder abwählen, wenn schon gewählt. */
+  toggleSingle(group: CategoryGroup, id: number) {
+    const wasSelected = this.selectedCategories.has(id);
     this.categoriesOf(group).forEach(category =>
       this.selectedCategories.delete(category.id)
     );
-    if (id !== null) this.selectedCategories.add(id);
+    if (!wasSelected) this.selectedCategories.add(id);
   }
 
   toggleCategory(id: number) {
@@ -202,6 +220,10 @@ export class PlaceDetailComponent implements OnInit {
 
   removeLocation(location: PlaceLocation) {
     this.locations = this.locations.filter(other => other !== location);
+  }
+
+  onCancel() {
+    this.router.navigate(['/my-places']);
   }
 
   onFormSubmitted() {

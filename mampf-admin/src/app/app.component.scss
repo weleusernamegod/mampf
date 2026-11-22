@@ -1,0 +1,81 @@
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+
+  background-color: var(--white);
+  box-shadow: 0px 1px 4px 0px var(--shadow);
+}
+
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  max-width: 640px;
+  height: 64px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+// Logo etwas näher an "Meine Orte" als die Links untereinander
+.brand {
+  display: block;
+  margin-right: -8px;
+}
+
+// Logo in der Oberflächenfarbe: die Datei dient nur als Form (Maske), wie beim Login
+.mampf-logo {
+  display: block;
+  width: 112px;
+  aspect-ratio: 1700 / 750;
+
+  background-color: var(--primary);
+  -webkit-mask: url('/assets/logo.svg') center / contain no-repeat;
+  mask: url('/assets/logo.svg') center / contain no-repeat;
+}
+
+.nav-link {
+  padding: 4px 0;
+
+  border: none;
+  background: none;
+
+  color: var(--grey2);
+  font-size: 15px;
+  text-decoration: none;
+  white-space: nowrap;
+
+  transition: color 0.2s ease;
+
+  // Gewählte Seite in Schwarz, die anderen (und Abmelden) bleiben grau
+  &.active,
+  &:hover {
+    color: var(--black);
+  }
+}
+
+.sign-out {
+  margin-left: auto;
+}
+
+// Handy: enger zusammen, damit auch "Kategorien" (nur Admins) Platz hat
+@media (max-width: 480px) {
+  .topbar-inner {
+    gap: 10px;
+    padding: 0 10px;
+  }
+
+  .mampf-logo {
+    width: 80px;
+  }
+
+  .brand {
+    margin-right: 0;
+  }
+
+  .nav-link {
+    font-size: 14px;
+  }
+}

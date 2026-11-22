@@ -1,0 +1,24 @@
+// Gleicher Knopf wie "Speichern" im Formular, in der Oberflächenfarbe
+.add {
+  padding: 10px 24px;
+
+  border: none;
+  border-radius: 50px;
+  box-shadow: 0px 2px 5px 0px var(--shadow);
+
+  background-color: var(--primary);
+
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 800;
+
+  transition: filter 0.2s ease;
+
+  &:hover {
+    filter: brightness(1.08);
+  }
+
+  .fa {
+    margin-right: 4px;
+  }
+}

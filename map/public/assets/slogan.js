@@ -29,6 +29,23 @@
    */
   const FONT = { sideBearing: 64.2 - 55.2 / 2, below: 55.2 / 2, descender: 207 };
 
+  /**
+   * Oberflächenfarbe als fester Wert (aus theme.js). Bewusst nicht nur
+   * var(--primary): Safari färbt SVG-Text nicht nach, wenn sich die Variable
+   * später ändert (Farbregler auf der About-Seite).
+   */
+  function primaryColor() {
+    const theme = window.MampfTheme;
+    return theme ? theme.primaryColor(theme.hue) : `var(--primary, ${COLOR})`;
+  }
+
+  // Neue Oberflächenfarbe: alle Sprüche auf der Seite umfärben
+  window.addEventListener('mampf-hue', () => {
+    document.querySelectorAll('text.mampf-slogan').forEach(textEl => {
+      textEl.style.fill = primaryColor();
+    });
+  });
+
   let fontPromise;
   let slogansPromise;
 
@@ -103,7 +120,7 @@
       const textEl = document.createElementNS(NS, 'text');
       textEl.setAttribute('class', 'mampf-slogan');
       textEl.setAttribute('fill', COLOR);
-      textEl.style.fill = `var(--primary, ${COLOR})`; // Oberflächenfarbe, falls gesetzt (theme.js)
+      textEl.style.fill = primaryColor();
       textEl.style.fontFamily = `"${FAMILY}"`;
       textEl.style.fontWeight = '300';
       svg.appendChild(textEl);

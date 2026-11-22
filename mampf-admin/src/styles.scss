@@ -1,8 +1,352 @@
+/*
+  Admin-Bereich im Stil der Karte: gleiche Farben (vars.scss) und gleiche Schrift.
+  Beide Dateien kommen direkt aus map/, damit alles aus einem Guss bleibt.
+  Keine Farbwerte hier hineinschreiben, nur die Variablen verwenden.
+*/
+@import '../../map/src/vars';
+@import '../../map/src/fonts/fonts';
+
+:root {
+  --bs-body-font-family: 'Open Sans', system-ui, sans-serif;
+  --bs-body-color: var(--grey3);
+  --bs-body-bg: var(--grey0);
+}
+
 body {
-  min-height: 75rem;
-  padding-top: 4.5rem;
+  padding-top: 88px;
+  padding-bottom: 40px;
+}
+
+strong {
+  font-weight: 800;
+}
+
+a {
+  color: var(--primary);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+/* ---------- Seite & Karten ---------- */
+
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 14px;
+}
+
+.panel {
+  margin-bottom: 22px;
+  padding: 26px 28px 28px 28px;
+
+  border-radius: 16px;
+  box-shadow: 0px 2px 5px 0px var(--shadow);
+
+  background-color: var(--white);
+}
+
+.panel-title {
+  margin: 0 0 6px 0;
+
+  color: var(--grey3);
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* Frage über einem Eingabefeld */
+.question {
+  display: block;
+  margin: 20px 0 8px 0;
+
+  color: var(--grey3);
+  font-size: 15px;
+}
+
+/* Kurzer Hinweis zur Bedienung: gleich gross wie der übrige Text, aber grau */
+.hint {
+  margin: 8px 0 0 0;
+
+  color: var(--grey2);
+  font-size: 15px;
+
+  &.error {
+    color: var(--accent);
+  }
+}
+
+.divider {
+  margin: 26px 0 0 0;
+
+  border: none;
+  border-top: 1px solid var(--grey1);
+  opacity: 1;
+}
+
+/* Überschrift links, Suchfeld rechts (bei Küche, Gerichte, Präferenzen) */
+.question-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 20px 0 10px 0;
+
+  .question {
+    margin: 0;
+  }
+}
+
+.search {
+  position: relative;
+  flex: 0 1 200px;
+  margin: 0;
+
+  .fa {
+    position: absolute;
+    top: 50%;
+    left: 13px;
+    translate: 0 -50%;
+
+    color: var(--grey2);
+    font-size: 13px;
+    pointer-events: none;
+  }
+
+  // "input.field", damit es stärker ist als ".field.small" weiter unten
+  input.field {
+    padding-left: 34px;
+    border-radius: 50px;
+  }
+}
+
+/* ---------- Textfelder ---------- */
+
+.field {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px 14px;
+
+  border: 1px solid var(--grey1);
+  border-radius: 10px;
+  outline: none;
+
+  background-color: var(--white);
+
+  color: var(--grey3);
+  font-family: inherit;
+  font-size: 15px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &::placeholder {
+    color: var(--grey2);
+  }
+
+  &:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+  }
+
+  &.small {
+    padding: 7px 12px;
+    font-size: 14px;
+  }
+}
+
+/* ---------- Chips (wie im Filtermenü der Karte) ---------- */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 6px 12px;
+
+  border: 1px solid var(--grey1);
+  border-radius: 50px;
+
+  background-color: var(--white);
+
+  color: var(--grey3);
+  font-size: 14px;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+
+  .fa {
+    margin-right: 4px;
+    color: var(--grey2);
+  }
+
+  &.selected {
+    border-color: var(--primary);
+    background-color: var(--primary);
+    color: var(--white);
+  }
+
+  &.danger:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+
+    .fa {
+      color: var(--accent);
+    }
+  }
+}
+
+/* Knopf, der wie ein Link aussieht ("+ Zweiter Standort") */
+.text-button {
+  padding: 6px 0;
+
+  border: none;
+  background: none;
+
+  color: var(--primary);
+  font-size: 14px;
+
+  .fa {
+    margin-right: 4px;
+  }
+}
+
+/* ---------- Schieberegler mit mehreren Optionen ---------- */
+
+.segmented {
+  display: flex;
+  padding: 3px;
+
+  border: 1px solid var(--grey1);
+  border-radius: 12px;
+
+  background-color: var(--grey0);
+
+  button {
+    flex: 1 1 0;
+    padding: 9px 8px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: none;
+
+    color: var(--grey2);
+    font-size: 15px;
+    line-height: 1.25;
+
+    transition:
+      background-color 0.25s ease,
+      box-shadow 0.25s ease,
+      color 0.25s ease;
+
+    &.selected {
+      background-color: var(--white);
+      box-shadow: 0px 1px 3px 0px var(--shadow);
+      color: var(--grey3);
+    }
+  }
+}
+
+/* ---------- Runde Auswahlknöpfe (genau eine Auswahl) ---------- */
+
+.radio-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px 16px;
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 0;
+
+  border: none;
+  background: none;
+
+  color: var(--grey3);
+  font-size: 15px;
+  text-align: left;
+
+  &::before {
+    content: '';
+    flex: none;
+    box-sizing: border-box;
+    width: 22px;
+    height: 22px;
+
+    border: 2px solid var(--grey2);
+    border-radius: 50%;
+
+    background-color: var(--white);
+
+    transition:
+      border 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  &.selected::before {
+    border: 7px solid var(--primary);
+  }
+}
+
+/* ---------- Kästchen zum Ankreuzen ---------- */
+
+.check {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+
+  border: 2px solid var(--grey2);
+  border-radius: 7px;
+
+  background-color: var(--white);
+
+  color: var(--white);
+  font-size: 15px;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+
+  &.selected {
+    border-color: var(--primary);
+    background-color: var(--primary);
+  }
+}
+
+/* ---------- Handy: schmalere Ränder, damit das Kästchen-Raster Platz hat ---------- */
+
+@media (max-width: 480px) {
+  .page {
+    padding: 0;
+  }
+
+  .panel {
+    padding: 22px 16px 24px 16px;
+  }
+
+  .check {
+    width: 26px;
+    height: 26px;
+  }
 }

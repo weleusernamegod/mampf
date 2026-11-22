@@ -59,6 +59,7 @@
   font-family: inherit;
   font-size: 15px;
   text-align: left;
+  text-decoration: none; // auch für den Link "meine Orte verwalten"
 
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -102,9 +103,13 @@
   mask-image: url('/assets/icons/share.svg');
 }
 
-.icon-add {
-  -webkit-mask-image: url('/assets/icons/add.svg');
-  mask-image: url('/assets/icons/add.svg');
+a.action:hover {
+  text-decoration: none;
+}
+
+.icon-edit {
+  -webkit-mask-image: url('/assets/icons/edit.svg');
+  mask-image: url('/assets/icons/edit.svg');
 }
 
 .circle.language {

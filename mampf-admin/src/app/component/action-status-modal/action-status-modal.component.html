@@ -1,52 +1,23 @@
 @if (status !== ActionStatus.NoOperation) {
-  <div
-    class="modal d-block"
-    tabindex="-1"
-    role="dialog"
-    style="background-color: #f8f9fac0">
-    <div class="modal-dialog modal-dialog-centered" data-bs-backdrop="static">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">{{ title }}</h5>
-          @if (
-            status === ActionStatus.CompletedSuccess ||
-            status === ActionStatus.CompletedError
-          ) {
-            <button
-              type="button"
-              class="btn-close"
-              (click)="resetModal()"></button>
-          }
-        </div>
-        <div class="modal-body">
-          <div class="text-center m-4">
-            @switch (status) {
-              @case (ActionStatus.Loading) {
-                <div class="spinner-border"></div>
-              }
-              @case (ActionStatus.CompletedError) {
-                <p>Das hat leider nicht geklappt. Bitte versuche es nochmals.</p>
-              }
-              @case (ActionStatus.CompletedSuccess) {
-                <p>Erledigt!</p>
-              }
-            }
-          </div>
-        </div>
-        @if (
-          status === ActionStatus.CompletedSuccess ||
-          status === ActionStatus.CompletedError
-        ) {
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              (click)="resetModal()">
-              Schliessen
-            </button>
-          </div>
+  <div class="backdrop" role="dialog" aria-modal="true" [attr.aria-label]="title">
+    <div class="panel box">
+      @switch (status) {
+        @case (ActionStatus.Loading) {
+          <h2 class="panel-title">{{ title }}</h2>
+          <div class="spinner-border my-3" role="status"></div>
         }
-      </div>
+        @case (ActionStatus.CompletedError) {
+          <h2 class="panel-title">Hoppla</h2>
+          <p>Das hat leider nicht geklappt. Bitte versuche es nochmals.</p>
+        }
+        @case (ActionStatus.CompletedSuccess) {
+          <div class="done"><i class="fa fa-check"></i></div>
+          <h2 class="panel-title">Erledigt!</h2>
+        }
+      }
+      @if (status === ActionStatus.CompletedSuccess || status === ActionStatus.CompletedError) {
+        <button type="button" class="close" (click)="resetModal()">Schliessen</button>
+      }
     </div>
   </div>
 }

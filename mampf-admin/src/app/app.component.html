@@ -1,51 +1,22 @@
 @if (user) {
-  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Mampf</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbar-collapse">
-        <span class="navbar-toggler-icon"></span>
+  <nav class="topbar">
+    <div class="topbar-inner">
+      <!-- Logo führt zurück zur Karte (Startseite) -->
+      <a class="brand" href="/" title="Zur Karte">
+        <span class="mampf-logo" role="img" aria-label="mampf"></span>
+      </a>
+      <a routerLink="/my-places" routerLinkActive="active" class="nav-link">Meine Orte</a>
+      @if (user.admin) {
+        <a routerLink="/categories" routerLinkActive="active" class="nav-link">Kategorien</a>
+      }
+      <button type="button" class="nav-link sign-out" (click)="onSignOutClicked()">
+        Abmelden
       </button>
-      <div class="collapse navbar-collapse" id="navbar-collapse">
-        <ul class="navbar-nav me-auto mb-2 mb-md-0">
-          <li class="nav-item">
-            <a
-              routerLink="/my-places"
-              routerLinkActive="active"
-              class="nav-link"
-              >Meine Orte</a
-            >
-          </li>
-          @if (user.admin) {
-            <li class="nav-item">
-              <a
-                routerLink="/categories"
-                routerLinkActive="active"
-                class="nav-link"
-                >Kategorien</a
-              >
-            </li>
-          }
-        </ul>
-        <div class="text-white-50">
-          <button
-            type="button"
-            class="btn btn-outline-light"
-            (click)="onSignOutClicked()">
-            Abmelden
-          </button>
-        </div>
-      </div>
     </div>
   </nav>
 
   <main class="container">
-    <div class="container mb-4">
-      <router-outlet></router-outlet>
-    </div>
+    <router-outlet></router-outlet>
   </main>
 } @else {
   <mampf-loading-spinner></mampf-loading-spinner>

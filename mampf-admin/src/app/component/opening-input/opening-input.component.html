@@ -1,49 +1,38 @@
-<table class="table table-sm table-borderless align-middle mb-0 opening">
-  <thead>
-    <tr>
-      <th></th>
-      @for (slot of slots; track slot.value) {
-        <th class="text-center">
-          <button
-            type="button"
-            class="btn btn-link btn-sm p-0 fw-bold text-decoration-none"
-            title="Ganze Spalte umschalten"
-            (click)="toggleSlot(slot.value)">
-            {{ slot.name }}
-          </button>
-        </th>
-      }
-    </tr>
-  </thead>
-  <tbody>
+<div class="week" role="grid" aria-label="Öffnungszeiten">
+  <!-- Kopfzeile: Wochentage (Klick = ganze Spalte) -->
+  <span></span>
+  @for (day of weekdays; track day.value) {
+    <button
+      type="button"
+      class="day"
+      [class.active]="isDayOpen(day.value)"
+      [title]="day.name + ': ganzen Tag umschalten'"
+      (click)="toggleDay(day.value)">
+      {{ day.short }}
+    </button>
+  }
+
+  <!-- Eine Zeile pro Tageszeit (Klick auf den Namen = ganze Zeile) -->
+  @for (slot of slots; track slot.value) {
+    <button
+      type="button"
+      class="slot"
+      [title]="slot.name + ': jeden Tag umschalten'"
+      (click)="toggleSlot(slot.value)">
+      {{ slot.name }}
+    </button>
     @for (day of weekdays; track day.value) {
-      <tr>
-        <th>
-          <button
-            type="button"
-            class="btn btn-link btn-sm p-0 fw-normal text-decoration-none text-body"
-            title="Ganzen Tag umschalten"
-            (click)="toggleDay(day.value)">
-            {{ day.name }}
-          </button>
-        </th>
-        @for (slot of slots; track slot.value) {
-          <td class="text-center">
-            <button
-              type="button"
-              class="cell btn"
-              [class.btn-success]="isOpen(day.value, slot.value)"
-              [class.btn-outline-secondary]="!isOpen(day.value, slot.value)"
-              [attr.aria-pressed]="isOpen(day.value, slot.value)"
-              [attr.aria-label]="day.name + ' ' + slot.name"
-              (click)="toggle(day.value, slot.value)">
-              @if (isOpen(day.value, slot.value)) {
-                <i class="fa fa-check"></i>
-              }
-            </button>
-          </td>
+      <button
+        type="button"
+        class="check"
+        [class.selected]="isOpen(day.value, slot.value)"
+        [attr.aria-pressed]="isOpen(day.value, slot.value)"
+        [attr.aria-label]="day.name + ' ' + slot.name"
+        (click)="toggle(day.value, slot.value)">
+        @if (isOpen(day.value, slot.value)) {
+          <i class="fa fa-check"></i>
         }
-      </tr>
+      </button>
     }
-  </tbody>
-</table>
+  }
+</div>

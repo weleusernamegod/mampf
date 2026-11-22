@@ -68,6 +68,11 @@ export class PlaceDialogComponent implements OnChanges {
   categoryGroups: GroupedCategories[] = [];
   /** z.B. "5–15 Minuten" */
   waitingTime: string | undefined;
+  /** Erstellungsdatum, z.B. "12.11.2026". */
+  createdText: string | undefined;
+  /** "Missbrauch melden" gibt es noch nicht: kurz "kommt bald" anzeigen. */
+  reportHint = false;
+  private reportTimer: ReturnType<typeof setTimeout> | undefined;
 
   private drag: Drag | undefined = undefined;
   /** Nach dem Ziehen keinen zusätzlichen Klick auswerten. */
@@ -85,6 +90,9 @@ export class PlaceDialogComponent implements OnChanges {
         categoriesOf(this.place, this.categoryList)
       );
       this.categoryGroups = groups.filter(group => group.key !== 'wartezeit');
+      const [year, month, day] = (this.place.created ?? '').split('-');
+      this.createdText = day ? `${day}.${month}.${year}` : undefined;
+      this.reportHint = false;
       this.waitingTime = groups
         .find(group => group.key === 'wartezeit')
         ?.categories.map(category => category.name)
@@ -97,6 +105,14 @@ export class PlaceDialogComponent implements OnChanges {
     setTimeout(() => {
       if (!this.expanded) this.setHeight(this.minimizedHeight());
     });
+  }
+
+  /** Platzhalter: Melden kommt später, bis dahin nur ein kurzer Hinweis. */
+  onReportClicked(event: Event): void {
+    event.stopPropagation(); // Infobox nicht zuklappen
+    this.reportHint = true;
+    clearTimeout(this.reportTimer);
+    this.reportTimer = setTimeout(() => (this.reportHint = false), 2500);
   }
 
   /** Antippen / Klicken: auf- bzw. zuklappen. */

@@ -51,6 +51,27 @@
         class="section block"
         [opening]="place?.opening ?? []"
         [day]="day"></mampf-open-days>
+
+      <!-- Ganz unten: eigener Ort -> bearbeiten, sonst wer ihn erstellt hat -->
+      <div class="section footer">
+        @if (place?.editable) {
+          <a class="edit" [href]="'/admin/place/' + place?.id" (click)="$event.stopPropagation()">
+            <span class="icon-edit"></span>bearbeiten
+          </a>
+        }
+        @if (!place?.own) {
+          <p class="meta">
+            Erstellt durch anderen Nutzer
+            @if (createdText) {
+              am {{ createdText }}
+            }
+            <br />
+            <button type="button" class="report" (click)="onReportClicked($event)">
+              {{ reportHint ? 'kommt bald' : 'Missbrauch melden' }}
+            </button>
+          </p>
+        }
+      </div>
     </div>
   </div>
 </div>

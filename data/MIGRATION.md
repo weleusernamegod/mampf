@@ -105,3 +105,17 @@ erraten). Am besten die Orte danach im Admin-Bereich kurz durchgehen.
 3. Die alte Website-Version wieder hochladen.
 
 Danach ist alles wieder wie vorher.
+
+---
+
+## Nachtrag: „Art des Lokals“ überarbeitet (Version 0.0.011)
+
+Neue Namen und Reihenfolge, Deli und Personalrestaurant fallen weg,
+Food Court heisst neu Markthalle. Steht in `data/migration-2026-11-art.sql`.
+
+1. Sicherung machen (wie Schritt 1).
+2. In phpMyAdmin die mampf-Datenbank anklicken, Reiter **SQL**.
+3. Inhalt von `data/migration-2026-11-art.sql` einfügen, **OK**.
+
+Darf gefahrlos auch zweimal laufen. Passt zu jeder Website-Version,
+die Reihenfolge muss also nicht mit dem Hochladen abgestimmt werden.

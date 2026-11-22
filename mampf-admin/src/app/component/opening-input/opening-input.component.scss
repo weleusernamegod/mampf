@@ -1,9 +1,54 @@
-.opening {
-  max-width: 360px;
+// Raster: links die Tageszeiten, oben MO–SO, dazwischen Kästchen (.check, siehe styles.scss)
+.week {
+  display: grid;
+  grid-template-columns: auto repeat(7, 1fr);
+  justify-items: center;
+  align-items: center;
+  gap: 10px 4px;
+  padding: 12px 14px 14px 10px;
+
+  border: 1px solid var(--grey1);
+  border-radius: 12px;
+
+  background-color: var(--grey0);
 }
 
-.cell {
-  width: 44px;
-  height: 32px;
+.day,
+.slot {
   padding: 0;
+
+  border: none;
+  background: none;
+
+  color: var(--grey2);
+  font-size: 15px;
+
+  transition: color 0.2s ease;
+}
+
+.day {
+  text-transform: uppercase;
+
+  &.active {
+    color: var(--grey3);
+  }
+}
+
+.slot {
+  justify-self: start;
+  padding-right: 6px;
+
+  color: var(--grey3);
+  font-size: 14px;
+}
+
+@media (max-width: 480px) {
+  .week {
+    gap: 10px 2px;
+    padding: 10px 8px 12px 6px;
+  }
+
+  .slot {
+    font-size: 13px;
+  }
 }

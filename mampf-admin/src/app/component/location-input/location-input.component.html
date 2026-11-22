@@ -1,20 +1,13 @@
-@if (showTitle) {
-  <p class="mb-1"><strong>Standort</strong></p>
-  <p>
-    <small
-      >Zum Ändern die <i class="fa fa-map-marker"></i> Markierung verschieben.</small
-    >
-  </p>
-}
-
-<google-map
-  width="100%"
-  [height]="height"
-  [options]="MAP_OPTIONS"
-  [center]="center"
-  [zoom]="15">
-  <map-marker
-    [position]="currentLocation"
-    [options]="{ draggable: true }"
-    (mapDragend)="onMarkerLocationChanged($event)" />
-</google-map>
+<div class="map">
+  <google-map
+    width="100%"
+    [height]="height"
+    [options]="MAP_OPTIONS"
+    [center]="center"
+    [zoom]="16">
+    <map-marker
+      [position]="currentLocation"
+      [options]="markerOptions"
+      (mapDragend)="onMarkerLocationChanged($event)" />
+  </google-map>
+</div>

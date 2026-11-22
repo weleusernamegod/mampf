@@ -6,6 +6,9 @@ import {
   Output,
 } from '@angular/core';
 import { GoogleMap, MapMarker } from '@angular/google-maps';
+// Gleicher Kartenstil wie auf der öffentlichen Karte (dreht mit der Oberflächenfarbe mit)
+import { mapStyles } from '../../../../../map/src/app/util/map-styles';
+import { currentHue } from '../../../../../map/src/app/util/color';
 
 @Component({
   selector: 'mampf-location-input',
@@ -16,6 +19,9 @@ import { GoogleMap, MapMarker } from '@angular/google-maps';
 })
 export class LocationInputComponent implements OnChanges {
   readonly MAP_OPTIONS: google.maps.MapOptions = {
+    styles: mapStyles(currentHue()),
+    disableDefaultUI: true,
+    zoomControl: true,
     mapTypeControl: false,
     streetViewControl: false,
     fullscreenControl: false,
@@ -23,12 +29,24 @@ export class LocationInputComponent implements OnChanges {
     clickableIcons: false,
   };
 
+  /** Grüner Punkt mit weissem Rand, wie die Orte auf der Karte (zum Ziehen). */
+  readonly markerOptions: google.maps.MarkerOptions = {
+    draggable: true,
+    cursor: 'grab',
+    icon: {
+      path: 0, // google.maps.SymbolPath.CIRCLE (google ist hier noch nicht geladen)
+      scale: 11,
+      fillColor: `hsl(${currentHue()}, 53.8%, 39%)`, // = --primary
+      fillOpacity: 1,
+      strokeColor: 'white',
+      strokeWeight: 4,
+    },
+  };
+
   @Input() lat: number | undefined;
   @Input() lng: number | undefined;
   /** Höhe der Karte in px. */
   @Input() height = 500;
-  /** Überschrift und Hinweis über der Karte anzeigen. */
-  @Input() showTitle = true;
   @Output() latChange = new EventEmitter<number>();
   @Output() lngChange = new EventEmitter<number>();
 

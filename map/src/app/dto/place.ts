@@ -13,4 +13,10 @@ export interface Place {
   locations: PlaceLocation[];
   /** IDs der Kategorien (siehe api/get-categories.php). */
   categories: number[];
+  /** Erstellt am (JJJJ-MM-TT). */
+  created: string;
+  /** Gehört dem angemeldeten Nutzer. */
+  own: boolean;
+  /** Darf bearbeitet werden (eigener Ort, oder Admin). */
+  editable: boolean;
 }

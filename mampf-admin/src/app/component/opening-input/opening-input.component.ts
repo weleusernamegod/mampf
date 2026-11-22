@@ -23,6 +23,11 @@ export class OpeningInputComponent {
     return this.opening.some(o => o.weekday === weekday && o.slot === slot);
   }
 
+  /** Mindestens ein Kreuz an diesem Tag (Tag wird dann dunkel angezeigt). */
+  isDayOpen(weekday: number): boolean {
+    return this.opening.some(o => o.weekday === weekday);
+  }
+
   toggle(weekday: number, slot: Slot) {
     this.emit(
       this.isOpen(weekday, slot)

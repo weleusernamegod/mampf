@@ -1,0 +1,56 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: grid;
+  place-items: center;
+  padding: 20px;
+
+  background-color: var(--shadow);
+}
+
+.box {
+  width: min(320px, 100%);
+  margin: 0;
+
+  text-align: center;
+
+  p {
+    margin: 12px 0 0 0;
+  }
+}
+
+.spinner-border {
+  color: var(--primary);
+}
+
+// Grüner Kreis mit Häkchen
+.done {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 14px auto;
+
+  border-radius: 50%;
+
+  background-color: var(--primary);
+
+  color: var(--white);
+  font-size: 24px;
+}
+
+.close {
+  margin-top: 20px;
+  padding: 10px 28px;
+
+  border: none;
+  border-radius: 50px;
+
+  background-color: var(--primary);
+
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 800;
+}

@@ -2,17 +2,6 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@ang
 import { VERSION } from '../../version';
 import { DEFAULT_HUE, currentHue, setHue } from '../../util/color';
 
-/** Vom Browser angebotene Installation als App (nur Chrome/Android, mit Web-App-Manifest). */
-interface InstallPromptEvent extends Event {
-  prompt(): Promise<void>;
-}
-
-let installPrompt: InstallPromptEvent | undefined;
-window.addEventListener('beforeinstallprompt', event => {
-  event.preventDefault();
-  installPrompt = event as InstallPromptEvent;
-});
-
 /** Zufallsspruch unter dem Logo, aus assets/slogan.js (in index.html geladen). */
 declare global {
   interface Window {
@@ -21,7 +10,7 @@ declare global {
 }
 
 /** Die Zeilen im Dialog. */
-type Row = 'share' | 'home' | 'language';
+type Row = 'share' | 'language';
 
 /** Abstand der Regler-Enden zur Mitte des Knopfs in px (halbe Höhe des Reglers). */
 const HUE_EDGE = 20;
@@ -84,20 +73,6 @@ export class AboutDialogComponent implements AfterViewInit, OnDestroy {
     } catch {
       this.showHint('share', url);
     }
-  }
-
-  async addToHomeScreen(event: Event) {
-    event.stopPropagation();
-    if (installPrompt) {
-      await installPrompt.prompt();
-      installPrompt = undefined;
-      return;
-    }
-    // Ohne Installations-Angebot des Browsers: kurze Anleitung
-    const iOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-    // iPhone: Geht nur über den Teilen-Knopf des Browsers (Safari unten, Chrome oben),
-    // nicht über "mit Freund:in teilen" oben – dort fehlt "Zum Home-Bildschirm".
-    this.showHint('home', iOS ? 'Safari: Teilen → Zum Home-Bildschirm' : 'Menü ⋮ → Zum Startbildschirm', 6000);
   }
 
   /** Erster Tipp auf die Zeile öffnet den Farbregler. */

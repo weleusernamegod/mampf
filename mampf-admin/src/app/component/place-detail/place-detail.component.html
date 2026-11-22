@@ -1,192 +1,210 @@
 @if (!isLoading) {
-  <h1 class="mb-4">
-    @if (place) {
-      Ort «{{ place.name }}»
-    } @else {
-      Neuer Ort
-    }
-  </h1>
+  <form class="page" ngNativeValidate (submit)="$event.preventDefault(); onFormSubmitted()">
+    <!-- Name, Beschreibung, Bild -->
+    <section class="panel">
+      <h2 class="panel-title">Allgemein</h2>
 
-  <form ngNativeValidate (submit)="$event.preventDefault(); onFormSubmitted()">
-    <div class="row mb-2">
-      <div class="col-lg-6">
-        <div class="mb-3">
-          <label for="input-name" class="form-label">Name</label>
-          <input
-            type="text"
-            minlength="2"
-            maxlength="30"
-            required
-            class="form-control"
-            id="input-name"
-            name="name"
-            [(ngModel)]="name" />
-        </div>
-
-        <div class="mb-4">
-          <label for="input-description" class="form-label"
-            >Kurzbeschreibung</label
-          >
-          <input
-            type="text"
-            minlength="2"
-            maxlength="50"
-            required
-            class="form-control"
-            id="input-description"
-            name="description"
-            [(ngModel)]="description" />
-        </div>
-
-        <mampf-picture-input
-          [originalPictureId]="place?.pictureId"
-          (pictureDeleted)="onPictureDeleted()"
-          (pictureUploaded)="onPictureUploaded($event)"></mampf-picture-input>
-      </div>
-      <div class="col-lg-6">
-        <p class="mb-2"><strong>Öffnungszeiten</strong></p>
-        <p class="mb-2">
-          <small class="text-muted"
-            >Kästchen anklicken. Klick auf einen Tag oder eine Tageszeit
-            schaltet die ganze Zeile bzw. Spalte.</small
-          >
-        </p>
-        <mampf-opening-input
-          [opening]="opening"
-          (openingChange)="onOpeningChanged($event)"></mampf-opening-input>
-      </div>
-    </div>
-
-    <div class="mb-4">
-      <p class="mb-2"><strong>Kategorien</strong></p>
-      @for (group of categoryList.groups; track group.key) {
-        <div class="mb-3">
-          <label class="form-label small text-muted mb-1" [for]="'category-' + group.key">
-            {{ group.name }}
-            @if (group.single) {
-              (eine Auswahl)
-            }
-          </label>
-          @if (group.single) {
-            <select
-              class="form-select form-select-sm category-select"
-              [id]="'category-' + group.key"
-              [name]="'category-' + group.key"
-              [ngModel]="selectedIn(group)"
-              (ngModelChange)="selectSingle(group, $event)">
-              <option [ngValue]="null">– keine Angabe –</option>
-              @for (category of categoriesOf(group); track category.id) {
-                <option [ngValue]="category.id">{{ category.name }}</option>
-              }
-            </select>
-          } @else {
-            <div class="d-flex flex-wrap gap-1" [id]="'category-' + group.key">
-              @for (category of categoriesOf(group); track category.id) {
-                <button
-                  type="button"
-                  class="btn btn-sm rounded-pill"
-                  [class.btn-success]="selectedCategories.has(category.id)"
-                  [class.btn-outline-secondary]="!selectedCategories.has(category.id)"
-                  [attr.aria-pressed]="selectedCategories.has(category.id)"
-                  (click)="toggleCategory(category.id)">
-                  {{ category.name }}
-                </button>
-              }
-            </div>
-          }
-        </div>
-      }
-    </div>
-
-    <div class="form-check form-switch mb-3">
+      <label class="question" for="input-name">Wie heisst der Ort?</label>
       <input
-        type="checkbox"
-        class="form-check-input"
-        role="switch"
-        id="checkbox-multiple-locations"
-        name="multiple-locations"
-        [ngModel]="multipleLocations"
-        (ngModelChange)="onMultipleLocationsChanged($event)" />
-      <label class="form-check-label" for="checkbox-multiple-locations">
-        <strong>Mehrere Standorte</strong>
-        <small class="text-muted ms-1"
-          >(Foodtruck: an jedem Tag woanders)</small
-        >
-      </label>
-    </div>
+        type="text"
+        minlength="2"
+        maxlength="30"
+        required
+        class="field"
+        id="input-name"
+        name="name"
+        placeholder="z.B. Pizza Paolo"
+        [(ngModel)]="name" />
 
-    @if (!multipleLocations) {
-      @if (positionFromMap) {
-        <div class="alert alert-success py-2 small">
-          Standort von der Karte übernommen. Zum Anpassen die Markierung verschieben.
-        </div>
+      <label class="question" for="input-description">Was gibt es dort, in ein paar Worten?</label>
+      <input
+        type="text"
+        minlength="2"
+        maxlength="50"
+        required
+        class="field"
+        id="input-description"
+        name="description"
+        placeholder="z.B. Holzofenpizza zum Mitnehmen"
+        [(ngModel)]="description" />
+
+      <span class="question">Bild</span>
+      <mampf-picture-input
+        [originalPictureId]="place?.pictureId"
+        (pictureDeleted)="onPictureDeleted()"
+        (pictureUploaded)="onPictureUploaded($event)"></mampf-picture-input>
+    </section>
+
+    <!-- Kategorien -->
+    <section class="panel">
+      <h2 class="panel-title">Angebot</h2>
+      @for (group of categoryList.groups; track group.key) {
+        @if (!group.single) {
+          <!-- Viele Chips: Überschrift mit Suchfeld, nicht passende Chips verschwinden -->
+          <div class="question-row">
+            <span class="question">{{ group.name }}</span>
+            <label class="search">
+              <i class="fa fa-search"></i>
+              <input
+                type="search"
+                class="field small"
+                autocomplete="off"
+                placeholder="Suchen"
+                [attr.aria-label]="group.name + ' durchsuchen'"
+                [value]="searchTerms[group.key] ?? ''"
+                (input)="searchTerms[group.key] = $any($event.target).value"
+                (keydown.enter)="$event.preventDefault()" />
+            </label>
+          </div>
+        } @else if (group.key !== 'art') {
+          <!-- "Art des Lokals" braucht keine Überschrift, das ist klar genug -->
+          <span class="question">{{ group.name }}</span>
+        }
+        @if (group.single && categoriesOf(group).length <= 4) {
+          <!-- Wenige Optionen: Schieberegler -->
+          <div class="segmented" role="radiogroup" [attr.aria-label]="group.name">
+            @for (category of categoriesOf(group); track category.id) {
+              <button
+                type="button"
+                role="radio"
+                [class.selected]="selectedCategories.has(category.id)"
+                [attr.aria-checked]="selectedCategories.has(category.id)"
+                (click)="toggleSingle(group, category.id)">
+                {{ category.name }}
+              </button>
+            }
+          </div>
+        } @else if (group.single) {
+          <!-- Viele Optionen, nur eine erlaubt: runde Knöpfe -->
+          <div class="radio-list mt-3" role="radiogroup" [attr.aria-label]="group.name">
+            @for (category of categoriesOf(group); track category.id) {
+              <button
+                type="button"
+                role="radio"
+                class="radio"
+                [class.selected]="selectedCategories.has(category.id)"
+                [attr.aria-checked]="selectedCategories.has(category.id)"
+                (click)="toggleSingle(group, category.id)">
+                {{ category.name }}
+              </button>
+            }
+          </div>
+          <p class="hint">Nochmals anklicken hebt eine Auswahl wieder auf.</p>
+        } @else {
+          <!-- Mehrere erlaubt: Chips wie im Filter der Karte -->
+          <div class="chips">
+            @for (category of visibleCategoriesOf(group); track category.id) {
+              <button
+                type="button"
+                class="chip"
+                [class.selected]="selectedCategories.has(category.id)"
+                [attr.aria-pressed]="selectedCategories.has(category.id)"
+                (click)="toggleCategory(category.id)">
+                {{ category.name }}
+              </button>
+            } @empty {
+              <p class="hint mt-0">Nichts gefunden.</p>
+            }
+          </div>
+        }
       }
-      <mampf-location-input [(lat)]="lat" [(lng)]="lng"></mampf-location-input>
-    } @else {
-      @if (openDays.length === 0 || locationError) {
-        <div class="alert py-2 small" [class.alert-info]="!locationError" [class.alert-danger]="locationError">
-          Zuerst in den Öffnungszeiten mindestens einen Tag ankreuzen.
-          Danach erscheint hier für jeden offenen Tag eine Karte.
-        </div>
-      }
-      <div class="row">
+    </section>
+
+    <!-- Öffnungszeiten -->
+    <section class="panel">
+      <h2 class="panel-title">Öffnungszeiten</h2>
+      <span class="question">Wann gibt es etwas zu essen?</span>
+      <mampf-opening-input
+        [opening]="opening"
+        (openingChange)="onOpeningChanged($event)"></mampf-opening-input>
+      <p class="hint">Klick auf einen Tag oder eine Tageszeit kreuzt die ganze Reihe an.</p>
+    </section>
+
+    <!-- Standort -->
+    <section class="panel">
+      <h2 class="panel-title">Standort</h2>
+      <span class="question">Steht der Ort immer am gleichen Platz?</span>
+      <div class="segmented" role="radiogroup" aria-label="Standort">
+        <button
+          type="button"
+          role="radio"
+          [class.selected]="!multipleLocations"
+          [attr.aria-checked]="!multipleLocations"
+          (click)="onMultipleLocationsChanged(false)">
+          Immer gleich
+        </button>
+        <button
+          type="button"
+          role="radio"
+          [class.selected]="multipleLocations"
+          [attr.aria-checked]="multipleLocations"
+          (click)="onMultipleLocationsChanged(true)">
+          Je nach Wochentag
+        </button>
+      </div>
+
+      @if (!multipleLocations) {
+        <span class="question">Wo genau?</span>
+        <mampf-location-input [(lat)]="lat" [(lng)]="lng"></mampf-location-input>
+        <p class="hint">
+          @if (positionFromMap) {
+            Standort von der Karte übernommen.
+          }
+          Zum Anpassen Punkt verschieben.
+        </p>
+      } @else {
+        @if (openDays.length === 0 || locationError) {
+          <p class="hint mt-3" [class.error]="locationError">
+            Zuerst bei den Öffnungszeiten Tage ankreuzen.
+          </p>
+        }
         @for (day of openDays; track day.value) {
           @for (location of locationsFor(day.value); track location; let index = $index) {
-            <div class="col-lg-6 mb-4">
-              <div class="d-flex align-items-center gap-2 mb-2">
-                <strong class="me-auto">
-                  Standort {{ day.name }}
+            <div class="day-location">
+              <div class="day-header">
+                <span class="day-name">
+                  {{ day.name }}
                   @if (index > 0) {
-                    ({{ index + 1 }})
+                    <span class="day-index">· {{ index + 1 }}. Standort</span>
                   }
-                </strong>
+                </span>
                 @if (index === 0 && previousOpenDay(day.value); as previousDay) {
-                  <button
-                    type="button"
-                    class="btn btn-outline-secondary btn-sm"
-                    (click)="copyFromPreviousDay(location)">
-                    <i class="fa fa-clone"></i> wie {{ previousDay.name }}
+                  <button type="button" class="chip" (click)="copyFromPreviousDay(location)">
+                    <i class="fa fa-clone"></i>wie {{ previousDay.name }}
                   </button>
                 }
                 @if (index > 0) {
-                  <button
-                    type="button"
-                    class="btn btn-outline-danger btn-sm"
-                    (click)="removeLocation(location)">
-                    <i class="fa fa-trash"></i> Entfernen
+                  <button type="button" class="chip danger" (click)="removeLocation(location)">
+                    <i class="fa fa-trash-o"></i>Entfernen
                   </button>
                 }
               </div>
               <input
                 type="text"
                 maxlength="50"
-                class="form-control form-control-sm mb-2"
-                placeholder="Bezeichnung (optional), z.B. Helvetiaplatz"
+                class="field small mb-2"
+                placeholder="Bezeichnung (freiwillig), z.B. Helvetiaplatz"
                 [name]="'location-label-' + day.value + '-' + index"
                 [(ngModel)]="location.label" />
               <mampf-location-input
-                [height]="250"
-                [showTitle]="false"
+                [height]="240"
                 [(lat)]="location.lat"
                 [(lng)]="location.lng"></mampf-location-input>
               @if (index === locationsFor(day.value).length - 1 && locationsFor(day.value).length < MAX_LOCATIONS_PER_DAY) {
-                <button
-                  type="button"
-                  class="btn btn-link btn-sm px-0"
-                  (click)="addLocation(day.value)">
-                  <i class="fa fa-plus"></i> Zweiter Standort am {{ day.name }}
+                <button type="button" class="text-button" (click)="addLocation(day.value)">
+                  <i class="fa fa-plus"></i>Zweiter Standort am {{ day.name }}
                 </button>
               }
             </div>
           }
         }
-      </div>
-    }
+      }
+    </section>
 
-    <div class="mt-4 text-end">
-      <button type="submit" class="btn btn-primary">
-        <i class="fa fa-floppy-o"></i> Speichern
-      </button>
+    <!-- Leiste ganz am Ende, rund wie der Tages-Wähler auf der Karte -->
+    <div class="save-bar">
+      <button type="button" class="cancel" (click)="onCancel()">Abbrechen</button>
+      <button type="submit" class="save">Speichern</button>
     </div>
   </form>
 } @else {

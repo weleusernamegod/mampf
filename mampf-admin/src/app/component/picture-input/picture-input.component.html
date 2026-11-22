@@ -1,33 +1,17 @@
-<div class="card mb-3">
-  <div class="row g-0">
-    <div class="col-auto">
-      <img
-        [src]="imageUrl ? imageUrl : 'assets/no-picture.jpg'"
-        class="img-fluid rounded-start"
-        alt="" />
-    </div>
-    <div class="col">
-      <div class="card-body">
-        <p class="card-title"><strong>Bild</strong></p>
-        @if (imageUrl) {
-          <button
-            type="button"
-            class="btn btn-danger"
-            (click)="onPictureDeleted()">
-            <i class="fa fa-trash-o"></i> Löschen
-          </button>
-        } @else {
-          <!-- Eigener Knopf statt dem Datei-Feld des Browsers (das wäre je nach Browser englisch) -->
-          <label class="btn btn-outline-secondary mt-3">
-            <i class="fa fa-upload"></i> Bild auswählen
-            <input
-              type="file"
-              accept="image/*"
-              hidden
-              (change)="onFileSelected($event)" />
-          </label>
-        }
-      </div>
-    </div>
+<div class="picture">
+  <img [src]="imageUrl ? imageUrl : 'assets/no-picture.jpg'" alt="" />
+  <div class="actions">
+    @if (imageUrl) {
+      <button type="button" class="chip danger" (click)="onPictureDeleted()">
+        <i class="fa fa-trash-o"></i>Bild entfernen
+      </button>
+    } @else {
+      <!-- Eigener Knopf statt dem Datei-Feld des Browsers (das wäre je nach Browser englisch) -->
+      <label class="chip">
+        <i class="fa fa-upload"></i>Bild auswählen
+        <input type="file" accept="image/*" hidden (change)="onFileSelected($event)" />
+      </label>
+      <p class="hint">Am besten quadratisch.</p>
+    }
   </div>
 </div>

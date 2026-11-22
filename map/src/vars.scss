@@ -13,9 +13,13 @@
      (Standard #992e37, Weinrot): Wochenende, heutiger Tag, Platzieren-Punkt */
   --accent: hsl(calc(var(--hue) + 180) 53.8% 39%);
   --white: #ffffff;
+  /* heller Hintergrund (Admin-Bereich, hinter den weissen Karten) */
+  --grey0: #f2f2f2;
   --grey1: #dedede;
   --grey2: #b1b1b1;
   --grey3: #5f5f5f;
+  /* fast schwarz (gewählte Seite im Admin-Menü) */
+  --black: #1f1f1f;
   --shadow: rgba(0, 0, 0, 0.2);
 
   /* Abstand des Tages-Wählers vom unteren Rand. Wird auch vom Splashscreen
