@@ -88,14 +88,14 @@ button {
   }
 
   &.selected {
-    border-color: var(--teal);
+    border-color: var(--primary);
 
-    background-color: var(--teal);
+    background-color: var(--primary);
 
     color: var(--white);
 
     .count {
-      color: var(--teal_light);
+      color: var(--primary-light);
     }
   }
 }
@@ -125,7 +125,7 @@ button {
   border: none;
   border-radius: 50px;
 
-  background-color: var(--teal);
+  background-color: var(--primary);
 
   color: var(--white);
   font-size: 14px;

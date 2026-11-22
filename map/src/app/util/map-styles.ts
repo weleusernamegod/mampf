@@ -1,4 +1,30 @@
-export const MAP_STYLES = [
+/**
+ * Kartenstil (ursprünglich von Snazzy Maps), passend zur Oberflächenfarbe.
+ *
+ * Die Farbtöne unten gelten für mampf-Grün (Farbton 175.5). Wählt jemand auf der
+ * About-Seite eine andere Oberflächenfarbe, werden alle farbigen Werte (hue und
+ * Wasser) um gleich viel auf dem Farbkreis gedreht. Grautöne bleiben, wie sie sind.
+ */
+import { DEFAULT_HUE, rotateHue } from './color';
+
+/** Kartenstil für einen Farbton der Oberfläche (0–360). */
+export function mapStyles(hue: number): google.maps.MapTypeStyle[] {
+  const shift = hue - DEFAULT_HUE;
+  if (shift === 0) return MAP_STYLES;
+  return MAP_STYLES.map(style => ({
+    ...style,
+    stylers: style.stylers?.map(styler => {
+      const rotated: Record<string, unknown> = { ...styler };
+      for (const key of ['hue', 'color'] as const) {
+        const value = rotated[key];
+        if (typeof value === 'string') rotated[key] = rotateHue(value, shift);
+      }
+      return rotated;
+    }),
+  }));
+}
+
+const MAP_STYLES = [
   {
     featureType: 'landscape.man_made',
     elementType: 'geometry.fill',

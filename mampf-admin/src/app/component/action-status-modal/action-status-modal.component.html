@@ -25,10 +25,10 @@
                 <div class="spinner-border"></div>
               }
               @case (ActionStatus.CompletedError) {
-                <p>The operation could not be performed. Please try again.</p>
+                <p>Das hat leider nicht geklappt. Bitte versuche es nochmals.</p>
               }
               @case (ActionStatus.CompletedSuccess) {
-                <p>The operation was performed successfully.</p>
+                <p>Erledigt!</p>
               }
             }
           </div>
@@ -42,7 +42,7 @@
               type="button"
               class="btn btn-secondary"
               (click)="resetModal()">
-              Close
+              Schliessen
             </button>
           </div>
         }

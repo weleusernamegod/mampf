@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { VERSION } from '../../version';
+import { DEFAULT_HUE, currentHue, setHue } from '../../util/color';
 
 /** Vom Browser angebotene Installation als App (nur Chrome/Android, mit Web-App-Manifest). */
 interface InstallPromptEvent extends Event {
@@ -20,7 +21,12 @@ declare global {
 }
 
 /** Die Zeilen im Dialog. */
-type Row = 'share' | 'home' | 'language' | 'color';
+type Row = 'share' | 'home' | 'language';
+
+/** Abstand der Regler-Enden zur Mitte des Knopfs in px (halbe Höhe des Reglers). */
+const HUE_EDGE = 20;
+/** So nah (in Grad) am Original-Grün rastet der Regler ein. */
+const HUE_SNAP = 12;
 
 @Component({
   selector: 'mampf-about-dialog',
@@ -31,13 +37,23 @@ type Row = 'share' | 'home' | 'language' | 'color';
 })
 export class AboutDialogComponent implements AfterViewInit, OnDestroy {
   readonly version = VERSION;
+  readonly DEFAULT_HUE = DEFAULT_HUE;
 
   @ViewChild('logo') logo?: ElementRef<HTMLElement>;
+  @ViewChild('hueBar') hueBar?: ElementRef<HTMLElement>;
 
   /** Kurzer Hinweis, der für ein paar Sekunden den Text einer Zeile ersetzt. */
   hint: { row: Row; text: string } | undefined = undefined;
 
+  /** Farbregler offen (Punkt zum Regler verbreitert). */
+  picking = false;
+  /** Farbton unter dem Finger, gilt erst beim Loslassen. */
+  previewHue = currentHue();
+
   private timer: ReturnType<typeof setTimeout> | undefined;
+  private collapseTimer: ReturnType<typeof setTimeout> | undefined;
+  private dragging = false;
+  private snapped = false;
 
   ngAfterViewInit(): void {
     if (this.logo) window.MampfSlogan?.attach(this.logo.nativeElement);
@@ -45,6 +61,7 @@ export class AboutDialogComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     clearTimeout(this.timer);
+    clearTimeout(this.collapseTimer);
   }
 
   async share(event: Event) {
@@ -52,10 +69,10 @@ export class AboutDialogComponent implements AfterViewInit, OnDestroy {
     const url = window.location.origin + '/';
     if (navigator.share) {
       try {
-        // Nur den Link teilen, ohne Titel und Text: Dann holt sich das iPhone
-        // (und WhatsApp usw.) Icon, Titel und Beschreibung selbst aus der Seite,
-        // genau wie beim Teilen über den Browser. Mit Text würde nur der Text geteilt.
-        await navigator.share({ url });
+        // Link und Seitentitel teilen, aber keinen eigenen Text: Mit Text würde das
+        // iPhone nur den Text teilen statt einer Link-Vorschau. Das Icon kann eine
+        // Webseite hier nicht mitgeben, das kann nur Safaris eigener Teilen-Knopf.
+        await navigator.share({ title: document.title, url });
       } catch {
         // Teilen abgebrochen: nichts tun
       }
@@ -83,8 +100,57 @@ export class AboutDialogComponent implements AfterViewInit, OnDestroy {
     this.showHint('home', iOS ? 'Safari: Teilen → Zum Home-Bildschirm' : 'Menü ⋮ → Zum Startbildschirm', 6000);
   }
 
+  /** Erster Tipp auf die Zeile öffnet den Farbregler. */
+  onColorRowClicked(event: Event) {
+    event.stopPropagation(); // Dialog nicht schliessen
+    if (!this.picking) {
+      this.previewHue = currentHue();
+      this.picking = true;
+    }
+  }
+
+  onHuePointerDown(event: PointerEvent) {
+    if (!this.picking) return; // Regler ist noch zu: der Tipp öffnet ihn nur
+    event.preventDefault();
+    clearTimeout(this.collapseTimer);
+    this.dragging = true;
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+    this.updatePreview(event);
+  }
+
+  onHuePointerMove(event: PointerEvent) {
+    if (this.dragging) this.updatePreview(event);
+  }
+
+  /** Finger losgelassen: Farbe übernehmen, Regler kurz danach wieder zum Punkt. */
+  onHuePointerUp() {
+    if (!this.dragging) return;
+    this.dragging = false;
+    setHue(this.previewHue);
+    this.collapseTimer = setTimeout(() => (this.picking = false), 700);
+  }
+
+  /** Gleiche Sättigung und Helligkeit wie --primary in vars.scss. */
+  colorOf(hue: number): string {
+    return `hsl(${hue} 53.8% 39%)`;
+  }
+
+  /** Farbton aus der Fingerposition: links 0, rechts 360, nahe beim Original rastet er ein. */
+  private updatePreview(event: PointerEvent) {
+    const bar = this.hueBar?.nativeElement;
+    if (!bar) return;
+    const rect = bar.getBoundingClientRect();
+    const position = (event.clientX - rect.left - HUE_EDGE) / (rect.width - 2 * HUE_EDGE);
+    let hue = Math.round(Math.min(1, Math.max(0, position)) * 360);
+    const snapped = Math.abs(hue - DEFAULT_HUE) < HUE_SNAP;
+    if (snapped) hue = DEFAULT_HUE;
+    if (snapped && !this.snapped) navigator.vibrate?.(10); // kurzes Rütteln (nur Android)
+    this.snapped = snapped;
+    this.previewHue = hue;
+  }
+
   /** Platzhalter für Funktionen, die es noch nicht gibt. */
-  showSoon(event: Event, row: 'language' | 'color') {
+  showSoon(event: Event, row: 'language') {
     event.stopPropagation();
     this.showHint(row, 'folgt bald');
   }

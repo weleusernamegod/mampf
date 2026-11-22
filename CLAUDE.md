@@ -18,6 +18,11 @@ Sprüche unter dem Logo: `map/public/assets/slogans.txt` (einer pro Zeile). `map
 wählt bei jedem Anzeigen des Logos zufällig einen (Splashscreen, About-Seite, Login, Registrierung).
 Schrift dafür: `map/public/assets/fonts/Mampf-Light.woff2` (dünne Variante) (wird von `mampf_font.py` dorthin kopiert).
 
+Farben: Alles hängt am Farbton `--hue` in `map/src/vars.scss` (`--primary` = mampf-Grün,
+`--primary-light`, `--accent` = Gegenfarbe/Weinrot). Keine Farbwerte direkt in SCSS schreiben.
+Der Farbregler auf der About-Seite setzt `--hue` über `map/public/assets/theme.js` (auch in `login/`);
+der Kartenstil (`map/src/app/util/map-styles.ts`) dreht seine Farbtöne mit.
+
 `build.sh` baut alles nach `dist/`. Diese Struktur entspricht 1:1 dem Webroot auf dem Server.
 
 ## Lokal entwickeln

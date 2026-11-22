@@ -23,8 +23,14 @@
     margin: 0 auto;
   }
 
-  img {
+  .logo-image {
     display: block;
+    width: 200px;
+    height: 88px;
+
+    background-color: var(--primary);
+    -webkit-mask: url('/assets/logo.svg') center / contain no-repeat;
+    mask: url('/assets/logo.svg') center / contain no-repeat;
   }
 }
 
@@ -73,7 +79,7 @@
   transition: transform 0.15s ease;
 }
 
-.action:active .circle {
+.action:not(.picking):active .circle {
   transform: scale(0.92);
 }
 
@@ -106,12 +112,101 @@
   font-size: 17px;
 }
 
-.circle.color {
-  box-shadow: 0 0 0 3px var(--white);
-  border: 2px solid var(--white);
-  box-sizing: border-box;
+// Farbregler: im Ruhezustand ein Punkt in der Oberflächenfarbe, angetippt ein
+// breiter Regler mit allen Farbtönen (Farbton 0 links bis 360 rechts).
+$hue-edge: 18px; // halbe Innenhöhe: so weit liegen die Enden der Skala vom Rand
 
-  background-color: var(--teal);
+@function hue-stops() {
+  $stops: ();
+  @for $i from 0 through 12 {
+    // gleiche Sättigung und Helligkeit wie --primary in vars.scss
+    $color: hsl($i * 30, 53.8%, 39%);
+    $stops: append($stops, $color calc(#{$hue-edge} + (100% - #{2 * $hue-edge}) * #{$i} / 12), comma);
+  }
+  @return $stops;
+}
+
+.color-action {
+  overflow: hidden; // der Text wird beim Verbreitern nach rechts hinausgeschoben
+
+  .text {
+    transition: opacity 0.2s ease;
+  }
+
+  &.picking .text {
+    opacity: 0;
+  }
+}
+
+.circle.color {
+  position: relative;
+  box-sizing: border-box;
+  width: 40px;
+  border: 2px solid var(--white);
+  border-radius: 20px;
+  box-shadow: 0 0 0 3px var(--white);
+
+  background-color: var(--primary);
+
+  transition:
+    width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.15s ease;
+
+  .picking & {
+    width: 100%;
+    touch-action: none; // Wischen gehört dem Regler
+    cursor: ew-resize;
+  }
+}
+
+.hue-scale,
+.hue-home,
+.hue-thumb {
+  position: absolute;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+
+  .picking & {
+    opacity: 1;
+  }
+}
+
+.hue-scale {
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(to right, hue-stops());
+}
+
+// kleiner weisser Punkt beim Original-Grün
+.hue-home {
+  left: calc(#{$hue-edge} + var(--pos) * (100% - #{2 * $hue-edge}));
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+
+  background-color: var(--white);
+}
+
+// Griff unter dem Finger, zeigt die gewählte Farbe
+.hue-thumb {
+  left: calc(#{$hue-edge} + var(--pos) * (100% - #{2 * $hue-edge}));
+  top: 50%;
+  box-sizing: border-box;
+  width: 30px;
+  height: 30px;
+  border: 3px solid var(--white);
+  border-radius: 50%;
+  box-shadow: 0 1px 4px var(--shadow);
+  transform: translate(-50%, -50%);
+
+  .picking & {
+    transition:
+      opacity 0.25s ease 0.15s,
+      left 0.08s ease-out; // kurzer Sprung beim Einrasten
+  }
 }
 
 .text {
@@ -119,7 +214,7 @@
 
   // Hinweis statt Text, z.B. "Link kopiert!"
   &.hint {
-    color: var(--teal);
+    color: var(--primary);
   }
 }
 
@@ -136,7 +231,7 @@
     color: var(--grey2);
 
     a {
-      color: var(--teal);
+      color: var(--primary);
       cursor: pointer;
     }
   }

@@ -40,7 +40,7 @@
       height: 20px;
       box-shadow: 0 0 0 3px var(--white);
 
-      background-color: var(--teal);
+      background-color: var(--primary);
     }
   }
 }
@@ -67,7 +67,7 @@
       0 0 0 3px var(--white),
       0 1px 4px 2px var(--shadow);
 
-    background-color: var(--teal);
+    background-color: var(--primary);
 
     color: var(--white);
     font-size: 13px;
@@ -102,7 +102,7 @@
       0 0 0 3px var(--white),
       0 1px 3px 3px var(--shadow);
 
-    background-color: var(--weekend); /* Weinrot wie das Wochenende */
+    background-color: var(--accent); /* Weinrot wie das Wochenende */
 
     animation: pin-pop 0.4s ease-out;
     transition:

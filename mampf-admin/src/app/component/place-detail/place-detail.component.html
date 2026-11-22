@@ -1,9 +1,9 @@
 @if (!isLoading) {
   <h1 class="mb-4">
     @if (place) {
-      Place '{{ place.name }}'
+      Ort «{{ place.name }}»
     } @else {
-      New Place
+      Neuer Ort
     }
   </h1>
 
@@ -25,7 +25,7 @@
 
         <div class="mb-4">
           <label for="input-description" class="form-label"
-            >Short Description</label
+            >Kurzbeschreibung</label
           >
           <input
             type="text"
@@ -118,7 +118,7 @@
     @if (!multipleLocations) {
       @if (positionFromMap) {
         <div class="alert alert-success py-2 small">
-          Location taken from the map. Drag the marker to adjust it.
+          Standort von der Karte übernommen. Zum Anpassen die Markierung verschieben.
         </div>
       }
       <mampf-location-input [(lat)]="lat" [(lng)]="lng"></mampf-location-input>
@@ -185,7 +185,7 @@
 
     <div class="mt-4 text-end">
       <button type="submit" class="btn btn-primary">
-        <i class="fa fa-floppy-o"></i> Save
+        <i class="fa fa-floppy-o"></i> Speichern
       </button>
     </div>
   </form>
@@ -194,5 +194,5 @@
 }
 
 <mampf-action-status-modal
-  [title]="'Saving place'"
+  [title]="'Ort wird gespeichert'"
   [status]="actionStatus"></mampf-action-status-modal>

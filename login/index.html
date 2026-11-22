@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 
 <head>
     <meta charset="utf-8">
@@ -7,8 +7,25 @@
     <title>Mampf Login</title>
 
     <link href="bootstrap.min.css" rel="stylesheet">
+    <!-- Oberflächenfarbe wie auf der Karte (Farbregler auf der About-Seite) -->
+    <script src="/assets/theme.js"></script>
 
     <style>
+        :root {
+            --hue: 175.5;
+            --primary: hsl(var(--hue) 53.8% 39%);
+        }
+
+        /* Logo in der Oberflächenfarbe: die Datei dient nur als Form (Maske) */
+        .mampf-logo {
+            display: block;
+            width: 250px;
+            aspect-ratio: 1700 / 750;
+            background-color: var(--primary);
+            -webkit-mask: url('logo.svg') center / contain no-repeat;
+            mask: url('logo.svg') center / contain no-repeat;
+        }
+
         html,
         body {
             height: 100%;
@@ -42,7 +59,7 @@
         <form onsubmit="onFormSubmit(event)">
             <!-- Logo mit Zufallsspruch (Sprüche: map/public/assets/slogans.txt) -->
             <div class="mb-3 mx-auto" style="width: 250px" data-mampf-slogan>
-                <img class="d-block" src="logo.svg" alt="mampf" width="250">
+                <span class="mampf-logo" role="img" aria-label="mampf"></span>
             </div>
             <h1 class="h4 mb-3 fw-normal">Bitte melde dich an</h1>
 
@@ -52,7 +69,7 @@
             </div>
 
             <div class="form-floating">
-                <input type="password" class="form-control" id="password" placeholder="Password" required>
+                <input type="password" class="form-control" id="password" placeholder="Passwort" required>
                 <label for="password">Passwort</label>
             </div>
 

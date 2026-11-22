@@ -16,6 +16,8 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#2e9991" />
+    <!-- Oberflächenfarbe (Farbregler auf der About-Seite) vor allem anderen setzen -->
+    <script src="assets/theme.js"></script>
     <meta name="apple-mobile-web-app-title" content="mampf" />
 
     <!-- Vorschau beim Teilen (WhatsApp, iMessage, Signal usw.) -->
@@ -63,6 +65,7 @@
         width: 363.18px;
         height: 160.23px;
         transition: opacity var(--logo-fade, 700ms) ease;
+        color: var(--primary, #2e9991); /* Linien des Logos (currentColor) */
       }
       /* Logo blendet aus, kurz nachdem die grauen Punkte einzublenden beginnen */
       #splash.fade-logo svg {
@@ -254,7 +257,7 @@
               return;
             }
             svg = svg
-              .replace(/stroke="#000(000)?"/g, 'stroke="#2e9991"') // Schwarz -> mampf-Grün
+              .replace(/stroke="#(000|000000|2e9991)"/g, 'stroke="currentColor"') // Linien in der Oberflächenfarbe
               .replace(/3000ms/g, DURATION + 'ms'); // Tempo anpassen
             splash.insertAdjacentHTML('beforeend', svg);
             splash.classList.add('play'); // Band-Animation gleichzeitig starten

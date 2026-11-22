@@ -9,7 +9,8 @@ import {
   inject,
 } from '@angular/core';
 import { GoogleMap, MapCircle, MapMarker } from '@angular/google-maps';
-import { MAP_STYLES } from '../../util/map-styles';
+import { mapStyles } from '../../util/map-styles';
+import { currentHue } from '../../util/color';
 import { Place } from '../../dto/place';
 import { PlacesOverlay, createPlacesOverlay } from './places-overlay';
 import { Slot } from '../../dto/opening';
@@ -40,7 +41,7 @@ export class MapComponent implements OnInit, OnChanges {
   readonly MAX_ACCURACY_RADIUS = 300;
   readonly DETAIL_ZOOM = 16;
   readonly MAP_OPTIONS: google.maps.MapOptions = {
-    styles: MAP_STYLES,
+    styles: mapStyles(currentHue()),
     zoomControl: false,
     mapTypeControl: false,
     streetViewControl: false,
@@ -120,6 +121,8 @@ export class MapComponent implements OnInit, OnChanges {
 
   onMapInitialized(map: google.maps.Map) {
     this.map = map;
+    // Neue Oberflächenfarbe (Farbregler auf der About-Seite): Karte mitfärben
+    window.addEventListener('mampf-hue', () => map.setOptions({ styles: mapStyles(currentHue()) }));
     map.addListener('dragstart', () =>
       this.zone.run(() => (this.mapMoving = true))
     );

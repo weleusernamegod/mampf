@@ -103,6 +103,7 @@
       const textEl = document.createElementNS(NS, 'text');
       textEl.setAttribute('class', 'mampf-slogan');
       textEl.setAttribute('fill', COLOR);
+      textEl.style.fill = `var(--primary, ${COLOR})`; // Oberflächenfarbe, falls gesetzt (theme.js)
       textEl.style.fontFamily = `"${FAMILY}"`;
       textEl.style.fontWeight = '300';
       svg.appendChild(textEl);

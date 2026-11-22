@@ -12,7 +12,7 @@ export class ActionStatusModalComponent {
   readonly ActionStatus = ActionStatus;
 
   @Input() status: ActionStatus = ActionStatus.NoOperation;
-  @Input() title = 'Operation in progress';
+  @Input() title = 'Bitte warten';
 
   resetModal(): void {
     this.status = ActionStatus.NoOperation;
