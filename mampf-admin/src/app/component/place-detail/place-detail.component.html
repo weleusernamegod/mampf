@@ -40,9 +40,9 @@
       <h2 class="panel-title">Angebot</h2>
       @for (group of categoryList.groups; track group.key) {
         @if (!group.single) {
-          <!-- Viele Chips: Überschrift mit Suchfeld, nicht passende Chips verschwinden -->
+          <!-- Viele Chips: Überschrift, darunter Suchfeld; nicht passende Chips verschwinden -->
           <div class="question-row">
-            <span class="question">{{ group.name }}</span>
+            <span class="question group-title">{{ group.name }}</span>
             <label class="search">
               <i class="fa fa-search"></i>
               <input
@@ -58,7 +58,7 @@
           </div>
         } @else if (group.key !== 'art') {
           <!-- "Art des Lokals" braucht keine Überschrift, das ist klar genug -->
-          <span class="question">{{ group.name }}</span>
+          <span class="question group-title">{{ group.name }}</span>
         }
         @if (group.single && categoriesOf(group).length <= 4) {
           <!-- Wenige Optionen: Schieberegler -->
@@ -89,7 +89,7 @@
               </button>
             }
           </div>
-          <p class="hint">Nochmals anklicken hebt eine Auswahl wieder auf.</p>
+          <p class="hint">Anklicken hebt eine Auswahl wieder auf.</p>
         } @else {
           <!-- Mehrere erlaubt: Chips wie im Filter der Karte -->
           <div class="chips">

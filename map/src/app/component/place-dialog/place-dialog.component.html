@@ -61,11 +61,9 @@
         }
         @if (!place?.own) {
           <p class="meta">
-            Erstellt durch anderen Nutzer
             @if (createdText) {
-              am {{ createdText }}
+              Erstellt am {{ createdText }}.
             }
-            <br />
             <button type="button" class="report" (click)="onReportClicked($event)">
               {{ reportHint ? 'kommt bald' : 'Missbrauch melden' }}
             </button>
