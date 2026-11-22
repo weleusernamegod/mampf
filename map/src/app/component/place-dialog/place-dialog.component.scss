@@ -13,7 +13,7 @@
   width: 339px;
   height: 110px; // wird per JavaScript gesetzt (zu- und aufgeklappt)
 
-  padding: 10px 15px 15px 15px;
+  padding: 15px;
 
   overflow: hidden;
 
@@ -44,45 +44,14 @@
   }
 }
 
-// Kleines X oben rechts
-.close {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: none;
-
-  background-color: var(--grey2);
-  -webkit-mask: url('/assets/icons/no.svg') center / contain no-repeat;
-  mask: url('/assets/icons/no.svg') center / contain no-repeat;
-
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-
-  &:hover {
-    background-color: var(--grey3);
-  }
-}
-
 #summary {
   display: grid;
   grid-template-columns: 70px auto;
   grid-template-rows: auto;
   gap: 15px;
 
-  padding-right: 20px; // Platz für das X
 
   font-size: 14px;
-}
-
-hr {
-  width: 100px;
-  margin: 0 auto 15px auto;
-
-  border-top: 1px solid var(--grey1);
 }
 
 #logo {

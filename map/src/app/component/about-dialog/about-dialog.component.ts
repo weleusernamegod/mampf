@@ -49,14 +49,13 @@ export class AboutDialogComponent implements AfterViewInit, OnDestroy {
 
   async share(event: Event) {
     event.stopPropagation(); // Dialog nicht schliessen
-    const url = window.location.origin;
+    const url = window.location.origin + '/';
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: 'mampf',
-          text: 'Foodtrucks und Imbisse auf der Karte',
-          url,
-        });
+        // Nur den Link teilen, ohne Titel und Text: Dann holt sich das iPhone
+        // (und WhatsApp usw.) Icon, Titel und Beschreibung selbst aus der Seite,
+        // genau wie beim Teilen über den Browser. Mit Text würde nur der Text geteilt.
+        await navigator.share({ url });
       } catch {
         // Teilen abgebrochen: nichts tun
       }
@@ -79,7 +78,9 @@ export class AboutDialogComponent implements AfterViewInit, OnDestroy {
     }
     // Ohne Installations-Angebot des Browsers: kurze Anleitung
     const iOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-    this.showHint('home', iOS ? 'Teilen → Zum Home-Bildschirm' : 'Menü ⋮ → Zum Startbildschirm', 5000);
+    // iPhone: Geht nur über den Teilen-Knopf des Browsers (Safari unten, Chrome oben),
+    // nicht über "mit Freund:in teilen" oben – dort fehlt "Zum Home-Bildschirm".
+    this.showHint('home', iOS ? 'Safari: Teilen → Zum Home-Bildschirm' : 'Menü ⋮ → Zum Startbildschirm', 6000);
   }
 
   /** Platzhalter für Funktionen, die es noch nicht gibt. */

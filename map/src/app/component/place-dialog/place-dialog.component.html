@@ -11,13 +11,6 @@
     (touchend)="onTouchEnd()"
     (touchcancel)="onTouchEnd()"
     (transitionend)="onTransitionEnd($event)">
-    <button
-      type="button"
-      class="close"
-      aria-label="Schliessen"
-      (click)="$event.stopPropagation(); closed.emit()"></button>
-
-    <hr />
     <div id="summary" #summary>
       <img id="logo" [src]="pictureUrl" width="70" height="70" alt="" />
       <div id="info">
