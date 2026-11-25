@@ -62,7 +62,10 @@
   border-radius: 50%;
   border: 2px solid var(--grey1);
 
-  object-fit: cover;
+  // contain: Logos (oft breiter als hoch) ganz zeigen statt abschneiden;
+  // quadratische Fotos füllen den Kreis trotzdem
+  object-fit: contain;
+  background: var(--white);
   cursor: zoom-in;
 }
 
@@ -78,7 +81,8 @@
   border-radius: 14px;
   box-shadow: 0px 1px 3px 0px var(--shadow);
 
-  object-fit: cover;
+  object-fit: contain;
+  background: var(--white);
   cursor: zoom-out;
 
   animation: photo-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);

@@ -19,16 +19,14 @@ export class PictureInputComponent implements OnChanges {
   readonly MAX_SIDE = 512;
   readonly MIN_SIDE = 128;
 
-  @Input() originalPictureId: number | undefined;
+  @Input() originalPictureUrl: string | null | undefined;
   @Output() pictureDeleted = new EventEmitter<void>();
   @Output() pictureUploaded = new EventEmitter<string>();
 
   imageUrl: string | undefined;
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.imageUrl = this.originalPictureId
-      ? `/api/get-public-picture.php?id=${this.originalPictureId}`
-      : undefined;
+    this.imageUrl = this.originalPictureUrl ?? undefined;
   }
 
   onPictureDeleted() {

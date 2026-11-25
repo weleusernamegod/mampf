@@ -43,10 +43,12 @@ for r in rows:
         L.append(f"UPDATE tbl_place SET price_min = {pmin}, price_max = {pmax} WHERE {near} AND price_min IS NULL;")
         upd += 1
     desc = r["beschreibung"] or ", ".join(x for x in [r["art"], r["kueche"].replace("; ", ", ")] if x)
+    if len(desc) > 50:  # Admin-Formular erlaubt höchstens 50 Zeichen
+        desc = desc[:49].rsplit(" ", 1)[0].rstrip(",;:") + "…"
     L.append(f"-- {r['nr']}: {name} ({r['adresse']})")
     L.append(f"SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE {near});")
     L.append("INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)\n"
-             f"  SELECT @user_id, NULL, {q(name)}, {q(desc[:255])}, {lat}, {lng}, {pmin}, {pmax}, NOW() FROM DUAL WHERE @neu;")
+             f"  SELECT @user_id, NULL, {q(name)}, {q(desc)}, {lat}, {lng}, {pmin}, {pmax}, NOW() FROM DUAL WHERE @neu;")
     L.append("SET @p = IF(@neu, LAST_INSERT_ID(), NULL);")
     zeiten = [f"SELECT {w} w, '{s}' s" for t, w in TAGE if r[t] == "1" for c, s in SLOTS if r[c] == "1"]
     if zeiten:

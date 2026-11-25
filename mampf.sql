@@ -76,6 +76,7 @@ CREATE TABLE `tbl_place` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `picture_id` int(11) DEFAULT NULL,
+  `picture_file` varchar(100) DEFAULT NULL COMMENT 'Bilddatei in /bilder/orte/ auf dem Webserver',
   `name` varchar(255) NOT NULL,
   `description` varchar(255) NOT NULL,
   `lat` double NOT NULL,

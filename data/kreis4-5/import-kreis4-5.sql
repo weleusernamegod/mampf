@@ -18,7 +18,7 @@ UPDATE tbl_place SET price_min = 10, price_max = 15 WHERE ((name = 'Famiglia Tre
 -- 1: Famiglia Tremonte (Birmensdorferstrasse 129, 8003 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Famiglia Tremonte' AND ABS(lat - 47.3699) < 0.002 AND ABS(lng - 8.518) < 0.002) OR (name LIKE 'Famiglia%' AND ABS(lat - 47.3699) < 0.0006 AND ABS(lng - 8.518) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Famiglia Tremonte', 'Familienbetrieb seit 2004 bei der Schmiede Wiedikon, berühmt für Piadina', 47.3699, 8.518, 10, 15, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Famiglia Tremonte', 'Familienbetrieb an der Schmiede Wiedikon, Piadina', 47.3699, 8.518, 10, 15, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 1 w, 'noon' s UNION ALL SELECT 2 w, 'noon' s UNION ALL SELECT 3 w, 'noon' s UNION ALL SELECT 4 w, 'noon' s UNION ALL SELECT 5 w, 'noon' s) t WHERE @p IS NOT NULL;
@@ -40,7 +40,7 @@ UPDATE tbl_place SET price_min = 12, price_max = 17 WHERE ((name = 'Allegrotto' 
 -- 3: Allegrotto (Langstrasse 81, 8004 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Allegrotto' AND ABS(lat - 47.3776837) < 0.002 AND ABS(lng - 8.5264) < 0.002) OR (name LIKE 'Allegrotto%' AND ABS(lat - 47.3776837) < 0.0006 AND ABS(lng - 8.5264) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Allegrotto', 'Imbiss-Stand, Amerikanisch, Indisch, Italienisch, Sri Lankisch, Türkisch', 47.3776837, 8.5264, 12, 17, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Allegrotto', 'Imbiss-Stand, Amerikanisch, Indisch…', 47.3776837, 8.5264, 12, 17, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 0 w, 'morning' s UNION ALL SELECT 0 w, 'noon' s UNION ALL SELECT 0 w, 'evening' s UNION ALL SELECT 1 w, 'morning' s UNION ALL SELECT 1 w, 'noon' s UNION ALL SELECT 1 w, 'evening' s UNION ALL SELECT 2 w, 'morning' s UNION ALL SELECT 2 w, 'noon' s UNION ALL SELECT 2 w, 'evening' s UNION ALL SELECT 3 w, 'morning' s UNION ALL SELECT 3 w, 'noon' s UNION ALL SELECT 3 w, 'evening' s UNION ALL SELECT 4 w, 'morning' s UNION ALL SELECT 4 w, 'noon' s UNION ALL SELECT 4 w, 'evening' s UNION ALL SELECT 5 w, 'morning' s UNION ALL SELECT 5 w, 'noon' s UNION ALL SELECT 5 w, 'evening' s UNION ALL SELECT 6 w, 'morning' s UNION ALL SELECT 6 w, 'noon' s UNION ALL SELECT 6 w, 'evening' s) t WHERE @p IS NOT NULL;
@@ -71,7 +71,7 @@ UPDATE tbl_place SET price_min = 16, price_max = 23 WHERE ((name = 'Bilo Bistro'
 -- 6: Bilo Bistro (Ankerstrasse 116, 8004 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Bilo Bistro' AND ABS(lat - 47.3764202) < 0.002 AND ABS(lng - 8.5283268) < 0.002) OR (name LIKE 'Bilo%' AND ABS(lat - 47.3764202) < 0.0006 AND ABS(lng - 8.5283268) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Bilo Bistro', 'Mediterrane Bistro-Küche, auch Lieferung, bis spät nachts offen', 47.3764202, 8.5283268, 16, 23, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Bilo Bistro', 'Mediterranes Bistro, Lieferung, bis spät offen', 47.3764202, 8.5283268, 16, 23, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT IGNORE INTO tbl_place_category (place_id, category_id)
   SELECT @p, id FROM tbl_category WHERE @p IS NOT NULL AND ((gruppe = 'art' AND name = 'Imbiss-Stand') OR (gruppe = 'kueche' AND name = 'Mediterran') OR (gruppe = 'praeferenz' AND name = 'Lieferung'));
@@ -120,7 +120,7 @@ UPDATE tbl_place SET price_min = 17, price_max = 24 WHERE ((name = 'Charlie''s T
 -- 11: Charlie's Take Away (Werdstrasse 60, 8004 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Charlie''s Take Away' AND ABS(lat - 47.3726372) < 0.002 AND ABS(lng - 8.5277578) < 0.002) OR (name LIKE 'Charlie''s%' AND ABS(lat - 47.3726372) < 0.0006 AND ABS(lng - 8.5277578) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Charlie''s Take Away', 'Kleiner Take-away mit malaysischen Currys, bekannt für Rendang', 47.3726372, 8.5277578, 17, 24, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Charlie''s Take Away', 'Malaysische Currys, bekannt für Rendang', 47.3726372, 8.5277578, 17, 24, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT IGNORE INTO tbl_place_category (place_id, category_id)
   SELECT @p, id FROM tbl_category WHERE @p IS NOT NULL AND ((gruppe = 'art' AND name = 'Take-away-Stand') OR (gruppe = 'kueche' AND name = 'Malaysisch') OR (gruppe = 'gericht' AND name = 'Curry') OR (gruppe = 'gericht' AND name = 'Rendang'));
@@ -171,7 +171,7 @@ UPDATE tbl_place SET price_min = 12, price_max = 17 WHERE ((name = 'Edy''s' AND 
 -- 16: Edy's (Lutherstrasse 2, 8004 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Edy''s' AND ABS(lat - 47.3737038) < 0.002 AND ABS(lng - 8.5300022) < 0.002) OR (name LIKE 'Edy''s%' AND ABS(lat - 47.3737038) < 0.0006 AND ABS(lng - 8.5300022) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Edy''s', 'Gemüse-Kebab am Stauffacher, auch vegan mit Planted', 47.3737038, 8.5300022, 12, 17, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Edy''s', 'Gemüse-Kebab am Stauffacher, auch vegan mit…', 47.3737038, 8.5300022, 12, 17, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 1 w, 'noon' s UNION ALL SELECT 1 w, 'evening' s UNION ALL SELECT 2 w, 'noon' s UNION ALL SELECT 2 w, 'evening' s UNION ALL SELECT 3 w, 'noon' s UNION ALL SELECT 3 w, 'evening' s UNION ALL SELECT 4 w, 'noon' s UNION ALL SELECT 4 w, 'evening' s UNION ALL SELECT 5 w, 'noon' s UNION ALL SELECT 5 w, 'evening' s UNION ALL SELECT 6 w, 'noon' s UNION ALL SELECT 6 w, 'evening' s) t WHERE @p IS NOT NULL;
@@ -215,7 +215,7 @@ UPDATE tbl_place SET price_min = 16, price_max = 22 WHERE ((name = 'Huncho' AND 
 -- 20: Huncho (Kanonengasse 7, 8004 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Huncho' AND ABS(lat - 47.3771779) < 0.002 AND ABS(lng - 8.5290073) < 0.002) OR (name LIKE 'Huncho%' AND ABS(lat - 47.3771779) < 0.0006 AND ABS(lng - 8.5290073) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Huncho', 'Smash-Burger, handgeschnittene doppelt frittierte Pommes, keine Sitzplätze', 47.3771779, 8.5290073, 16, 22, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Huncho', 'Smash-Burger und frische Pommes, ohne Sitzplätze', 47.3771779, 8.5290073, 16, 22, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT IGNORE INTO tbl_place_category (place_id, category_id)
   SELECT @p, id FROM tbl_category WHERE @p IS NOT NULL AND ((gruppe = 'art' AND name = 'Take-away-Stand') OR (gruppe = 'kueche' AND name = 'Amerikanisch') OR (gruppe = 'gericht' AND name = 'Burger') OR (gruppe = 'gericht' AND name = 'Smash Burger'));
@@ -246,7 +246,7 @@ UPDATE tbl_place SET price_min = 17, price_max = 25 WHERE ((name = 'Kanton Slice
 -- 23: Kanton Slice (Brauerstrasse, 8004 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Kanton Slice' AND ABS(lat - 47.3778013) < 0.002 AND ABS(lng - 8.5268763) < 0.002) OR (name LIKE 'Kanton%' AND ABS(lat - 47.3778013) < 0.0006 AND ABS(lng - 8.5268763) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Kanton Slice', 'access via elevator in the entrance area of Hungry Duck', 47.3778013, 8.5268763, 17, 25, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Kanton Slice', 'Pizza-Slices, Zugang per Lift bei Hungry Duck', 47.3778013, 8.5268763, 17, 25, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 0 w, 'evening' s UNION ALL SELECT 2 w, 'evening' s UNION ALL SELECT 3 w, 'evening' s UNION ALL SELECT 4 w, 'evening' s UNION ALL SELECT 5 w, 'evening' s UNION ALL SELECT 6 w, 'evening' s) t WHERE @p IS NOT NULL;
@@ -321,7 +321,7 @@ UPDATE tbl_place SET price_min = 12, price_max = 17 WHERE ((name = 'Oder Wat' AN
 -- 30: Oder Wat (Tellstrasse 10, 8004 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Oder Wat' AND ABS(lat - 47.3783341) < 0.002 AND ABS(lng - 8.5286082) < 0.002) OR (name LIKE 'Oder%' AND ABS(lat - 47.3783341) < 0.0006 AND ABS(lng - 8.5286082) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Oder Wat', 'Ruhrpott-Imbiss: Currywurst mit Pommes, auch Curry-Fondue', 47.3783341, 8.5286082, 12, 17, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Oder Wat', 'Ruhrpott-Imbiss: Currywurst mit Pommes, auch…', 47.3783341, 8.5286082, 12, 17, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 2 w, 'noon' s UNION ALL SELECT 3 w, 'noon' s UNION ALL SELECT 4 w, 'noon' s UNION ALL SELECT 5 w, 'noon' s) t WHERE @p IS NOT NULL;
@@ -407,7 +407,7 @@ UPDATE tbl_place SET price_min = 14, price_max = 20 WHERE ((name = 'Roots of Him
 -- 38: Roots of Himalaya (Badenerstrasse 155, 8004 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Roots of Himalaya' AND ABS(lat - 47.3742749) < 0.002 AND ABS(lng - 8.5219557) < 0.002) OR (name LIKE 'Roots%' AND ABS(lat - 47.3742749) < 0.0006 AND ABS(lng - 8.5219557) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Roots of Himalaya', 'Tibetische Momos von Küchenchef Topden Phuntsok, auch Curry und Bowls', 47.3742749, 8.5219557, 14, 20, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Roots of Himalaya', 'Tibetische Momos, auch Curry und Bowls', 47.3742749, 8.5219557, 14, 20, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT IGNORE INTO tbl_place_category (place_id, category_id)
   SELECT @p, id FROM tbl_category WHERE @p IS NOT NULL AND ((gruppe = 'art' AND name = 'Imbiss-Stand') OR (gruppe = 'kueche' AND name = 'Tibetisch') OR (gruppe = 'gericht' AND name = 'Momos') OR (gruppe = 'gericht' AND name = 'Curry') OR (gruppe = 'gericht' AND name = 'Bowls') OR (gruppe = 'praeferenz' AND name = 'Vegan') OR (gruppe = 'praeferenz' AND name = 'Vegetarisch'));
@@ -416,7 +416,7 @@ UPDATE tbl_place SET price_min = 10, price_max = 15 WHERE ((name = 'Rosita''s' A
 -- 39: Rosita's (Lagerstrasse 95, 8004 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Rosita''s' AND ABS(lat - 47.3793553) < 0.002 AND ABS(lng - 8.5297102) < 0.002) OR (name LIKE 'Rosita''s%' AND ABS(lat - 47.3793553) < 0.0006 AND ABS(lng - 8.5297102) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Rosita''s', 'Grosszügige, frisch belegte Sandwiches; Käse und Fleisch vor Ort geschnitten', 47.3793553, 8.5297102, 10, 15, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Rosita''s', 'Grosszügige, frisch belegte Sandwiches', 47.3793553, 8.5297102, 10, 15, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 1 w, 'morning' s UNION ALL SELECT 1 w, 'noon' s UNION ALL SELECT 2 w, 'morning' s UNION ALL SELECT 2 w, 'noon' s UNION ALL SELECT 3 w, 'morning' s UNION ALL SELECT 3 w, 'noon' s UNION ALL SELECT 4 w, 'morning' s UNION ALL SELECT 4 w, 'noon' s) t WHERE @p IS NOT NULL;
@@ -478,7 +478,7 @@ UPDATE tbl_place SET price_min = 12, price_max = 15 WHERE ((name = 'Suppelade' A
 -- 45: Suppelade (Lagerstrasse 119, 8004 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Suppelade' AND ABS(lat - 47.379811) < 0.002 AND ABS(lng - 8.52851) < 0.002) OR (name LIKE 'Suppelade%' AND ABS(lat - 47.379811) < 0.0006 AND ABS(lng - 8.52851) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Suppelade', 'Suppenfenster: drei frische Suppen täglich mit Brot und Früchten', 47.379811, 8.52851, 12, 15, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Suppelade', 'Drei frische Suppen täglich mit Brot und Frucht', 47.379811, 8.52851, 12, 15, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 1 w, 'noon' s UNION ALL SELECT 2 w, 'noon' s UNION ALL SELECT 3 w, 'noon' s UNION ALL SELECT 4 w, 'noon' s UNION ALL SELECT 5 w, 'noon' s) t WHERE @p IS NOT NULL;
@@ -580,7 +580,7 @@ UPDATE tbl_place SET price_min = 13, price_max = 18 WHERE ((name = 'Veganitas' A
 -- 55: Veganitas (Brauerstrasse 30, 8004 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Veganitas' AND ABS(lat - 47.3775824) < 0.002 AND ABS(lng - 8.5276791) < 0.002) OR (name LIKE 'Veganitas%' AND ABS(lat - 47.3775824) < 0.0006 AND ABS(lng - 8.5276791) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Veganitas', 'Veganes Fast Food: Pitas mit Planted Chicken, Tempeh, Beyond Burger', 47.3775824, 8.5276791, 13, 18, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Veganitas', 'Veganes Fast Food: Pitas und Burger', 47.3775824, 8.5276791, 13, 18, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT IGNORE INTO tbl_place_category (place_id, category_id)
   SELECT @p, id FROM tbl_category WHERE @p IS NOT NULL AND ((gruppe = 'art' AND name = 'Restaurant mit Take-away') OR (gruppe = 'gericht' AND name = 'Pita') OR (gruppe = 'gericht' AND name = 'Burger') OR (gruppe = 'praeferenz' AND name = 'Vegan') OR (gruppe = 'praeferenz' AND name = 'Rollstuhlgängig') OR (gruppe = 'praeferenz' AND name = 'Draussen sitzen') OR (gruppe = 'praeferenz' AND name = 'Online bestellen'));
@@ -653,7 +653,7 @@ UPDATE tbl_place SET price_min = 12, price_max = 17 WHERE ((name = 'Ada Lokma' A
 -- 62: Ada Lokma (Toni-Areal, Pfingstweidstrasse 96, 8005 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Ada Lokma' AND ABS(lat - 47.390504) < 0.002 AND ABS(lng - 8.512049) < 0.002) OR (name LIKE 'Ada%' AND ABS(lat - 47.390504) < 0.0006 AND ABS(lng - 8.512049) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Ada Lokma', 'Kebab, Köfte, Leber, vegetarische und vegane Optionen', 47.390504, 8.512049, 12, 17, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Ada Lokma', 'Kebab, Köfte, auch vegetarisch und vegan', 47.390504, 8.512049, 12, 17, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 5 w, 'morning' s UNION ALL SELECT 5 w, 'noon' s) t WHERE @p IS NOT NULL;
@@ -686,7 +686,7 @@ UPDATE tbl_place SET price_min = 12, price_max = 17 WHERE ((name = 'Best Kebab' 
 -- 65: Best Kebab (Langstrasse 206, 8005 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Best Kebab' AND ABS(lat - 47.3827549) < 0.002 AND ABS(lng - 8.5300757) < 0.002) OR (name LIKE 'Best%' AND ABS(lat - 47.3827549) < 0.0006 AND ABS(lng - 8.5300757) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Best Kebab', 'Döner, Lahmacun, Adana- und Schisch-Kebab, bis spät offen', 47.3827549, 8.5300757, 12, 17, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Best Kebab', 'Döner, Lahmacun, Adana-Kebab, bis spät offen', 47.3827549, 8.5300757, 12, 17, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 0 w, 'morning' s UNION ALL SELECT 0 w, 'noon' s UNION ALL SELECT 0 w, 'evening' s UNION ALL SELECT 1 w, 'morning' s UNION ALL SELECT 1 w, 'noon' s UNION ALL SELECT 1 w, 'evening' s UNION ALL SELECT 2 w, 'morning' s UNION ALL SELECT 2 w, 'noon' s UNION ALL SELECT 2 w, 'evening' s UNION ALL SELECT 3 w, 'morning' s UNION ALL SELECT 3 w, 'noon' s UNION ALL SELECT 3 w, 'evening' s UNION ALL SELECT 4 w, 'morning' s UNION ALL SELECT 4 w, 'noon' s UNION ALL SELECT 4 w, 'evening' s UNION ALL SELECT 5 w, 'morning' s UNION ALL SELECT 5 w, 'noon' s UNION ALL SELECT 5 w, 'evening' s UNION ALL SELECT 6 w, 'morning' s UNION ALL SELECT 6 w, 'noon' s UNION ALL SELECT 6 w, 'evening' s) t WHERE @p IS NOT NULL;
@@ -761,7 +761,7 @@ UPDATE tbl_place SET price_min = 14, price_max = 19 WHERE ((name = 'El Turpial' 
 -- 72: El Turpial (Toni-Areal, Pfingstweidstrasse 96, 8005 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'El Turpial' AND ABS(lat - 47.390504) < 0.002 AND ABS(lng - 8.512049) < 0.002) OR (name LIKE 'El%' AND ABS(lat - 47.390504) < 0.0006 AND ABS(lng - 8.512049) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'El Turpial', 'Venezolanische Arepas, Pabellón criollo, auch vegan', 47.390504, 8.512049, 14, 19, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'El Turpial', 'Venezolanische Arepas, auch vegan', 47.390504, 8.512049, 14, 19, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 3 w, 'noon' s) t WHERE @p IS NOT NULL;
@@ -772,7 +772,7 @@ UPDATE tbl_place SET price_min = 14, price_max = 20 WHERE ((name = 'Frida' AND A
 -- 73: Frida (Limmatstrasse 31, 8005 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Frida' AND ABS(lat - 47.3811243) < 0.002 AND ABS(lng - 8.5361272) < 0.002) OR (name LIKE 'Frida%' AND ABS(lat - 47.3811243) < 0.0006 AND ABS(lng - 8.5361272) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Frida', 'Kleiner mexikanischer Laden mit Tacos und Burritos zum Mitnehmen, auch Lebensmittel', 47.3811243, 8.5361272, 14, 20, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Frida', 'Mexikanische Tacos und Burritos zum Mitnehmen', 47.3811243, 8.5361272, 14, 20, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 0 w, 'noon' s UNION ALL SELECT 0 w, 'evening' s UNION ALL SELECT 1 w, 'noon' s UNION ALL SELECT 1 w, 'evening' s UNION ALL SELECT 2 w, 'noon' s UNION ALL SELECT 2 w, 'evening' s UNION ALL SELECT 3 w, 'noon' s UNION ALL SELECT 3 w, 'evening' s UNION ALL SELECT 4 w, 'noon' s UNION ALL SELECT 4 w, 'evening' s UNION ALL SELECT 5 w, 'noon' s UNION ALL SELECT 5 w, 'evening' s UNION ALL SELECT 6 w, 'noon' s UNION ALL SELECT 6 w, 'evening' s) t WHERE @p IS NOT NULL;
@@ -814,7 +814,7 @@ UPDATE tbl_place SET price_min = 10, price_max = 15 WHERE ((name = 'Il Pentagram
 -- 77: Il Pentagramma (Josefstrasse 28, 8005 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Il Pentagramma' AND ABS(lat - 47.3811064) < 0.002 AND ABS(lng - 8.5336844) < 0.002) OR (name LIKE 'Il%' AND ABS(lat - 47.3811064) < 0.0006 AND ABS(lng - 8.5336844) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Il Pentagramma', 'Panini-Institution an der Josefstrasse, Klassiker «Goloso»', 47.3811064, 8.5336844, 10, 15, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Il Pentagramma', 'Panini-Institution an der Josefstrasse', 47.3811064, 8.5336844, 10, 15, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT IGNORE INTO tbl_place_category (place_id, category_id)
   SELECT @p, id FROM tbl_category WHERE @p IS NOT NULL AND ((gruppe = 'art' AND name = 'Imbiss-Stand') OR (gruppe = 'kueche' AND name = 'Italienisch') OR (gruppe = 'gericht' AND name = 'Sandwiches') OR (gruppe = 'gericht' AND name = 'Panini') OR (gruppe = 'praeferenz' AND name = 'Online bestellen') OR (gruppe = 'praeferenz' AND name = 'Frisch') OR (gruppe = 'praeferenz' AND name = 'Kartenzahlung') OR (gruppe = 'praeferenz' AND name = 'Unter CHF 15'));
@@ -865,7 +865,7 @@ UPDATE tbl_place SET price_min = 16, price_max = 23 WHERE ((name = 'Kitchen Repu
 -- 82: Kitchen Republic (Heinrichstrasse 239, 8005 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Kitchen Republic' AND ABS(lat - 47.3889173) < 0.002 AND ABS(lng - 8.5222924) < 0.002) OR (name LIKE 'Kitchen%' AND ABS(lat - 47.3889173) < 0.0006 AND ABS(lng - 8.5222924) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Kitchen Republic', 'Food Hall mit Negishi, Nooch, The Butcher, Angry Chicken, Poke Nation', 47.3889173, 8.5222924, 16, 23, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Kitchen Republic', 'Food Hall: Sushi, Wok, Burger, Korean Chicken', 47.3889173, 8.5222924, 16, 23, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 0 w, 'noon' s UNION ALL SELECT 0 w, 'evening' s UNION ALL SELECT 1 w, 'noon' s UNION ALL SELECT 1 w, 'evening' s UNION ALL SELECT 2 w, 'noon' s UNION ALL SELECT 2 w, 'evening' s UNION ALL SELECT 3 w, 'noon' s UNION ALL SELECT 3 w, 'evening' s UNION ALL SELECT 4 w, 'noon' s UNION ALL SELECT 4 w, 'evening' s UNION ALL SELECT 5 w, 'noon' s UNION ALL SELECT 5 w, 'evening' s UNION ALL SELECT 6 w, 'noon' s UNION ALL SELECT 6 w, 'evening' s) t WHERE @p IS NOT NULL;
@@ -918,7 +918,7 @@ UPDATE tbl_place SET price_min = 17, price_max = 24 WHERE ((name = 'Loving Lanka
 -- 87: Loving Lanka (ZHdK, Pfingstweidstrasse 94, 8005 Zürich / Schiffbau, Hardstrasse 243)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Loving Lanka' AND ABS(lat - 47.390229) < 0.002 AND ABS(lng - 8.512069) < 0.002) OR (name LIKE 'Loving%' AND ABS(lat - 47.390229) < 0.0006 AND ABS(lng - 8.512069) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Loving Lanka', 'Scharfe tamilische Currys mit Reis, immer auch vegan', 47.390229, 8.512069, 17, 24, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Loving Lanka', 'Scharfe tamilische Currys mit Reis, auch vegan', 47.390229, 8.512069, 17, 24, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 2 w, 'noon' s UNION ALL SELECT 5 w, 'noon' s) t WHERE @p IS NOT NULL;
@@ -958,7 +958,7 @@ UPDATE tbl_place SET price_min = 10, price_max = 15 WHERE ((name = 'Mensa Molki 
 -- 91: Mensa Molki (Toni-Areal) (Pfingstweidstrasse 96, 8005 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Mensa Molki (Toni-Areal)' AND ABS(lat - 47.390504) < 0.002 AND ABS(lng - 8.512049) < 0.002) OR (name LIKE 'Mensa%' AND ABS(lat - 47.390504) < 0.0006 AND ABS(lng - 8.512049) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Mensa Molki (Toni-Areal)', 'Mensa von ZHdK/ZHAW: Tagesmenüs, Suppe, Markt- und Salatbuffet', 47.390504, 8.512049, 10, 15, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Mensa Molki (Toni-Areal)', 'Mensa ZHdK/ZHAW: Menüs, Suppe, Salatbuffet', 47.390504, 8.512049, 10, 15, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 1 w, 'noon' s UNION ALL SELECT 2 w, 'noon' s UNION ALL SELECT 3 w, 'noon' s UNION ALL SELECT 4 w, 'noon' s UNION ALL SELECT 5 w, 'noon' s) t WHERE @p IS NOT NULL;
@@ -1053,7 +1053,7 @@ UPDATE tbl_place SET price_min = 18, price_max = 24 WHERE ((name = 'Spoon' AND A
 -- 100: Spoon (Pfingstweidstrasse 104a, 8005 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Spoon' AND ABS(lat - 47.390961) < 0.002 AND ABS(lng - 8.508666) < 0.002) OR (name LIKE 'Spoon%' AND ABS(lat - 47.390961) < 0.0006 AND ABS(lng - 8.508666) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Spoon', 'Rund zehn thailändische Gerichte täglich frisch, vegetarisch und mit Fleisch', 47.390961, 8.508666, 18, 24, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Spoon', 'Täglich rund zehn frische Thai-Gerichte', 47.390961, 8.508666, 18, 24, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 1 w, 'noon' s UNION ALL SELECT 2 w, 'noon' s UNION ALL SELECT 3 w, 'noon' s UNION ALL SELECT 4 w, 'noon' s UNION ALL SELECT 5 w, 'noon' s) t WHERE @p IS NOT NULL;
@@ -1075,7 +1075,7 @@ UPDATE tbl_place SET price_min = 14, price_max = 20 WHERE ((name = 'Tenz Momo Fo
 -- 102: Tenz Momo Foodtruck (EXIL, Hardstrasse 245, 8005 Zürich)
 SET @neu = NOT EXISTS (SELECT 1 FROM tbl_place WHERE ((name = 'Tenz Momo Foodtruck' AND ABS(lat - 47.38823) < 0.002 AND ABS(lng - 8.519562) < 0.002) OR (name LIKE 'Tenz%' AND ABS(lat - 47.38823) < 0.0006 AND ABS(lng - 8.519562) < 0.0008)));
 INSERT INTO tbl_place (user_id, picture_id, name, description, lat, lng, price_min, price_max, create_time)
-  SELECT @user_id, NULL, 'Tenz Momo Foodtruck', 'Foodtruck der Momo-Kette Tenz: tibetische Teigtaschen', 47.38823, 8.519562, 14, 20, NOW() FROM DUAL WHERE @neu;
+  SELECT @user_id, NULL, 'Tenz Momo Foodtruck', 'Foodtruck der Momo-Kette Tenz', 47.38823, 8.519562, 14, 20, NOW() FROM DUAL WHERE @neu;
 SET @p = IF(@neu, LAST_INSERT_ID(), NULL);
 INSERT INTO tbl_place_opening (place_id, weekday, slot)
   SELECT @p, w, s FROM (SELECT 3 w, 'noon' s UNION ALL SELECT 5 w, 'noon' s) t WHERE @p IS NOT NULL;

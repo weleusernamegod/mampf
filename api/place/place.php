@@ -3,7 +3,10 @@ class Place
 {
     public $id;
     public $userId;
+    /** Altes Bild in tbl_picture (wird abgelöst durch pictureFile) */
     public $pictureId;
+    /** Bilddatei in /bilder/orte/ auf dem Webserver, NULL = keine */
+    public $pictureFile = NULL;
     public $name;
     public $description;
     public $lat;

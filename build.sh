@@ -13,6 +13,13 @@ if [ -d "/opt/homebrew/opt/node@22/bin" ]; then
 fi
 echo "Node $(node --version)"
 
+# Lokal hochgeladene Bilder (dist/bilder/orte) beim Neubauen behalten
+BILDER_TMP=""
+if [ -d ./dist/bilder/orte ]; then
+  BILDER_TMP="$(mktemp -d)"
+  cp -R ./dist/bilder/orte/. "$BILDER_TMP"/
+fi
+
 # Ausgabeordner neu anlegen
 rm -rf ./dist
 mkdir ./dist
@@ -32,5 +39,13 @@ cp ./mampf-admin/public/.htaccess ./dist/admin/.htaccess
 rsync -a --exclude '.DS_Store' ./login/ ./dist/login/
 rsync -a --exclude '.DS_Store' --exclude '.vscode' --exclude '.gitignore' \
   --exclude 'config.example.php' ./api/ ./dist/api/
+
+# Bilder der Orte: Ordner mit Schutz-.htaccess (die Bilder selbst liegen nur auf dem Server)
+mkdir -p ./dist/bilder/orte
+if [ -n "$BILDER_TMP" ]; then
+  cp -R "$BILDER_TMP"/. ./dist/bilder/orte/
+  rm -rf "$BILDER_TMP"
+fi
+cp ./bilder/orte/.htaccess ./dist/bilder/orte/.htaccess
 
 echo "Fertig: ./dist"

@@ -5,6 +5,7 @@ include('util/api-util.php');
 include('util/login-util.php');
 include('place/place-repository.php');
 include('picture/picture-repository.php');
+include('picture/picture-files.php');
 
 require_once('place/place.php');
 require_once('picture/picture.php');
@@ -67,41 +68,38 @@ $place->locations = $locations;
 save_place_schedule($place);
 save_place_categories($place->id, $categoryIds);
 
-// update picture
+// Bild: neues Bild als Datei in /bilder/orte/ speichern, altes Bild (Datei
+// oder alter Datenbank-Eintrag) erst nach erfolgreichem Speichern löschen.
+$oldPictureFile = NULL;
 if ($data['updatePicture']) {
-	if (!is_null($place->pictureId) && is_null($pictureData)) {
-		// delete existing picture
-		$pictureIdToDelete = $place->pictureId;
+	$oldPictureFile = $place->pictureFile;
+	$oldPictureId = $place->pictureId;
 
-		$place->pictureId = NULL;
-		$place = update_place($place);
+	$newPictureFile = NULL;
+	if (!is_null($pictureData)) {
+		$newPictureFile = save_picture_file($pictureData, 'jpg');
+		if (is_null($newPictureFile)) {
+			$mysqli->rollback();
+			http_response_code(500);
+			exit();
+		}
+	}
 
-		delete_picture_by_id($pictureIdToDelete);
-	} else if (!is_null($place->pictureId) && !is_null($pictureData)) {
-		// update existing picture
-		$picture = find_picture_by_id($place->pictureId);
+	$place->pictureFile = $newPictureFile;
+	$place->pictureId = NULL;
+	$place = update_place($place);
 
-		$imageInfo = getimagesizefromstring($pictureData);
-
-		$picture->data = $pictureData;
-		$picture->width = $imageInfo[0];
-		$picture->height = $imageInfo[1];
-		$picture->type = $imageInfo['mime'];
-		$picture = update_picture($picture);
-	} else if (is_null($place->pictureId) && !is_null($pictureData)) {
-		// create new picture
-		$imageInfo = getimagesizefromstring($pictureData);
-
-		$picture = new Picture(-1, $pictureData, $imageInfo['mime'], $imageInfo[0], $imageInfo[1]);
-		$picture = create_picture($picture);
-
-		$place->pictureId = $picture->id;
-		$place = update_place($place);
+	if (!is_null($oldPictureId)) {
+		delete_picture_if_unused($oldPictureId);
 	}
 }
 
 $mysqli->commit();
 close_db_connection($mysqli);
+
+if (!is_null($oldPictureFile)) {
+	delete_picture_file($oldPictureFile);
+}
 
 function _load_picture($data)
 {

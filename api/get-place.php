@@ -4,6 +4,7 @@ include('util/db-util.php');
 include('util/api-util.php');
 include('util/login-util.php');
 include('place/place-repository.php');
+include('picture/picture-files.php');
 
 require_once('place/place.php');
 
@@ -18,8 +19,8 @@ $mysqli = create_db_connection();
 
 $place = find_place_by_id(intval($_GET["id"]));
 
-$allowed = $place->userId === $_SESSION['user_id'] || is_admin();
-if (!$place || !$allowed) {
+$allowed = $place && ($place->userId === $_SESSION['user_id'] || is_admin());
+if (!$allowed) {
     http_response_code(404);
     exit();
 }
@@ -33,6 +34,7 @@ function _map_place_to_dto($place)
     return [
         'id' => $place->id,
         'pictureId' => $place->pictureId,
+        'pictureUrl' => picture_url($place),
         'name' => $place->name,
         'description' => $place->description,
         'lat' => $place->lat,

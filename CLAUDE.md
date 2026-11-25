@@ -11,6 +11,7 @@ Web-App mit einer Karte von Foodtrucks/Imbissständen. Live unter https://mampf.
 | `login/` | Login & Registrierung (`/login`) | Plain HTML + fetch |
 | `api/` | Backend (`/api/*.php`) | PHP (mysqli), Sessions |
 | `mampf.sql` | Datenbankschema (tbl_user, tbl_place, tbl_place_opening, tbl_place_location, tbl_category, tbl_place_category, tbl_picture, tbl_comment) | MySQL/MariaDB |
+| `bilder/orte/` | Nur `.htaccess` (Bilder selbst liegen nur auf dem Server) | Apache |
 
 | `design/font/` | Mampf-Schrift (vom Logo abgeleitet), Generator `mampf_font.py`, Testseite `testen.html` | Python (fonttools, shapely) |
 
@@ -25,12 +26,18 @@ der Kartenstil (`map/src/app/util/map-styles.ts`) dreht seine Farbtöne mit.
 
 `build.sh` baut alles nach `dist/`. Diese Struktur entspricht 1:1 dem Webroot auf dem Server.
 
+Bilder der Orte: Dateien in `/bilder/orte/` auf dem Webserver (`tbl_place.picture_file` = Dateiname,
+Code in `api/picture/picture-files.php`). Benutzer laden sie im Admin hoch (quadratisches JPEG).
+Die Bilder gibt es **nur auf dem Server** (nicht im Git, Repo ist öffentlich); das Deployment darf
+den Ordner nie löschen. Im Git liegt nur `bilder/orte/.htaccess` (sperrt alles ausser Bildern).
+`tbl_picture`/`picture_id` ist das alte System (nur noch für den Umzug, siehe `data/BILDER-UPDATE.md`).
+
 ## Lokal entwickeln
 
 - `./dev.sh` baut alles und startet den PHP-Server auf http://localhost:8080 (wie live).
 - `./dev.sh --no-build` startet nur den Server mit dem bestehenden `dist/`.
 - Für schnelles Frontend-Arbeiten mit Live-Reload: in `map/` oder `mampf-admin/` `npm start`
-  (Port 4200, Proxy für `/api`, `/login`, `/admin` → localhost:8080, PHP-Server muss laufen).
+  (Port 4200, Proxy für `/api`, `/login`, `/admin`, `/bilder` → localhost:8080, PHP-Server muss laufen).
 - Angular 18 braucht **Node 22**: `export PATH="/opt/homebrew/opt/node@22/bin:$PATH"`
   (build.sh macht das automatisch). Node 26 ist global installiert, aber nicht kompatibel.
 - Lokale DB: MariaDB via Homebrew (`brew services start mariadb`),
@@ -46,8 +53,13 @@ der Kartenstil (`map/src/app/util/map-styles.ts`) dreht seine Farbtöne mit.
 ## Git & Deployment
 
 - Repo: **öffentlich** auf GitHub unter dem Account des Besitzers (`origin`). `jan` = altes Repo von Jan Ebbe (nur lesen).
-- Hosting: wahrscheinlich Hostpoint, Upload per FTP (bisher manuell mit Cyberduck).
-- Geplant: GitHub Actions deployt `dist/` automatisch (`staging` → Test-Subdomain, `main` → mampf.io).
+- Hosting: Hostpoint. Datenbank `geiseryv_mampf`, verwalten über phpMyAdmin im Hostpoint Control Panel.
+- **Deployment läuft automatisch:** Jeder Push auf `main` baut und lädt per FTPS auf mampf.io hoch
+  (`.github/workflows/deploy.yml`, lässt `api/config.php` aus). Kein manueller Upload nötig.
+  Status: `gh run list -R weleusernamegod/mampf`.
+- Datenbank-Migrationen (`data/migration-*.sql`) laufen **nicht** automatisch: vor dem Push in
+  phpMyAdmin ausführen (der Besitzer meldet sich im Browser-Fenster an).
+- Geplant: `staging` → Test-Subdomain.
 
 ## Arbeitsweise
 

@@ -4,6 +4,8 @@ import { PlaceLocation } from './place-location';
 export interface Place {
   id: number;
   pictureId: number | null;
+  /** Bild-Adresse (Datei in /bilder/orte/ oder altes Datenbank-Bild), null = kein Bild. */
+  pictureUrl: string | null;
   /** Normaler Standort (gilt, wenn locations leer ist). */
   position: google.maps.LatLngLiteral;
   name: string;

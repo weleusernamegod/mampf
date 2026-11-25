@@ -1,0 +1,27 @@
+# Bilder der Orte (von Benutzern hochgeladen oder per FTP abgelegt).
+# Hier darf nie ein Skript ausgeführt werden, nur Bilder ausgeliefert.
+
+# Keine Dateiliste anzeigen
+Options -Indexes -ExecCGI
+
+# Nur Bilddateien ausliefern, alles andere sperren (z.B. getarnte .php-Dateien)
+<FilesMatch ".*">
+  Require all denied
+</FilesMatch>
+<FilesMatch "\.(jpe?g|png|webp|gif|svg|ico|avif)$">
+  Require all granted
+</FilesMatch>
+
+# PHP in diesem Ordner sicherheitshalber abschalten
+<IfModule mod_php.c>
+  php_flag engine off
+</IfModule>
+
+# SVG-Dateien nicht als eigenständige Seite mit Skripten ausführen lassen
+<IfModule mod_headers.c>
+  <FilesMatch "\.svg$">
+    Header set Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; sandbox"
+  </FilesMatch>
+  # Bilder dürfen eine Woche im Browser-Cache bleiben (neue Bilder bekommen neue Namen)
+  Header set Cache-Control "public, max-age=604800"
+</IfModule>

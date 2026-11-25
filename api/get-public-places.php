@@ -3,6 +3,7 @@ include('config.php');
 include('util/db-util.php');
 include('util/api-util.php');
 include('place/place-repository.php');
+include('picture/picture-files.php');
 
 require_once('place/place.php');
 
@@ -32,6 +33,7 @@ function _map_place_to_dto($place)
     return [
         'id' => $place->id,
         'pictureId' => $place->pictureId,
+        'pictureUrl' => picture_url($place),
         'name' => $place->name,
         'description' => $place->description,
         'position' => [

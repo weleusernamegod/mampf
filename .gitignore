@@ -14,3 +14,8 @@ Thumbs.db
 
 # Fremde Logos/Bilder der Kreis-4/5-Recherche (Urheberrecht, Repo ist öffentlich)
 data/kreis4-5/bilder/
+data/kreis4-5/bilder-fuer-server/
+
+# Hochgeladene Bilder der Orte (liegen nur auf dem Server), nur die .htaccess gehört ins Git
+bilder/orte/*
+!bilder/orte/.htaccess

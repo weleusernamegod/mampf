@@ -43,7 +43,17 @@ jobs:
           protocol: ftps
           local-dir: ./dist/
           server-dir: ${{ vars.FTP_SERVER_DIR }}
-          # Die Live-config.php auf dem Server nie anfassen
+          # Die Live-config.php und die hochgeladenen Bilder der Orte
+          # (/bilder/orte/, gibt es nur auf dem Server) nie anfassen.
+          # Nur die .htaccess in bilder/orte/ wird hochgeladen.
           exclude: |
             **/.DS_Store
             api/config.php
+            bilder/orte/*.jpg
+            bilder/orte/*.jpeg
+            bilder/orte/*.png
+            bilder/orte/*.webp
+            bilder/orte/*.gif
+            bilder/orte/*.svg
+            bilder/orte/*.ico
+            bilder/orte/*.avif

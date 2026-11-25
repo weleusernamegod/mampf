@@ -49,10 +49,8 @@ export class MyPlacesListComponent implements OnInit {
     this.router.navigate(['place', 'new']);
   }
 
-  getPictureUrl(pictureId: number | undefined) {
-    return pictureId
-      ? `/api/get-public-picture.php?id=${pictureId}`
-      : 'assets/no-picture.jpg';
+  getPictureUrl(pictureUrl: string | null) {
+    return pictureUrl ?? 'assets/no-picture.jpg';
   }
 
   private loadPlaces() {
