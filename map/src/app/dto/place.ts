@@ -18,6 +18,8 @@ export interface Place {
   /** Preisspanne in CHF (10–30), null = unbekannt */
   priceMin: number | null;
   priceMax: number | null;
+  /** Link zur Website oder zum Menü (https://…), null = keiner */
+  website: string | null;
   /** Erstellt am (JJJJ-MM-TT). */
   created: string;
   /** Gehört dem angemeldeten Nutzer. */

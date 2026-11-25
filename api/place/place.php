@@ -19,6 +19,8 @@ class Place
     /** Preisspanne in CHF (ganze Franken, 10–30; 10 = oder weniger, 30 = oder mehr), NULL = unbekannt */
     public $priceMin;
     public $priceMax;
+    /** Link zur Website oder zum Menü (https://…), NULL = keiner */
+    public $website = NULL;
     /** IDs der (sichtbaren) Kategorien */
     public $categories;
     public $createTime;

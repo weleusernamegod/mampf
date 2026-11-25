@@ -21,6 +21,9 @@
   /* fast schwarz (gewählte Seite im Admin-Menü) */
   --black: #1f1f1f;
   --shadow: rgba(0, 0, 0, 0.2);
+  /* Blau für den eigenen Standort (Punkt, Genauigkeitskreis, Blickrichtung),
+     wie man es von Google Maps kennt. Hängt bewusst nicht am Farbton. */
+  --location-blue: #1473e7;
 
   /* Abstand des Tages-Wählers vom unteren Rand. Wird auch vom Splashscreen
      (src/index.html) verwendet, damit die Logo-Ringe genau auf MO–SO landen. */

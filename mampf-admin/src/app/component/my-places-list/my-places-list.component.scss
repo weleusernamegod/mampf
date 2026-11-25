@@ -1,3 +1,31 @@
+// Tabelle nie breiter als der Bildschirm: feste Spaltenbreiten,
+// lange Namen und Beschreibungen brechen auf mehrere Zeilen um
+.table {
+  table-layout: fixed;
+
+  td {
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+}
+
+// Handy: Bildspalte und Abstände etwas schmaler
+@media (max-width: 480px) {
+  .table {
+    font-size: 14px;
+
+    th,
+    td {
+      padding-left: 4px;
+      padding-right: 4px;
+    }
+
+    .picture-col {
+      width: 58px;
+    }
+  }
+}
+
 // Gleicher Knopf wie "Speichern" im Formular, in der Oberflächenfarbe
 .add {
   padding: 10px 24px;

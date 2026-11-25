@@ -13,6 +13,8 @@
 }
 
 body {
+  /* Nie seitlich scrollen: Breites bricht um (Sicherheitsnetz, falls doch etwas übersteht) */
+  overflow-x: clip;
   padding-top: 88px;
   padding-bottom: 40px;
 }

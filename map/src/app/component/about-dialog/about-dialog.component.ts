@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { VERSION } from '../../version';
 import { DEFAULT_HUE, currentHue, setHue } from '../../util/color';
 
@@ -24,7 +24,7 @@ const HUE_SNAP = 12;
   templateUrl: './about-dialog.component.html',
   styleUrl: './about-dialog.component.scss',
 })
-export class AboutDialogComponent implements AfterViewInit, OnDestroy {
+export class AboutDialogComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly version = VERSION;
   readonly DEFAULT_HUE = DEFAULT_HUE;
 
@@ -39,10 +39,20 @@ export class AboutDialogComponent implements AfterViewInit, OnDestroy {
   /** Farbton unter dem Finger, gilt erst beim Loslassen. */
   previewHue = currentHue();
 
+  /** Angemeldet? Dann "meine Orte & Konto" statt "Login / Anmelden". */
+  loggedIn = false;
+
   private timer: ReturnType<typeof setTimeout> | undefined;
   private collapseTimer: ReturnType<typeof setTimeout> | undefined;
   private dragging = false;
   private snapped = false;
+
+  ngOnInit(): void {
+    fetch('/api/get-login-status.php')
+      .then(response => response.json())
+      .then(data => (this.loggedIn = !!data.loggedIn))
+      .catch(() => (this.loggedIn = false));
+  }
 
   ngAfterViewInit(): void {
     if (this.logo) window.MampfSlogan?.attach(this.logo.nativeElement);

@@ -52,6 +52,7 @@ function _map_place_to_dto($place)
         'categories' => $place->categories,
         'priceMin' => $place->priceMin,
         'priceMax' => $place->priceMax,
+        'website' => $place->website,
         // Nur das Datum (JJJJ-MM-TT), ohne Uhrzeit
         'created' => substr($place->createTime ?? '', 0, 10),
         'own' => $own,

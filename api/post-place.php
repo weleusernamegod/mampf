@@ -24,6 +24,7 @@ $opening = _normalize_opening($data['opening']);
 $locations = _normalize_locations($data['locations']);
 
 $categoryIds = array_values(array_unique($data['categories']));
+$website = _normalize_website($data['website'] ?? NULL);
 
 $mysqli = create_db_connection();
 
@@ -40,6 +41,7 @@ if ($data['id'] === -1) {
 	$place = new Place(-1, $_SESSION['user_id'], NULL, $data['name'], $data['description'], $data['lat'], $data['lng'], date("Y-m-d H:i:s"), NULL);
 	$place->priceMin = $data['priceMin'] ?? NULL;
 	$place->priceMax = $data['priceMax'] ?? NULL;
+	$place->website = $website;
 	$place = create_place($place);
 } else {
 	// update exiting place
@@ -58,6 +60,7 @@ if ($data['id'] === -1) {
 	$place->lng = $data['lng'];
 	$place->priceMin = $data['priceMin'] ?? NULL;
 	$place->priceMax = $data['priceMax'] ?? NULL;
+	$place->website = $website;
 	$place->lastUpdateTime = date("Y-m-d H:i:s");
 	$place = update_place($place);
 }
@@ -157,6 +160,9 @@ function _validate_payload($data)
 	if (!_validate_price($data['priceMin'] ?? NULL, $data['priceMax'] ?? NULL)) {
 		return FALSE;
 	}
+	if (!_validate_website($data['website'] ?? NULL)) {
+		return FALSE;
+	}
 	if (!isset($data['opening']) || !_validate_opening($data['opening'])) {
 		return FALSE;
 	}
@@ -181,6 +187,32 @@ function _validate_price($min, $max)
 		return TRUE;
 	}
 	return is_int($min) && is_int($max) && $min >= 10 && $max <= 30 && $min <= $max;
+}
+
+/** Link zur Website / zum Menü: leer, oder eine Web-Adresse (höchstens 255 Zeichen) */
+function _validate_website($website)
+{
+	if (is_null($website)) {
+		return TRUE;
+	}
+	if (!is_string($website) || mb_strlen($website) > 255) {
+		return FALSE;
+	}
+	$normalized = _normalize_website($website);
+	return is_null($normalized) || filter_var($normalized, FILTER_VALIDATE_URL) !== FALSE;
+}
+
+/** Leer = kein Link. "www.beispiel.ch" wird zu "https://www.beispiel.ch". */
+function _normalize_website($website)
+{
+	$website = trim($website ?? '');
+	if ($website === '') {
+		return NULL;
+	}
+	if (!preg_match('~^https?://~i', $website)) {
+		$website = 'https://' . $website;
+	}
+	return $website;
 }
 
 /** Einfache Liste [a, b, c] (kein Objekt mit eigenen Schlüsseln) */

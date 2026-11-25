@@ -28,6 +28,22 @@
         placeholder="z.B. Holzofenpizza zum Mitnehmen"
         [(ngModel)]="description" />
 
+      <label class="question" for="input-website">Link zur Website oder zum Menü (freiwillig)</label>
+      <input
+        type="text"
+        inputmode="url"
+        autocapitalize="off"
+        autocomplete="url"
+        spellcheck="false"
+        maxlength="255"
+        pattern="\s*(https?:\/\/)?[^\s\/]+\.\S{2,}.*"
+        title="Eine Web-Adresse, z.B. www.pizza-paolo.ch"
+        class="field"
+        id="input-website"
+        name="website"
+        placeholder="z.B. www.pizza-paolo.ch"
+        [(ngModel)]="website" />
+
       <span class="question">Bild</span>
       <mampf-picture-input
         [originalPictureUrl]="place?.pictureUrl"

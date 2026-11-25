@@ -76,6 +76,8 @@ export class PlaceDetailComponent implements OnInit {
   /** Preisspanne in CHF (10–30), null = unbekannt. */
   priceMin: number | null = null;
   priceMax: number | null = null;
+  /** Link zur Website oder zum Menü (freiwillig). */
+  website = '';
   /** Suchfeld pro Gruppe (Küche, Gerichte ...): Gruppe -> eingetippter Text. */
   searchTerms: Partial<Record<string, string>> = {};
 
@@ -274,6 +276,7 @@ export class PlaceDetailComponent implements OnInit {
       categories: [...this.selectedCategories],
       priceMin: this.priceMin,
       priceMax: this.priceMax,
+      website: this.website.trim() || null,
     } as SavePlace;
 
     fetch('/api/post-place.php', {
@@ -311,6 +314,7 @@ export class PlaceDetailComponent implements OnInit {
         this.selectedCategories = new Set(data.categories);
         this.priceMin = data.priceMin ?? null;
         this.priceMax = data.priceMax ?? null;
+        this.website = data.website ?? '';
 
         this.isLoading = false;
       })

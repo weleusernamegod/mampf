@@ -130,3 +130,28 @@
     transform: scale(1);
   }
 }
+
+/* Blickrichtung (heading-overlay.ts): blauer Fächer, der vom eigenen Standort
+   wegzeigt und nach aussen durchsichtig wird, wie bei Google Maps. */
+::ng-deep .heading-beam {
+  position: absolute;
+  width: 110px;
+  height: 80px;
+  /* Drehpunkt = unteres Ende in der Mitte = eigener Standort */
+  translate: -50% -100%;
+  transform-origin: 50% 100%;
+  transition: rotate 0.25s ease-out;
+  pointer-events: none;
+
+  background: radial-gradient(
+    circle at 50% 100%,
+    color-mix(in srgb, var(--location-blue) 65%, transparent) 0,
+    transparent 80px
+  );
+  /* Fächer mit ca. 70° Öffnung */
+  clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+
+  &[hidden] {
+    display: none;
+  }
+}

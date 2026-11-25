@@ -108,6 +108,19 @@
         </div>
       }
 
+      @if (place?.website; as website) {
+        <!-- Direkt über den Öffnungszeiten: Link zur Website oder zum Menü (neues Fenster) -->
+        <div class="section">
+          <strong class="title">Website / Menü</strong>
+          <a
+            class="website"
+            [href]="website"
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            (click)="$event.stopPropagation()">{{ websiteText }}</a>
+        </div>
+      }
+
       <mampf-open-days
         class="section block"
         [opening]="place?.opening ?? []"

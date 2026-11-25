@@ -68,14 +68,34 @@
   }
 
   .mampf-logo {
-    width: 80px;
+    width: 72px;
   }
 
   .brand {
+    flex: none;
     margin-right: 0;
   }
 
   .nav-link {
     font-size: 14px;
+    line-height: 1.2;
+    text-align: center;
+    white-space: normal; // "Meine Orte" darf auf zwei Zeilen
+  }
+}
+
+// Sehr schmale Handys (z.B. iPhone SE): alles noch etwas enger
+@media (max-width: 360px) {
+  .topbar-inner {
+    gap: 8px;
+    padding: 0 8px;
+  }
+
+  .mampf-logo {
+    width: 58px;
+  }
+
+  .nav-link {
+    font-size: 13px;
   }
 }

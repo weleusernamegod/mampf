@@ -87,6 +87,8 @@ export class PlaceDialogComponent implements OnChanges {
   shortDescription = '';
   /** Passt die Wartezeit noch neben Art und Preis? (wird nach dem Anzeigen gemessen) */
   waitingFits = true;
+  /** Link kurz angezeigt, ohne https:// und www., z.B. "pizza-paolo.ch/menu". */
+  websiteText = '';
   /** Erstellungsdatum, z.B. "12.11.2026". */
   createdText: string | undefined;
   /** "Missbrauch melden" gibt es noch nicht: kurz "kommt bald" anzeigen. */
@@ -117,6 +119,10 @@ export class PlaceDialogComponent implements OnChanges {
       const [year, month, day] = (this.place.created ?? '').split('-');
       this.createdText = day ? `${day}.${month}.${year}` : undefined;
       this.reportHint = false;
+      this.websiteText = (this.place.website ?? '')
+        .replace(/^https?:\/\//i, '')
+        .replace(/^www\./i, '')
+        .replace(/\/$/, '');
       this.price =
         this.place.priceMin != null && this.place.priceMax != null
           ? priceText(this.place.priceMin, this.place.priceMax)

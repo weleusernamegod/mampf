@@ -16,4 +16,6 @@ export interface SavePlace {
   /** Preisspanne in CHF (10–30), null = unbekannt */
   priceMin: number | null;
   priceMax: number | null;
+  /** Link zur Website oder zum Menü, null = keiner */
+  website: string | null;
 }

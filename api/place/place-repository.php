@@ -2,14 +2,14 @@
 require_once('place.php');
 require_once(__DIR__ . '/../category/category-repository.php');
 
-const PLACE_COLUMNS = 'id, user_id, picture_id, picture_file, name, description, lat, lng, price_min, price_max, create_time, last_update_time';
+const PLACE_COLUMNS = 'id, user_id, picture_id, picture_file, name, description, lat, lng, price_min, price_max, website, create_time, last_update_time';
 
 function create_place($place)
 {
     global $mysqli;
 
-    $statement = $mysqli->prepare("INSERT INTO tbl_place (user_id, picture_id, picture_file, name, description, lat, lng, price_min, price_max, create_time, last_update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $statement->bind_param("iisssddiiss", $place->userId, $place->pictureId, $place->pictureFile, $place->name, $place->description, $place->lat, $place->lng, $place->priceMin, $place->priceMax, $place->createTime, $place->lastUpdateTime);
+    $statement = $mysqli->prepare("INSERT INTO tbl_place (user_id, picture_id, picture_file, name, description, lat, lng, price_min, price_max, website, create_time, last_update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $statement->bind_param("iisssddiisss", $place->userId, $place->pictureId, $place->pictureFile, $place->name, $place->description, $place->lat, $place->lng, $place->priceMin, $place->priceMax, $place->website, $place->createTime, $place->lastUpdateTime);
     $statement->execute();
     $statement->close();
 
@@ -21,8 +21,8 @@ function update_place($place)
 {
     global $mysqli;
 
-    $statement = $mysqli->prepare("UPDATE tbl_place SET user_id = ?, picture_id = ?, picture_file = ?, name = ?, description = ?, lat = ?, lng = ?, price_min = ?, price_max = ?, last_update_time = ?, create_time = ? WHERE id = ?");
-    $statement->bind_param("iisssddiissi", $place->userId, $place->pictureId, $place->pictureFile, $place->name, $place->description, $place->lat, $place->lng, $place->priceMin, $place->priceMax, $place->lastUpdateTime, $place->createTime, $place->id);
+    $statement = $mysqli->prepare("UPDATE tbl_place SET user_id = ?, picture_id = ?, picture_file = ?, name = ?, description = ?, lat = ?, lng = ?, price_min = ?, price_max = ?, website = ?, last_update_time = ?, create_time = ? WHERE id = ?");
+    $statement->bind_param("iisssddiisssi", $place->userId, $place->pictureId, $place->pictureFile, $place->name, $place->description, $place->lat, $place->lng, $place->priceMin, $place->priceMax, $place->website, $place->lastUpdateTime, $place->createTime, $place->id);
     $statement->execute();
     $statement->close();
 
@@ -178,6 +178,7 @@ function _map_row_to_place($row)
     $priceMax = is_null($row["price_max"]) ? NULL : intval($row["price_max"]);
     $place = new Place(intval($row["id"]), intval($row["user_id"]), $pictureId, $row["name"], $row["description"], floatval($row["lat"]), floatval($row["lng"]), $row["create_time"], $row["last_update_time"], [], [], [], $priceMin, $priceMax);
     $place->pictureFile = $row["picture_file"] ?: NULL;
+    $place->website = $row["website"] ?: NULL;
     return $place;
 }
 ?>

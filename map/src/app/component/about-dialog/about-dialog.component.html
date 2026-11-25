@@ -19,11 +19,18 @@
         </button>
       </li>
       <li>
-        <!-- Admin-Bereich: eigene Orte und Konto/Profil (ohne Anmeldung zuerst zum Login) -->
-        <a class="action" href="/admin/my-places" (click)="$event.stopPropagation()">
-          <span class="circle"><span class="icon icon-edit"></span></span>
-          <span class="text">meine Orte &amp; Konto</span>
-        </a>
+        <!-- Angemeldet: Admin-Bereich (eigene Orte, Konto). Sonst zum Login, danach zurück zur Karte. -->
+        @if (loggedIn) {
+          <a class="action" href="/admin/my-places" (click)="$event.stopPropagation()">
+            <span class="circle"><span class="icon icon-edit"></span></span>
+            <span class="text">meine Orte &amp; Konto</span>
+          </a>
+        } @else {
+          <a class="action" href="/login/?zurueck=karte" (click)="$event.stopPropagation()">
+            <span class="circle"><span class="icon icon-person"></span></span>
+            <span class="text">Login / Anmelden</span>
+          </a>
+        }
       </li>
       <li>
         <button type="button" class="action" (click)="showSoon($event, 'language')">

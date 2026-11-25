@@ -1,12 +1,35 @@
 // Doppel-Regler: zwei übereinanderliegende <input type="range">.
 // Die Spur zeichnen wir selbst (.track grau, .fill im Farbton),
 // von den Inputs sieht und greift man nur die runden Knöpfe.
+// Der sichtbare Knopf ($thumb) ist kleiner als die greifbare Fläche ($hit-w × $hit-h):
+// rundherum ist ein unsichtbarer Rand, damit man ihn auch mit dem Finger gut erwischt.
 
 $thumb: 24px;
+$ring: 3px;
+$hit-w: 36px;
+$hit-h: 44px;
+
+// Knopf als Farbverlauf gezeichnet: weisse Mitte, Ring im Farbton, leichter Schatten, Rest durchsichtig
+@mixin thumb-look($focus: false) {
+  $r: calc($thumb / 2);
+  $layers: radial-gradient(
+      circle at center,
+      var(--white) calc($r - $ring - 0.5px),
+      var(--thumb-ring) calc($r - $ring) calc($r - 0.5px),
+      transparent $r
+    ),
+    radial-gradient(circle at 50% calc(50% + 1px), var(--shadow) calc($r - 1px), transparent calc($r + 2px));
+  @if $focus {
+    $layers: $layers,
+      radial-gradient(circle at center, var(--primary-light) calc($r + 4px), transparent calc($r + 4.5px));
+  }
+  background: $layers;
+}
 
 .range {
   // Platz links und rechts, damit die Knöpfe an den Enden nicht abgeschnitten sind
-  padding: 0 calc($thumb / 2);
+  padding: 0 calc($hit-w / 2);
+  --thumb-ring: var(--primary);
 }
 
 .labels {
@@ -14,7 +37,7 @@ $thumb: 24px;
   justify-content: space-between;
   gap: 12px;
   // Text bündig mit dem Rand des Panels, nicht mit der Mitte der Knöpfe
-  margin: 2px calc($thumb / -2) 0 calc($thumb / -2);
+  margin: 2px calc($hit-w / -2) 0 calc($hit-w / -2);
 
   color: var(--grey3);
   font-size: 15px;
@@ -49,10 +72,10 @@ $thumb: 24px;
 
 input[type='range'] {
   position: absolute;
-  top: 0;
-  left: calc($thumb / -2);
-  width: calc(100% + $thumb);
-  height: 100%;
+  top: calc(50% - $hit-h / 2);
+  left: calc($hit-w / -2);
+  width: calc(100% + $hit-w);
+  height: $hit-h;
   margin: 0;
 
   background: none;
@@ -76,13 +99,11 @@ input[type='range'] {
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
     box-sizing: border-box;
-    width: $thumb;
-    height: $thumb;
+    width: $hit-w;
+    height: $hit-h;
 
-    border: 3px solid var(--primary);
-    border-radius: 50%;
-    box-shadow: 0px 1px 3px 0px var(--shadow);
-    background-color: var(--white);
+    border: none;
+    @include thumb-look;
 
     cursor: grab;
     pointer-events: auto;
@@ -90,39 +111,35 @@ input[type='range'] {
 
   &::-moz-range-thumb {
     box-sizing: border-box;
-    width: $thumb;
-    height: $thumb;
+    width: $hit-w;
+    height: $hit-h;
 
-    border: 3px solid var(--primary);
-    border-radius: 50%;
-    box-shadow: 0px 1px 3px 0px var(--shadow);
-    background-color: var(--white);
+    border: none;
+    @include thumb-look;
 
     cursor: grab;
     pointer-events: auto;
   }
 
   &:focus-visible::-webkit-slider-thumb {
-    box-shadow: 0 0 0 4px var(--primary-light);
+    @include thumb-look(true);
+  }
+
+  &:focus-visible::-moz-range-thumb {
+    @include thumb-look(true);
   }
 }
 
 // Noch kein Preis angegeben: alles grau
 .unset {
+  --thumb-ring: var(--grey2);
+
   .fill {
     background-color: var(--grey1);
   }
 
   .labels {
     color: var(--grey2);
-  }
-
-  input[type='range']::-webkit-slider-thumb {
-    border-color: var(--grey2);
-  }
-
-  input[type='range']::-moz-range-thumb {
-    border-color: var(--grey2);
   }
 }
 

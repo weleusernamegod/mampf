@@ -15,17 +15,27 @@ import { Place } from '../../dto/place';
 import { PlacesOverlay, createPlacesOverlay } from './places-overlay';
 import { Slot } from '../../dto/opening';
 import { DEFAULT_SLOTS, PlacePin, pinsForDay } from '../../util/place-util';
+import { isTestBuild } from '../../util/test-build';
+import { CompassWatcher, HeadingOverlay, createHeadingOverlay } from './heading-overlay';
 
 /**
- * TEMPORÄR: fester Standort Zürich Kreis 4 (Langstrasse) statt dem echten
- * GPS-Standort. Bewusst auch live aktiv (Test-Phase): Alle Besucher starten
- * hier, der blaue Punkt zeigt nicht ihren echten Standort.
- * Zum Ausschalten auf null setzen, dann gilt wieder der echte GPS-Standort.
+ * Nur im Test-Build (lokal oder Test-Subdomain): fester Standort Zürich Kreis 4
+ * (Langstrasse) statt dem echten GPS-Standort, damit man die Orte dort sieht.
+ * Live auf mampf.io gilt immer der echte Standort des Besuchers.
  */
-const FIXED_LOCATION: google.maps.LatLngLiteral | null = {
-  lat: 47.3772,
-  lng: 8.5290,
-};
+const FIXED_LOCATION: google.maps.LatLngLiteral | null = isTestBuild()
+  ? { lat: 47.3772, lng: 8.529 }
+  : null;
+/** Im Test-Build ein Genauigkeitskreis von so vielen Metern, damit man ihn sieht. */
+const FIXED_ACCURACY = 40;
+
+/** Blau des eigenen Standorts aus vars.scss (--location-blue). */
+function locationBlue(): string {
+  return (
+    getComputedStyle(document.documentElement).getPropertyValue('--location-blue').trim() ||
+    'blue'
+  );
+}
 
 @Component({
   selector: 'mampf-map',
@@ -53,11 +63,23 @@ export class MapComponent implements OnInit, OnChanges {
     clickableIcons: false,
     disableDefaultUI: true,
   };
+  /** Durchsichtiger blauer Kreis um den eigenen Standort: so ungenau ist das GPS gerade. */
   readonly ACCURACY_CIRCLE_OPTIONS: google.maps.CircleOptions = {
-    strokeWeight: 0,
-    fillColor: '#1473e7',
-    fillOpacity: 0.3,
+    strokeColor: locationBlue(),
+    strokeOpacity: 0.35,
+    strokeWeight: 1,
+    fillColor: locationBlue(),
+    fillOpacity: 0.15,
+    clickable: false,
   };
+  /** Blickrichtung (Fächer unter dem blauen Punkt). */
+  private headingOverlay: HeadingOverlay | undefined = undefined;
+  /** Richtung vom Kompass des Handys; solange es keine gibt, die Fahrtrichtung vom GPS. */
+  private compassHeading: number | null = null;
+  private readonly compass = new CompassWatcher(heading => {
+    this.compassHeading = heading;
+    this.headingOverlay?.setHeading(heading);
+  });
 
   positionReceived = false;
   /** Blaue Kugel für den eigenen Standort, mit Ankerpunkt in der Mitte. */
@@ -87,17 +109,26 @@ export class MapComponent implements OnInit, OnChanges {
   @Output() placeClicked: EventEmitter<Place> = new EventEmitter<Place>();
 
   ngOnInit(): void {
+    this.compass.start();
     if (FIXED_LOCATION) {
-      this.onPositionUpdate(FIXED_LOCATION, 0);
+      this.onPositionUpdate(FIXED_LOCATION, FIXED_ACCURACY);
       return;
     }
     if (navigator.geolocation) {
       navigator.geolocation.watchPosition(
-        (geolocationPosition: GeolocationPosition) =>
+        (geolocationPosition: GeolocationPosition) => {
           this.onPositionUpdate(
             this.toLatLngLiteral(geolocationPosition),
             geolocationPosition.coords.accuracy
-          )
+          );
+          // Ohne Kompass: beim Gehen/Fahren zeigt das GPS die Bewegungsrichtung
+          const { heading, speed } = geolocationPosition.coords;
+          if (this.compassHeading === null && heading !== null && (speed ?? 0) > 0.5) {
+            this.headingOverlay?.setHeading(heading);
+          }
+        },
+        undefined,
+        { enableHighAccuracy: true }
       );
     }
   }
@@ -134,10 +165,16 @@ export class MapComponent implements OnInit, OnChanges {
     // Ohne "anchor" setzt Google den Ankerpunkt unten in die Mitte (wie bei
     // einer Stecknadel), dann sitzt die Kugel über dem echten Standort.
     // Das Bild ist 26x26px, die Mitte also bei 13/13.
-    this.positionIcon = {
-      url: 'assets/marker/position.svg',
-      anchor: new google.maps.Point(13, 13),
-    };
+    // In zone.run, damit Angular den Punkt sofort zeichnet (nicht erst bei der ersten Berührung)
+    this.zone.run(() => {
+      this.positionIcon = {
+        url: 'assets/marker/position.svg',
+        anchor: new google.maps.Point(13, 13),
+      };
+    });
+    this.headingOverlay = createHeadingOverlay(map);
+    if (this.positionReceived) this.headingOverlay.setPosition(this.locationMarkerPosition);
+    if (this.compassHeading !== null) this.headingOverlay.setHeading(this.compassHeading);
     this.placesOverlay = createPlacesOverlay(map, pin =>
       this.zone.run(() => this.onPinClicked(pin))
     );
@@ -152,6 +189,8 @@ export class MapComponent implements OnInit, OnChanges {
   }
 
   locate(): void {
+    // iPhone: Blickrichtung erst nach Erlaubnis, und fragen darf man nur beim Antippen
+    this.compass.requestPermission();
     if (this.positionReceived) {
       this.goToPosition(this.locationMarkerPosition);
     }
@@ -168,6 +207,7 @@ export class MapComponent implements OnInit, OnChanges {
     accuracy: number
   ): void {
     this.locationMarkerPosition = { ...position };
+    this.headingOverlay?.setPosition(position);
 
     this.accuracyCircleCenter = { ...position };
     this.accuracyCircleRadius =

@@ -112,6 +112,11 @@ a.action:hover {
   mask-image: url('/assets/icons/edit.svg');
 }
 
+.icon-person {
+  -webkit-mask-image: url('/assets/icons/about.svg');
+  mask-image: url('/assets/icons/about.svg');
+}
+
 .circle.language {
   color: var(--grey2);
   font-size: 17px;
