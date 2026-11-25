@@ -77,7 +77,7 @@ if ($data['updatePicture']) {
 
 	$newPictureFile = NULL;
 	if (!is_null($pictureData)) {
-		$newPictureFile = save_picture_file($pictureData, 'jpg');
+		$newPictureFile = save_picture_file($pictureData, $place, 'jpg');
 		if (is_null($newPictureFile)) {
 			$mysqli->rollback();
 			http_response_code(500);

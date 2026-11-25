@@ -39,14 +39,18 @@ mit seiner `.htaccess`.
 2. In phpMyAdmin den Inhalt von `data/kreis4-5/bilder-zuordnen.sql` ausführen.
    (Ordnet die Logos den Orten zu, nur wo noch kein Bild ist.)
 
-## 5. Alte Bilder umziehen
+## 5. Alte Bilder umziehen und Namen vereinheitlichen
 
-Die paar alten Bilder aus der Datenbank (`tbl_picture`) zu Dateien machen:
-als Admin auf mampf.io anmelden und dann diese Adresse öffnen:
+Als Admin auf mampf.io anmelden und dann diese Adresse öffnen:
 
     https://mampf.io/api/admin-bilder-umziehen.php
 
-Es erscheint eine kurze Liste („umgezogen“). Darf mehrmals aufgerufen werden.
+Das Skript macht die alten Bilder aus der Datenbank (`tbl_picture`) zu Dateien
+und benennt alle Bilddateien einheitlich um:
+`<Ort-ID>-<name>-<6 Zufallszeichen>.<endung>`, z.B. `112-banh-mi-136-a3f9c2.jpg`
+(so heissen auch neu hochgeladene Bilder). Es zeigt eine Liste („umgezogen“,
+„umbenannt“, „unbenutzt“). Unbenutzte Dateien gehören zu keinem Ort und
+können in Cyberduck gelöscht werden. Darf mehrmals aufgerufen werden.
 
 ## 6. Testen
 
