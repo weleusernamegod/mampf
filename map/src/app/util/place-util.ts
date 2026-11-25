@@ -33,9 +33,11 @@ export function isCustomSlots(slots: Slot[]): boolean {
 /**
  * Hat der Shop am Wochentag zu einer der gewählten Tageszeiten offen?
  * Keine Tageszeit gewählt = egal wann an diesem Tag.
+ * Shops ohne Öffnungszeiten (keine Angaben) gelten immer als offen.
  * day wie Date.getDay(): 0 = Sonntag, ...
  */
 export function isPlaceOpen(place: Place, day: number, slots: Slot[]): boolean {
+  if (place.opening.length === 0) return true;
   if (slots.length === 0) {
     return place.opening.some(entry => entry.weekday === day);
   }

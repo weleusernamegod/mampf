@@ -1,4 +1,7 @@
 <strong class="title">Öffnungszeiten</strong>
+@if (opening.length === 0) {
+  <span class="none">keine Angaben</span>
+} @else {
 
 <!--
   Pro Tag eine senkrechte graue Pille über Morgen, Mittag und Abend.
@@ -32,3 +35,4 @@
     </div>
   }
 </div>
+}

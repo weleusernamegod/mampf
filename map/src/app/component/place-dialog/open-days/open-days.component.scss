@@ -8,6 +8,13 @@ $gap: 1px;
   font-size: 14px;
 }
 
+// "keine Angaben" unter dem Titel, nicht fett
+.none {
+  display: block;
+  font-size: 14px;
+  color: var(--grey2);
+}
+
 #matrix {
   display: grid;
   grid-template-columns: 58px repeat(7, 1fr);
