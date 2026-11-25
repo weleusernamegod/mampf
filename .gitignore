@@ -11,3 +11,6 @@ node_modules/
 # System
 .DS_Store
 Thumbs.db
+
+# Fremde Logos/Bilder der Kreis-4/5-Recherche (Urheberrecht, Repo ist öffentlich)
+data/kreis4-5/bilder/
