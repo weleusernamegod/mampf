@@ -37,7 +37,7 @@ $hit-h: 44px;
   justify-content: space-between;
   gap: 12px;
   // Text bündig mit dem Rand des Panels, nicht mit der Mitte der Knöpfe
-  margin: 2px calc($hit-w / -2) 0 calc($hit-w / -2);
+  margin: 0 calc($hit-w / -2) 2px calc($hit-w / -2);
 
   color: var(--grey3);
   font-size: 15px;
@@ -103,6 +103,10 @@ input[type='range'] {
     height: $hit-h;
 
     border: none;
+    // Greiffläche rund statt eckig: sonst zeichnen Browser Schatten/Tipp-Markierung ums Rechteck
+    border-radius: 50%;
+    box-shadow: none;
+    -webkit-tap-highlight-color: transparent;
     @include thumb-look;
 
     cursor: grab;
@@ -115,6 +119,10 @@ input[type='range'] {
     height: $hit-h;
 
     border: none;
+    // Greiffläche rund statt eckig: sonst zeichnen Browser Schatten/Tipp-Markierung ums Rechteck
+    border-radius: 50%;
+    box-shadow: none;
+    -webkit-tap-highlight-color: transparent;
     @include thumb-look;
 
     cursor: grab;

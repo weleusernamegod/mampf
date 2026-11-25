@@ -1,4 +1,10 @@
 <div class="range" [class.unset]="!isSet">
+  <!-- Beträge über dem Regler, fest links und rechts -->
+  <div class="labels">
+    <span>{{ lowText }}</span>
+    <span>{{ highText }}</span>
+  </div>
+
   <div class="slider">
     <div class="track"></div>
     <div
@@ -23,12 +29,6 @@
       [max]="PRICE_MAX"
       [value]="high"
       (input)="onHighInput($event)" />
-  </div>
-
-  <!-- Beträge unter dem Regler, fest links und rechts -->
-  <div class="labels">
-    <span>{{ lowText }}</span>
-    <span>{{ highText }}</span>
   </div>
 </div>
 

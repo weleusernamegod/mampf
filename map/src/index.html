@@ -109,6 +109,21 @@
         }
       }
       /*
+        Ohne Animation (ANIMATE_LOGO = false): Das Logo bleibt auf seinem ersten
+        Bild stehen (ganzes "mampf"), der Spruch blendet ein und bleibt.
+      */
+      #splash.static svg *:not(.mampf-slogan) {
+        animation-play-state: paused !important;
+      }
+      #splash.static .mampf-slogan {
+        animation: splash-slogan-in 400ms linear forwards;
+      }
+      @keyframes splash-slogan-in {
+        to {
+          opacity: 1;
+        }
+      }
+      /*
         Weisses Band hinter dem Logo, von Anfang an mit runden Ecken wie der
         Tages-Wähler. Am Anfang ist es grösser als der Bildschirm (Ecken liegen
         ausserhalb), dann zieht es sich auf die Grösse des Tages-Wählers zusammen
@@ -227,6 +242,14 @@
     <script src="assets/slogan.js"></script>
     <script>
       (() => {
+        /**
+         * false = Logo erscheint mit Spruch, steht still und blendet nach STATIC_HOLD aus.
+         * true  = Buchstaben verwandeln sich in die Ringe der Tagesleiste (Animation).
+         * Vorerst ausgeschaltet.
+         */
+        const ANIMATE_LOGO = false;
+        /** Nur ohne Animation: so lange bleibt das stehende Logo sichtbar, bevor es ausblendet. */
+        const STATIC_HOLD = 2500;
         /** Dauer der Logo-Animation. Die Datei ist auf 3000 ms gebaut, hier etwas langsamer. */
         const DURATION = 4500;
         /**
@@ -295,6 +318,7 @@
               .replace(/3000ms/g, DURATION + 'ms'); // Tempo anpassen
             splash.insertAdjacentHTML('beforeend', svg);
             splash.classList.add('play'); // Band-Animation gleichzeitig starten
+            if (!ANIMATE_LOGO) splash.classList.add('static');
 
             // Zufallsspruch unter das Logo. Kommt er etwas später (Schrift lädt noch),
             // springt seine Animation an die richtige Stelle, damit er nicht zu lange bleibt.
@@ -302,6 +326,13 @@
             window.MampfSlogan?.attach(splash.querySelector('svg')).then(slogan => {
               if (slogan) slogan.style.animationDelay = -(performance.now() - started) + 'ms';
             });
+
+            if (!ANIMATE_LOGO) {
+              // Logo steht still -> nach einer Weile alles ausblenden
+              at(STATIC_HOLD, () => splash.classList.add('fade-out'));
+              at(STATIC_HOLD + SPLASH_FADE + 100, cleanUp);
+              return;
+            }
 
             if (!MORPH_INTO_BAR) {
               // Ringe fertig -> kurz stehen lassen, dann alles ausblenden
