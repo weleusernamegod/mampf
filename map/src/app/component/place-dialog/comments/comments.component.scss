@@ -1,0 +1,218 @@
+:host {
+  display: block;
+}
+
+.title {
+  display: inline-block;
+  margin-bottom: 7px;
+
+  font-size: 14px;
+}
+
+// --- Knopf "Kommentar abgeben" -------------------------------------
+
+.comment-button {
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 7px 14px; // genau so hoch wie das einzeilige Textfeld
+
+  border: 1px solid var(--primary);
+  border-radius: 18px;
+  background-color: var(--primary);
+
+  color: var(--white);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+
+  // Nicht angemeldet: weiss, nächster Klick führt zum Login
+  &.ask-login {
+    background-color: var(--white);
+    color: var(--primary);
+  }
+}
+
+// --- Eingabe (aus dem Knopf wird das Textfeld) ----------------------
+
+.new-comment {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+
+  cursor: auto;
+}
+
+// Aufklappen: das Feld steht genau dort, wo der Knopf war (gleiche Form),
+// es wird von grün zu weiss. Zähler und Knöpfe gleiten darunter herein,
+// so wie die Infobox ihre Details beim Aufschieben einblendet.
+textarea {
+  animation: field-in 0.3s ease-out;
+}
+
+.actions,
+.error {
+  animation: actions-in 0.3s ease-out 0.1s backwards;
+}
+
+@keyframes field-in {
+  from {
+    background-color: var(--primary);
+  }
+}
+
+@keyframes actions-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 7px 14px;
+
+  border: 1px solid var(--primary);
+  border-radius: 18px; // einzeilig so rund wie der Knopf vorher
+  background-color: var(--white);
+
+  color: var(--black);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: none;
+  overflow-y: hidden;
+  transition: height 0.15s ease; // wächst sanft mit dem Text
+  touch-action: pan-y;
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--primary-light);
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.counter {
+  margin-right: auto; // links, Knöpfe rechts
+  color: var(--grey2);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+
+  &.over {
+    color: var(--accent);
+    font-weight: 800;
+  }
+}
+
+.cancel {
+  padding: 0;
+
+  border: none;
+  background: none;
+
+  color: var(--grey2);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.send {
+  padding: 6px 16px;
+
+  border: none;
+  border-radius: 50px;
+  background-color: var(--primary);
+
+  color: var(--white);
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:disabled {
+    background-color: var(--grey1);
+    color: var(--grey2);
+    cursor: default;
+  }
+}
+
+.error {
+  margin: 0;
+  color: var(--accent);
+  font-size: 13px;
+}
+
+// --- Liste -----------------------------------------------------------
+
+.comments {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.comment + .comment {
+  margin-top: 10px;
+}
+
+.comment-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.comment-author {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.comment-time {
+  color: var(--grey2);
+  font-size: 12px;
+}
+
+.delete {
+  margin-left: auto;
+  padding: 0;
+
+  border: none;
+  background: none;
+
+  color: var(--grey2);
+  font-family: inherit;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.comment-text {
+  margin: 2px 0 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-line; // Zeilenumbrüche behalten
+  overflow-wrap: anywhere;
+}
+
+// Kurzer Hinweis: grau und kursiv
+.hint {
+  margin: 0 0 8px 0;
+
+  color: var(--grey2);
+  font-size: 13px;
+  font-style: italic;
+
+  a {
+    color: var(--primary);
+    font-style: normal;
+  }
+}

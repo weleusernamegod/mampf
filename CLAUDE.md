@@ -7,10 +7,10 @@ Web-App mit einer Karte von Foodtrucks/Imbissständen. Live unter https://mampf.
 | Ordner | Was | Technik |
 |---|---|---|
 | `map/` | Öffentliche Karte (Startseite `/`) | Angular 18, @angular/google-maps |
-| `mampf-admin/` | Admin-Bereich (`/admin`), eigene Orte verwalten | Angular 18, Bootstrap |
+| `mampf-admin/` | Admin-Bereich (`/admin`, auf der Karte "meine Orte & Konto"): eigene Orte, Profil (Name) | Angular 18, Bootstrap |
 | `login/` | Login & Registrierung (`/login`) | Plain HTML + fetch |
 | `api/` | Backend (`/api/*.php`) | PHP (mysqli), Sessions |
-| `mampf.sql` | Datenbankschema (tbl_user, tbl_place, tbl_place_opening, tbl_place_location, tbl_category, tbl_place_category, tbl_picture) | MySQL/MariaDB |
+| `mampf.sql` | Datenbankschema (tbl_user, tbl_place, tbl_place_opening, tbl_place_location, tbl_category, tbl_place_category, tbl_picture, tbl_comment) | MySQL/MariaDB |
 
 | `design/font/` | Mampf-Schrift (vom Logo abgeleitet), Generator `mampf_font.py`, Testseite `testen.html` | Python (fonttools, shapely) |
 

@@ -40,6 +40,21 @@ CREATE TABLE `tbl_category` (
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `tbl_comment`
+-- Kommentare zu Orten, höchstens 130 Zeichen. Angezeigt wird tbl_user.name.
+--
+
+CREATE TABLE `tbl_comment` (
+  `id` int(11) NOT NULL,
+  `place_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `text` varchar(130) NOT NULL,
+  `create_time` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `tbl_picture`
 --
 
@@ -121,6 +136,7 @@ CREATE TABLE `tbl_place_location` (
 CREATE TABLE `tbl_user` (
   `id` int(11) NOT NULL,
   `mail` varchar(255) NOT NULL,
+  `name` varchar(30) DEFAULT NULL COMMENT 'Anzeigename bei Kommentaren',
   `password_hash` varchar(255) NOT NULL,
   `admin` tinyint(4) NOT NULL,
   `registration_time` datetime NOT NULL,
@@ -137,6 +153,14 @@ CREATE TABLE `tbl_user` (
 ALTER TABLE `tbl_category`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_gruppe_name` (`gruppe`,`name`);
+
+--
+-- Indizes für die Tabelle `tbl_comment`
+--
+ALTER TABLE `tbl_comment`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_comment_place` (`place_id`,`create_time`),
+  ADD KEY `fk_comment_user` (`user_id`);
 
 --
 -- Indizes für die Tabelle `tbl_picture`
@@ -190,6 +214,12 @@ ALTER TABLE `tbl_category`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT für Tabelle `tbl_comment`
+--
+ALTER TABLE `tbl_comment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT für Tabelle `tbl_picture`
 --
 ALTER TABLE `tbl_picture`
@@ -216,6 +246,13 @@ ALTER TABLE `tbl_user`
 --
 -- Constraints der exportierten Tabellen
 --
+
+--
+-- Constraints der Tabelle `tbl_comment`
+--
+ALTER TABLE `tbl_comment`
+  ADD CONSTRAINT `fk_comment_place` FOREIGN KEY (`place_id`) REFERENCES `tbl_place` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_comment_user` FOREIGN KEY (`user_id`) REFERENCES `tbl_user` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints der Tabelle `tbl_place`

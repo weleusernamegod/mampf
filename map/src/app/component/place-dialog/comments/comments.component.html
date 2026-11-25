@@ -1,0 +1,61 @@
+<strong class="title">Kommentare</strong>
+
+@if (composing) {
+  <!-- Klicks hier sollen die Infobox nicht zuklappen -->
+  <form class="new-comment" (click)="$event.stopPropagation()" (submit)="$event.preventDefault(); send()">
+    <textarea
+      #textarea
+      rows="1"
+      placeholder="Wie war's?"
+      [value]="text"
+      (input)="onText($event)"
+      (keydown)="onKeydown($event)"></textarea>
+
+    <div class="actions">
+      <span class="counter" [class.over]="tooLong">{{ length }}/{{ maxLength }} Zeichen</span>
+      <button type="button" class="cancel" (click)="cancel()">Abbrechen</button>
+      <button type="submit" class="send" [disabled]="!canSend">
+        {{ sending ? 'Sende …' : 'Senden' }}
+      </button>
+    </div>
+    @if (error) {
+      <p class="error">{{ error }}</p>
+    }
+  </form>
+} @else {
+  <button
+    type="button"
+    class="comment-button"
+    [class.ask-login]="askLogin"
+    (click)="onButtonClicked($event)">
+    {{ askLogin ? 'Zum Kommentieren bitte anmelden' : 'Kommentar abgeben' }}
+  </button>
+}
+
+@if (loading && comments.length === 0) {
+  <p class="hint">Lade Kommentare …</p>
+} @else if (failed) {
+  <p class="hint">Kommentare konnten nicht geladen werden.</p>
+} @else if (comments.length === 0) {
+  <p class="hint">Noch keine Kommentare.</p>
+} @else {
+  <ul class="comments">
+    @for (comment of comments; track comment.id) {
+      <li class="comment">
+        <div class="comment-head">
+          <span class="comment-author">{{ comment.author }}</span>
+          <span class="comment-time">{{ when(comment.created) }}</span>
+          @if (comment.deletable) {
+            <button
+              type="button"
+              class="delete"
+              (click)="$event.stopPropagation(); remove(comment)">
+              löschen
+            </button>
+          }
+        </div>
+        <p class="comment-text">{{ comment.text }}</p>
+      </li>
+    }
+  </ul>
+}

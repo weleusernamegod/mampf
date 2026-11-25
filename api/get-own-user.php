@@ -25,6 +25,7 @@ function _map_user_to_dto($user)
     return [
         'id' => $user->id,
         'mail' => $user->mail,
+        'name' => $user->name,
         'admin' => $user->admin
     ];
 }

@@ -94,7 +94,48 @@
 }
 
 #info {
+  min-width: 0;
   line-height: 1.6;
+}
+
+// Zugeklappt: Beschreibung auf einer Zeile. Zu lang = gekürzt (im Code,
+// an einer Wortgrenze) mit "… mehr" in grau und kursiv.
+.description {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.description-short {
+  display: none;
+}
+
+.description.truncated {
+  .description-full {
+    display: none;
+  }
+
+  .description-short {
+    display: inline;
+  }
+}
+
+.more {
+  padding-left: 2px;
+  color: var(--grey2);
+}
+
+// Aufgeklappt: ganze Beschreibung, mehrzeilig, ohne "mehr"
+.expanded .description {
+  white-space: normal;
+
+  .description-full {
+    display: inline;
+  }
+
+  .description-short {
+    display: none;
+  }
 }
 
 // Weitere Infos: blenden beim Aufschieben sanft ein
@@ -177,36 +218,6 @@
 
 .fixed {
   flex: none;
-}
-
-.comments {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.comment + .comment {
-  margin-top: 10px;
-}
-
-.comment-author {
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.comment-text {
-  margin: 2px 0 0 0;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-// Kurzer Hinweis: grau und kursiv
-.hint {
-  margin: 8px 0 0 0;
-
-  color: var(--grey2);
-  font-size: 13px;
-  font-style: italic;
 }
 
 .locations {

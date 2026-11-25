@@ -16,6 +16,7 @@ import { filterByCategories } from './util/category-filter';
 import { CategoryList } from './dto/category';
 import { savePendingPosition } from './util/pending-position';
 import { DEFAULT_SLOTS } from './util/place-util';
+import { takePendingComment } from './util/pending-comment';
 
 @Component({
   selector: 'app-root',
@@ -50,6 +51,8 @@ export class AppComponent implements OnInit {
   selectedPlace: Place | undefined = undefined;
   aboutDialogVisible = false;
   placeDialogVisible = false;
+  /** Infobox gleich mit offenem Kommentarfeld (zurück vom Login). */
+  startComment = false;
   filterDialogVisible = false;
   /** Platzieren-Modus: neuen Ort mit dem roten Punkt in der Kartenmitte wählen. */
   placing = false;
@@ -60,6 +63,7 @@ export class AppComponent implements OnInit {
       .then(data => {
         this.places = data;
         this.updateVisiblePlaces();
+        this.openPendingComment();
       })
       .catch(error => {
         console.error('Could not fetch places', error);
@@ -74,6 +78,16 @@ export class AppComponent implements OnInit {
       .catch(error => {
         console.error('Could not fetch categories', error);
       });
+  }
+
+  /** Vom Login zurück, wollte kommentieren: diesen Ort öffnen, Kommentarfeld offen. */
+  private openPendingComment() {
+    const placeId = takePendingComment();
+    const place = this.places.find(place => place.id === placeId);
+    if (!place) return;
+    this.mapComponent?.showPlace(place.position);
+    this.onPlaceClicked(place);
+    this.startComment = true;
   }
 
   private updateVisiblePlaces() {
@@ -98,6 +112,7 @@ export class AppComponent implements OnInit {
   }
 
   onPlaceClicked(place: Place) {
+    this.startComment = false;
     this.selectedPlace = place;
 
     this.aboutDialogVisible = false;

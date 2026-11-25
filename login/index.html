@@ -87,7 +87,7 @@
                 Du hast dich erfolgreich abgemeldet.
             </div>
 
-            <p class="mt-5 mb-3 text-body-secondary">Noch kein Account? <a href="register.html">Jetzt registrieren</a></p>
+            <p class="mt-5 mb-3 text-body-secondary">Noch kein Account? <a href="register.html" id="register-link">Jetzt registrieren</a></p>
         </form>
     </main>
     <script src="/assets/slogan.js"></script>
@@ -95,6 +95,8 @@
 
 <script>
 	const urlFragment = window.location.hash;
+	// Kam von der Karte (z.B. zum Kommentieren)? Auch über die Registrierung mitnehmen.
+	document.getElementById('register-link').href = 'register.html' + window.location.search;
 	if (urlFragment === '#logout') {
 		document.getElementById('alert-logout').classList.remove('d-none');
 	} else if (urlFragment === '#register') {
@@ -121,7 +123,9 @@
         })
             .then(response => {
                 if (response.ok) {
-                    window.location.href = "../admin/";
+                    // Von der Karte gekommen (z.B. zum Kommentieren): zurück zur Karte
+                    const back = new URLSearchParams(window.location.search).get('zurueck');
+                    window.location.href = back === 'karte' ? "../" : "../admin/";
                 } else {
                     changeErrorAlertVisibility(true);
                 }

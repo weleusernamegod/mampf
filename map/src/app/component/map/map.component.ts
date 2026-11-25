@@ -40,6 +40,8 @@ export class MapComponent implements OnInit, OnChanges {
 
   readonly MAX_ACCURACY_RADIUS = 300;
   readonly DETAIL_ZOOM = 16;
+  /** Ein Ort wurde gezielt geöffnet: nicht automatisch zum eigenen Standort springen. */
+  private skipAutoLocate = false;
   readonly MAP_OPTIONS: google.maps.MapOptions = {
     styles: mapStyles(currentHue()),
     zoomControl: false,
@@ -143,6 +145,12 @@ export class MapComponent implements OnInit, OnChanges {
     this.placesOverlay.update(this.pins());
   }
 
+  /** Karte auf einen Ort ausrichten (z.B. zurück vom Login). Danach nicht mehr zum eigenen Standort springen. */
+  showPlace(position: google.maps.LatLngLiteral): void {
+    this.skipAutoLocate = true;
+    this.goToPosition(position);
+  }
+
   locate(): void {
     if (this.positionReceived) {
       this.goToPosition(this.locationMarkerPosition);
@@ -167,7 +175,7 @@ export class MapComponent implements OnInit, OnChanges {
 
     if (!this.positionReceived) {
       this.positionReceived = true;
-      this.locate();
+      if (!this.skipAutoLocate) this.locate();
     }
   }
 

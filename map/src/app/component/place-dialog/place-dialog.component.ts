@@ -11,6 +11,7 @@ import { Place } from '../../dto/place';
 import { CategoryList } from '../../dto/category';
 import { categoriesOf, groupCategories } from '../../util/category-filter';
 import { OpenDaysComponent } from './open-days/open-days.component';
+import { CommentsComponent } from './comments/comments.component';
 import { WEEKDAYS } from '../../util/place-util';
 import { priceText } from '../../util/price';
 import { Category } from '../../dto/category';
@@ -23,13 +24,6 @@ const DRAG_START = 8;
 const CLOSE_DISTANCE = 60;
 /** Schneller Wisch (px pro ms): Richtung entscheidet, egal wie weit. */
 const FLICK_SPEED = 0.4;
-
-/** Platzhalter für die Kommentare (kommen später, dann vom Server). */
-const SAMPLE_COMMENTS = [
-  { author: 'Lea', text: 'Super feines Essen und sehr freundlich. Komme gerne wieder!' },
-  { author: 'Marco', text: 'Über Mittag etwas Wartezeit, aber es lohnt sich.' },
-  { author: 'Sandra', text: 'Eigenes Geschirr wird gerne gefüllt, top!' },
-];
 
 /** Zustand während der Finger auf der Infobox liegt. */
 interface Drag {
@@ -46,7 +40,7 @@ interface Drag {
 @Component({
   selector: 'mampf-place-dialog',
   standalone: true,
-  imports: [OpenDaysComponent],
+  imports: [OpenDaysComponent, CommentsComponent],
   templateUrl: './place-dialog.component.html',
   styleUrl: './place-dialog.component.scss',
 })
@@ -56,12 +50,15 @@ export class PlaceDialogComponent implements OnChanges {
   @Input() day: number = new Date().getDay();
   /** Alle Kategorien, um die Namen anzuzeigen. */
   @Input() categoryList: CategoryList = { groups: [], categories: [] };
+  /** Nach dem Login zurück: gleich aufgeklappt mit offenem Kommentarfeld. */
+  @Input() startComment = false;
   /** Klick auf das kleine X */
   @Output() closed: EventEmitter<void> = new EventEmitter<void>();
 
   @ViewChild('dialog', { static: true }) dialog!: ElementRef<HTMLElement>;
   @ViewChild('wrapper', { static: true }) wrapper!: ElementRef<HTMLElement>;
   @ViewChild('summary', { static: true }) summary!: ElementRef<HTMLElement>;
+  @ViewChild('description', { static: true }) description!: ElementRef<HTMLElement>;
   @ViewChild('waitingChip') waitingChip: ElementRef<HTMLElement> | undefined;
 
   /** Aufgeschoben (alle Infos sichtbar)? */
@@ -84,10 +81,12 @@ export class PlaceDialogComponent implements OnChanges {
   preferences: Category[] = [];
   /** z.B. "5–15 Min": als Chip, wenn Platz ist, sonst erst aufgeklappt. */
   waitingTime: string | undefined;
+  /** Beschreibung passt zugeklappt nicht auf eine Zeile ("… mehr")? */
+  descriptionTruncated = false;
+  /** Gekürzte Beschreibung für zugeklappt, an einer Wortgrenze abgeschnitten. */
+  shortDescription = '';
   /** Passt die Wartezeit noch neben Art und Preis? (wird nach dem Anzeigen gemessen) */
   waitingFits = true;
-  /** Beispiele, bis es echte Kommentare gibt. */
-  readonly sampleComments = SAMPLE_COMMENTS;
   /** Erstellungsdatum, z.B. "12.11.2026". */
   createdText: string | undefined;
   /** "Missbrauch melden" gibt es noch nicht: kurz "kommt bald" anzeigen. */
@@ -132,8 +131,52 @@ export class PlaceDialogComponent implements OnChanges {
     this.scrollable = false;
     setTimeout(() => {
       this.waitingFits = this.measureWaitingFits();
-      if (!this.expanded) this.setHeight(this.minimizedHeight());
+      this.shortenDescription();
+      document.fonts?.ready.then(() => this.shortenDescription());
+      if (this.startComment) {
+        this.setExpanded(true);
+      } else if (!this.expanded) {
+        this.setHeight(this.minimizedHeight());
+      }
     });
+  }
+
+  /**
+   * Zugeklappt hat die Beschreibung nur eine Zeile. Ist sie zu lang, wird sie
+   * an einer Wortgrenze gekürzt, damit "… mehr" (grau, kursiv) noch dahinter passt.
+   */
+  private shortenDescription(): void {
+    const text = this.place?.description ?? '';
+    const box = this.description.nativeElement;
+    const available = box.clientWidth;
+    const style = getComputedStyle(box);
+    const context = document.createElement('canvas').getContext('2d');
+    if (!context || available === 0) {
+      this.descriptionTruncated = false;
+      return;
+    }
+    const font = `${style.fontSize} ${style.fontFamily}`;
+    const width = (value: string, italic = false) => {
+      context.font = (italic ? 'italic ' : '') + font;
+      return context.measureText(value).width;
+    };
+
+    if (width(text) <= available) {
+      this.descriptionTruncated = false;
+      return;
+    }
+    const space = available - width('… mehr', true) - 2;
+    let words = text.split(' ');
+    while (words.length > 1 && width(words.join(' ')) > space) {
+      words = words.slice(0, -1);
+    }
+    let short = words.join(' ');
+    // Ein einziges sehr langes Wort: dann halt mitten im Wort kürzen
+    while (short.length > 1 && width(short) > space) {
+      short = short.slice(0, -1);
+    }
+    this.shortDescription = short.replace(/[\s,;:.\-–]+$/, ''); // kein Komma vor "…"
+    this.descriptionTruncated = true;
   }
 
   /** Steht der Wartezeit-Chip noch auf der ersten Zeile (oder ist er umgebrochen)? */
@@ -150,6 +193,17 @@ export class PlaceDialogComponent implements OnChanges {
     this.reportHint = true;
     clearTimeout(this.reportTimer);
     this.reportTimer = setTimeout(() => (this.reportHint = false), 2500);
+  }
+
+  /** Inhalt hat sich geändert (z.B. Kommentare geladen): aufgeklappt neu messen. */
+  onContentChanged(): void {
+    if (!this.expanded || this.photoOpen) return;
+    const element = this.dialog.nativeElement;
+    const target = this.maximizedHeight();
+    if (Math.round(element.offsetHeight) === Math.round(target)) {
+      this.scrollable = element.scrollHeight > element.clientHeight;
+    }
+    this.setHeight(target);
   }
 
   /** Antippen / Klicken: auf- bzw. zuklappen. */
@@ -183,6 +237,10 @@ export class PlaceDialogComponent implements OnChanges {
     this.expanded = expanded;
     this.scrollable = false;
 
+    // Klasse gleich setzen (nicht erst beim nächsten Angular-Durchlauf), damit
+    // die Höhe mit dem richtigen Layout gemessen wird: aufgeklappt ist die
+    // Beschreibung mehrzeilig, zugeklappt nur eine Zeile.
+    element.classList.toggle('expanded', expanded);
     const target = expanded ? this.maximizedHeight() : this.minimizedHeight();
     if (!expanded) element.scrollTop = 0;
     if (Math.round(element.offsetHeight) === Math.round(target)) {
@@ -295,7 +353,25 @@ export class PlaceDialogComponent implements OnChanges {
   /** Höhe aufgeklappt: ganzer Inhalt, höchstens so hoch wie Platz da ist. */
   private maximizedHeight(): number {
     const available = this.wrapper.nativeElement.clientHeight;
-    return Math.min(this.dialog.nativeElement.scrollHeight, available);
+    return Math.min(this.naturalHeight(), available);
+  }
+
+  /**
+   * Wie hoch wäre der Inhalt ohne feste Höhe? (scrollHeight allein wird nie
+   * kleiner als die aktuelle Höhe, z.B. nach "Abbrechen" beim Kommentar.)
+   * Kurz ohne Animation auf "auto" messen, dann alles wie vorher.
+   */
+  private naturalHeight(): number {
+    const element = this.dialog.nativeElement;
+    const height = element.style.height;
+    const transition = element.style.transition;
+    element.style.transition = 'none';
+    element.style.height = 'auto';
+    const natural = element.offsetHeight;
+    element.style.height = height;
+    void element.offsetHeight; // alte Höhe festhalten, damit die Animation von dort startet
+    element.style.transition = transition;
+    return natural;
   }
 
   private setHeight(px: number) {

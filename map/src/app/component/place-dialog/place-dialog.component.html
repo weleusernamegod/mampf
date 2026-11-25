@@ -21,8 +21,12 @@
         alt="Bild vergrössern"
         (click)="openPhoto($event)" />
       <div id="info">
-        <strong>{{ place?.name }}</strong><br />
-        <span>{{ place?.description }}</span>
+        <strong>{{ place?.name }}</strong>
+        <!-- Zugeklappt nur eine Zeile; ist sie zu lang: "… mehr" (kursiv) -->
+        <div class="description" #description [class.truncated]="descriptionTruncated">
+          <span class="description-full">{{ place?.description }}</span>
+          <span class="description-short">{{ shortDescription }}<em class="more">… mehr</em></span>
+        </div>
       </div>
       @if (kind || price || waitingTime) {
         <!-- Unter dem Logo, ganz links: Art und Preis (die Art wird gekürzt,
@@ -109,19 +113,12 @@
         [opening]="place?.opening ?? []"
         [day]="day"></mampf-open-days>
 
-      <!-- Kommentare: vorerst nur Beispiele, echte kommen später -->
-      <div class="section">
-        <strong class="title">Kommentare</strong>
-        <ul class="comments">
-          @for (comment of sampleComments; track comment.author) {
-            <li class="comment">
-              <span class="comment-author">{{ comment.author }}</span>
-              <p class="comment-text">{{ comment.text }}</p>
-            </li>
-          }
-        </ul>
-        <p class="hint">Beispiele – Kommentare kommen bald.</p>
-      </div>
+      <!-- Kommentare: lesen für alle, schreiben mit Login -->
+      <mampf-comments
+        class="section"
+        [placeId]="place?.id"
+        [startComposing]="startComment"
+        (changed)="onContentChanged()"></mampf-comments>
 
       <!-- Ganz unten: eigener Ort -> bearbeiten, sonst wer ihn erstellt hat -->
       <div class="section footer">

@@ -43,6 +43,18 @@
         #mail {
             margin-bottom: 10px;
 		}
+        /* Name mit Würfel-Knopf daneben */
+        .name-group .form-floating {
+            flex: 1;
+        }
+        .name-group .form-control {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        .name-hint {
+            margin: 4px 0 14px 0;
+            font-size: 0.8rem;
+        }
 		
         #password {
             margin-bottom: -1px;
@@ -72,6 +84,14 @@
                 <label for="mail">E-Mail</label>
             </div>
 
+            <div class="input-group name-group">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="name" placeholder="Name" maxlength="30" minlength="2" autocomplete="nickname" required>
+                    <label for="name">Name</label>
+                </div>
+                <button type="button" class="btn btn-outline-secondary" onclick="onRandomName()" title="Zufälligen Namen erzeugen">🎲 Zufällig</button>
+            </div>
+            <p class="name-hint text-body-secondary text-start">Wird bei deinen Kommentaren angezeigt. Du kannst ihn später jederzeit ändern.</p>
             <div class="form-floating">
                 <input type="password" class="form-control" id="password" placeholder="Passwort" maxlength="128" minlength="6" required>
                 <label for="password">Passwort</label>
@@ -88,19 +108,29 @@
                 Deine Registrierung ist fehlgeschlagen. Bitte versuche es erneut.
             </div>
 
-            <p class="mt-5 mb-3 text-body-secondary">Bereits registriert? <a href="index.html">Jetzt anmelden</a></p>
+            <p class="mt-5 mb-3 text-body-secondary">Bereits registriert? <a href="index.html" id="login-link">Jetzt anmelden</a></p>
         </form>
     </main>
     <script src="/assets/slogan.js"></script>
+    <script src="/assets/random-name.js"></script>
 </body>
 
 <script>
+    // Kam von der Karte (z.B. zum Kommentieren)? Merken für nach dem Anmelden.
+    const search = window.location.search;
+    document.getElementById('login-link').href = 'index.html' + search;
+
+    function onRandomName() {
+        document.getElementById('name').value = mampfRandomName();
+    }
+
     function onFormSubmit(event) {
 		event.preventDefault();
 	
         changeAlertVisibility(false);
 
         const mail = document.getElementById('mail').value;
+        const name = document.getElementById('name').value.trim();
         const password = document.getElementById('password').value;
 		const password2 = document.getElementById('password2').value;
 		
@@ -116,12 +146,12 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                mail, password
+                mail, name, password
             })
         })
             .then(response => {
                 if (response.ok) {
-                    window.location.href = "index.html#register";
+                    window.location.href = "index.html" + search + "#register";
                 } else {
                     changeAlertVisibility(true);
                 }
