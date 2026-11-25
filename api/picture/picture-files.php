@@ -1,7 +1,7 @@
 <?php
 // Bilder der Orte als Dateien im Ordner /bilder/orte/ auf dem Webserver.
 // In tbl_place.picture_file steht nur der Dateiname, einheitlich
-// <Ort-ID>-<name>-<6 Zufallszeichen>.<endung> (siehe picture_file_name).
+// <Ort-ID sechsstellig>-<name>-<6 Zufallszeichen>.<endung> (siehe picture_file_name).
 // Alte Bilder (tbl_picture, tbl_place.picture_id) werden noch angezeigt, bis
 // api/admin-bilder-umziehen.php sie zu Dateien gemacht hat.
 
@@ -50,16 +50,16 @@ function _picture_slug($name)
     return $slug === '' ? 'ort' : $slug;
 }
 
-/** Einheitlicher Dateiname: <Ort-ID>-<name>-<6 Zufallszeichen>.<endung>, z.B. "112-banh-mi-136-a3f9c2.jpg" */
+/** Einheitlicher Dateiname: <Ort-ID sechsstellig>-<name>-<6 Zufallszeichen>.<endung>, z.B. "000112-banh-mi-136-a3f9c2.jpg" */
 function picture_file_name($place, $extension)
 {
-    return intval($place->id) . '-' . _picture_slug($place->name) . '-' . bin2hex(random_bytes(3)) . '.' . strtolower($extension);
+    return sprintf('%06d', intval($place->id)) . '-' . _picture_slug($place->name) . '-' . bin2hex(random_bytes(3)) . '.' . strtolower($extension);
 }
 
 /** Hat die Datei schon das einheitliche Namensschema für diesen Ort? */
 function has_picture_file_name($place, $name)
 {
-    return is_string($name) && preg_match('/^' . intval($place->id) . '-[a-z0-9-]+-[a-f0-9]{6}\.[a-z]+$/', $name) === 1;
+    return is_string($name) && preg_match('/^' . sprintf('%06d', intval($place->id)) . '-[a-z0-9-]+-[a-f0-9]{6}\.[a-z]+$/', $name) === 1;
 }
 
 /** Bild (bereits geprüft) für einen Ort speichern. Gibt den Dateinamen zurück, NULL bei Fehler. */

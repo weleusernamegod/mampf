@@ -47,7 +47,7 @@ Als Admin auf mampf.io anmelden und dann diese Adresse öffnen:
 
 Das Skript macht die alten Bilder aus der Datenbank (`tbl_picture`) zu Dateien
 und benennt alle Bilddateien einheitlich um:
-`<Ort-ID>-<name>-<6 Zufallszeichen>.<endung>`, z.B. `112-banh-mi-136-a3f9c2.jpg`
+`<Ort-ID sechsstellig>-<name>-<6 Zufallszeichen>.<endung>`, z.B. `000112-banh-mi-136-a3f9c2.jpg`
 (so heissen auch neu hochgeladene Bilder). Es zeigt eine Liste („umgezogen“,
 „umbenannt“, „unbenutzt“). Unbenutzte Dateien gehören zu keinem Ort und
 können in Cyberduck gelöscht werden. Darf mehrmals aufgerufen werden.

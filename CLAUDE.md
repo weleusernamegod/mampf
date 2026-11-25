@@ -28,7 +28,7 @@ der Kartenstil (`map/src/app/util/map-styles.ts`) dreht seine Farbtöne mit.
 
 Bilder der Orte: Dateien in `/bilder/orte/` auf dem Webserver (`tbl_place.picture_file` = Dateiname,
 Code in `api/picture/picture-files.php`). Benutzer laden sie im Admin hoch (quadratisches JPEG).
-Dateinamen einheitlich `<Ort-ID>-<name>-<6 Zufallszeichen>.<endung>`, z.B. `112-banh-mi-136-a3f9c2.jpg`.
+Dateinamen einheitlich `<Ort-ID sechsstellig>-<name>-<6 Zufallszeichen>.<endung>`, z.B. `000112-banh-mi-136-a3f9c2.jpg`.
 Die Bilder gibt es **nur auf dem Server** (nicht im Git, Repo ist öffentlich); das Deployment darf
 den Ordner nie löschen. Im Git liegt nur `bilder/orte/.htaccess` (sperrt alles ausser Bildern).
 `tbl_picture`/`picture_id` ist das alte System (nur noch für den Umzug, siehe `data/BILDER-UPDATE.md`).

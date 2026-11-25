@@ -2,7 +2,7 @@
 // Einmalig (darf aber mehrmals laufen): Bilder der Orte vereinheitlichen. Nur für Admins.
 //  1. Alte Bilder aus der Datenbank (tbl_picture) werden zu Dateien in /bilder/orte/.
 //  2. Vorhandene Bilddateien mit anderem Namen werden umbenannt auf
-//     <Ort-ID>-<name>-<6 Zufallszeichen>.<endung> (z.B. "112-banh-mi-136-a3f9c2.jpg").
+//     <Ort-ID sechsstellig>-<name>-<6 Zufallszeichen>.<endung> (z.B. "000112-banh-mi-136-a3f9c2.jpg").
 // Aufruf im Browser (angemeldet als Admin):
 //   https://mampf.io/api/admin-bilder-umziehen.php
 include('config.php');
