@@ -260,17 +260,29 @@ export function createPlacesOverlay(
       const bounds = new google.maps.LatLngBounds();
       cluster.members.forEach(marker => bounds.extend(marker.latLng));
       const zoomBefore = map.getZoom() ?? 0;
-      map.fitBounds(bounds, 80);
-      google.maps.event.addListenerOnce(map, 'idle', () => {
-        const zoom = map.getZoom() ?? 0;
-        if (zoom > CLUSTER_MAX_ZOOM + 1) {
-          // Shops sehr nah beieinander: nicht unendlich weit hineinzoomen
-          map.setZoom(CLUSTER_MAX_ZOOM + 1);
-        } else if (zoom <= zoomBefore) {
-          // Passte schon alles ins Bild: trotzdem eine Stufe näher
-          map.setZoom(zoomBefore + 1);
-        }
-      });
+      // Zielstufe vorher ausrechnen und in einem Schritt hinzoomen. (Früher: fitBounds
+      // und danach korrigieren – das zoomte sichtbar zu weit hinein und wieder heraus.)
+      let zoom = this.fitZoom(bounds, 80);
+      // Passte schon alles ins Bild: trotzdem eine Stufe näher
+      zoom = Math.max(zoom, Math.floor(zoomBefore) + 1);
+      // Shops sehr nah beieinander: nicht unendlich weit hineinzoomen
+      zoom = Math.min(zoom, CLUSTER_MAX_ZOOM + 1);
+      map.setCenter(bounds.getCenter());
+      map.setZoom(zoom);
+    }
+
+    /** Höchste ganze Zoomstufe, bei der "bounds" mit "padding" Rand ins Kartenfenster passt. */
+    private fitZoom(bounds: google.maps.LatLngBounds, padding: number): number {
+      const projection = map.getProjection();
+      const div = map.getDiv();
+      if (!projection) return CLUSTER_MAX_ZOOM + 1;
+      // Weltkoordinaten = Pixel bei Zoomstufe 0, jede Stufe verdoppelt
+      const ne = projection.fromLatLngToPoint(bounds.getNorthEast())!;
+      const sw = projection.fromLatLngToPoint(bounds.getSouthWest())!;
+      const width = Math.max(div.clientWidth - 2 * padding, 1);
+      const height = Math.max(div.clientHeight - 2 * padding, 1);
+      const scale = Math.min(width / Math.abs(ne.x - sw.x), height / Math.abs(ne.y - sw.y));
+      return Number.isFinite(scale) ? Math.floor(Math.log2(scale)) : CLUSTER_MAX_ZOOM + 1;
     }
 
     // ---------- Positionieren ----------
