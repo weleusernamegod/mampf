@@ -38,6 +38,10 @@
       (die Karte lädt dahinter). Am Ende der Animation werden aus "mampf" sieben
       Ringe, die genau über den Punkten MO–SO des Tages-Wählers liegen.
 
+      Danach blendet der ganze Splash (Band und Logo) aus und gibt die fertige
+      Leiste frei. Die frühere Variante (Band schrumpft in die Leiste, Punkte und
+      Tageskreis erscheinen nacheinander) ist noch da: MORPH_INTO_BAR im Skript unten.
+
       Ausrichtung (Logo-Datei assets/logo-animated.svg, viewBox 1700 x 750):
       - Die Ringe liegen am Ende 220 Einheiten auseinander, die Tages-Punkte 47px.
         Skalierung also 47 / 220 = 0.213636 -> Logo 1700 * 0.213636 = 363.18px breit.
@@ -56,12 +60,23 @@
         z-index: 10000;
         overflow: hidden;
         pointer-events: none; /* Karte bleibt bedienbar */
+        transition: opacity var(--splash-fade, 700ms) ease;
+      }
+      /* Alte Variante (MORPH_INTO_BAR): Ringe landen genau auf den Punkten der Leiste */
+      #splash.morph svg {
+        bottom: calc(var(--day-selector-bottom, 40px) + 28.5px - 117.71px);
+      }
+      /* Am Ende blendet alles aus, die Leiste darunter ist schon fertig */
+      #splash.fade-out {
+        opacity: 0;
       }
       #splash svg {
         position: absolute;
         z-index: 1; /* vor dem Band */
         left: calc(50% - 177.96px);
-        bottom: calc(var(--day-selector-bottom, 80px) + 28.5px - 117.71px);
+        /* Neue Variante: feste Höhe, unabhängig von der Leiste (das Band verdeckt
+           sie ohnehin). Spruch ca. 22px über dem Rand. */
+        bottom: -2px;
         width: 363.18px;
         height: 160.23px;
         transition: opacity var(--logo-fade, 700ms) ease;
@@ -108,13 +123,17 @@
         left: -40px;
         bottom: -40px;
         width: calc(100% + 80px);
-        height: 200px; /* Oberkante 160px über dem Rand */
+        height: 193px; /* Oberkante 153px über dem Rand, knapp über dem Logo */
         border-radius: 28.5px;
         background-color: #ffffff;
         box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.2); /* wie die Leiste */
         opacity: 0;
       }
       #splash.play #splash-band {
+        animation: splash-band-in var(--splash-duration, 4.5s) linear forwards;
+      }
+      /* Alte Variante (MORPH_INTO_BAR): Band schrumpft auf die Grösse der Leiste */
+      #splash.morph.play #splash-band {
         animation:
           splash-band-in var(--splash-duration, 4.5s) linear forwards,
           splash-band-shrink var(--splash-duration, 4.5s) linear forwards;
@@ -134,18 +153,19 @@
           left: -40px;
           bottom: -40px;
           width: calc(100% + 80px);
-          height: 200px;
+          height: 193px;
           animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
         }
         78%,
         100% {
           left: calc(50% - 169.5px);
-          bottom: var(--day-selector-bottom, 80px);
+          bottom: var(--day-selector-bottom, 40px);
           width: 339px;
           height: 57px;
         }
       }
       /*
+        Nur alte Variante (MORPH_INTO_BAR):
         Intro des Tages-Wählers nach dem Logo, gesteuert über Klassen auf <html>:
           intro          Leiste leer: keine Punkte, kein Tageskreis, kein Wochenende
           intro-hidden   Leiste ganz unsichtbar (solange das Band sie verdeckt)
@@ -209,6 +229,16 @@
       (() => {
         /** Dauer der Logo-Animation. Die Datei ist auf 3000 ms gebaut, hier etwas langsamer. */
         const DURATION = 4500;
+        /**
+         * true = alte Variante: Das Band schrumpft in die Leiste, danach erscheinen
+         * Punkte, Tageskreis und Wochenende nacheinander.
+         * false = Band bleibt gross, am Ende blendet alles aus und zeigt die Leiste.
+         */
+        const MORPH_INTO_BAR = false;
+        /** Nur neue Variante: so lange nach den fertigen Ringen warten ... */
+        const HOLD = 200;
+        /** ... und so lange dauert das Ausblenden. */
+        const SPLASH_FADE = 700;
         /** Das Band hat bei 78 % die Grösse des Tages-Wählers (siehe @keyframes splash-band-shrink). */
         const BAND_DONE = DURATION * 0.78;
         /** Die Ringe sind bei 83 % fertig. */
@@ -231,7 +261,11 @@
 
         const splash = document.getElementById('splash');
         const html = document.documentElement;
-        html.classList.add('intro', 'intro-hidden');
+        if (MORPH_INTO_BAR) {
+          html.classList.add('intro', 'intro-hidden');
+          splash.classList.add('morph');
+        }
+        splash.style.setProperty('--splash-fade', SPLASH_FADE + 'ms');
         splash.style.setProperty('--splash-duration', DURATION + 'ms');
         html.style.setProperty('--intro-dots', DOTS_FADE + 'ms');
         html.style.setProperty('--logo-fade', LOGO_FADE + 'ms');
@@ -268,6 +302,13 @@
             window.MampfSlogan?.attach(splash.querySelector('svg')).then(slogan => {
               if (slogan) slogan.style.animationDelay = -(performance.now() - started) + 'ms';
             });
+
+            if (!MORPH_INTO_BAR) {
+              // Ringe fertig -> kurz stehen lassen, dann alles ausblenden
+              at(RINGS_DONE + HOLD, () => splash.classList.add('fade-out'));
+              at(RINGS_DONE + HOLD + SPLASH_FADE + 100, cleanUp);
+              return;
+            }
 
             // 1. Band hat die Grösse der Leiste -> gegen die (noch leere) Leiste tauschen
             at(BAND_DONE, () => {
