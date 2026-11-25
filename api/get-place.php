@@ -19,7 +19,7 @@ $mysqli = create_db_connection();
 
 $place = find_place_by_id(intval($_GET["id"]));
 
-$allowed = $place && ($place->userId === $_SESSION['user_id'] || is_admin());
+$allowed = can_edit_place($place);
 if (!$allowed) {
     http_response_code(404);
     exit();

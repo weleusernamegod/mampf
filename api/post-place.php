@@ -47,7 +47,7 @@ if ($data['id'] === -1) {
 	// update exiting place
 	$place = find_place_by_id($data['id']);
 
-	$allowed = $place && ($place->userId === $_SESSION['user_id'] || is_admin());
+	$allowed = can_edit_place($place);
 	if (!$allowed) {
 		$mysqli->rollback();
 		http_response_code(404);

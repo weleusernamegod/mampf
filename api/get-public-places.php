@@ -2,12 +2,14 @@
 include('config.php');
 include('util/db-util.php');
 include('util/api-util.php');
+include('util/login-util.php');
 include('place/place-repository.php');
 include('picture/picture-files.php');
 
 require_once('place/place.php');
 
-// Wer angemeldet ist, bekommt bei eigenen Orten "bearbeiten" (Admins bei allen).
+// Wer angemeldet ist, bekommt bei eigenen Orten "bearbeiten" (Admins bei allen,
+// solange ALLE_DUERFEN_ALLES_BEARBEITEN in util/login-util.php an ist: alle bei allen).
 // Die Session nur öffnen, wenn schon eine besteht: Besucher ohne Anmeldung
 // sollen kein Cookie bekommen. Die user_id selbst wird nie ausgeliefert.
 $current_user_id = null;
@@ -56,7 +58,7 @@ function _map_place_to_dto($place)
         // Nur das Datum (JJJJ-MM-TT), ohne Uhrzeit
         'created' => substr($place->createTime ?? '', 0, 10),
         'own' => $own,
-        'editable' => $own || ($current_user_id !== null && $current_user_admin)
+        'editable' => $own || ($current_user_id !== null && ($current_user_admin || ALLE_DUERFEN_ALLES_BEARBEITEN))
     ];
 }
 ?>
