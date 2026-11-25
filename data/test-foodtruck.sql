@@ -44,6 +44,6 @@ WHERE (gruppe = 'art' AND name = 'Food Truck')
    OR (gruppe = 'kueche' AND name = 'Mexikanisch')
    OR (gruppe = 'gericht' AND name = 'Tacos')
    OR (gruppe = 'praeferenz' AND name = 'Vegetarisch')
-   OR (gruppe = 'wartezeit' AND name = 'Unter 5 Minuten');
+   OR (gruppe = 'wartezeit' AND name = 'Unter 5 Min');
 
 COMMIT;

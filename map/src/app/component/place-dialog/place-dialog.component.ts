@@ -9,9 +9,11 @@ import {
 } from '@angular/core';
 import { Place } from '../../dto/place';
 import { CategoryList } from '../../dto/category';
-import { GroupedCategories, categoriesOf, groupCategories } from '../../util/category-filter';
+import { categoriesOf, groupCategories } from '../../util/category-filter';
 import { OpenDaysComponent } from './open-days/open-days.component';
-import { SLOTS, WEEKDAYS, hasOpening } from '../../util/place-util';
+import { WEEKDAYS } from '../../util/place-util';
+import { priceText } from '../../util/price';
+import { Category } from '../../dto/category';
 
 /** Abstand unter dem Inhalt der zugeklappten Infobox in px (wie padding-bottom im SCSS). */
 const BOTTOM_PADDING = 15;
@@ -21,6 +23,13 @@ const DRAG_START = 8;
 const CLOSE_DISTANCE = 60;
 /** Schneller Wisch (px pro ms): Richtung entscheidet, egal wie weit. */
 const FLICK_SPEED = 0.4;
+
+/** Platzhalter für die Kommentare (kommen später, dann vom Server). */
+const SAMPLE_COMMENTS = [
+  { author: 'Lea', text: 'Super feines Essen und sehr freundlich. Komme gerne wieder!' },
+  { author: 'Marco', text: 'Über Mittag etwas Wartezeit, aber es lohnt sich.' },
+  { author: 'Sandra', text: 'Eigenes Geschirr wird gerne gefüllt, top!' },
+];
 
 /** Zustand während der Finger auf der Infobox liegt. */
 interface Drag {
@@ -53,21 +62,32 @@ export class PlaceDialogComponent implements OnChanges {
   @ViewChild('dialog', { static: true }) dialog!: ElementRef<HTMLElement>;
   @ViewChild('wrapper', { static: true }) wrapper!: ElementRef<HTMLElement>;
   @ViewChild('summary', { static: true }) summary!: ElementRef<HTMLElement>;
+  @ViewChild('waitingChip') waitingChip: ElementRef<HTMLElement> | undefined;
 
   /** Aufgeschoben (alle Infos sichtbar)? */
   expanded = false;
   /** Erst nach dem Aufschieben scrollbar, falls der Inhalt zu hoch ist. */
   scrollable = false;
 
-  /** Kurz für den gewählten Tag, z.B. "Heute: Mittag, Abend". */
-  openingHours: string | undefined;
   /** Nur bei mehreren Standorten, z.B. "Mo Helvetiaplatz · Fr Bahnhof Altstetten". */
   locations: string | undefined;
   pictureUrl: string | undefined;
-  /** Kategorien des Shops nach Gruppe (ohne Wartezeit). */
-  categoryGroups: GroupedCategories[] = [];
-  /** z.B. "5–15 Minuten" */
+  /** Art des Lokals als erster Chip, z.B. "Imbiss-Stand". */
+  kind: string | undefined;
+  /** Bild gross über die ganze Infobox? */
+  photoOpen = false;
+  /** Preis als Chip neben der Art, z.B. "CHF 13–18". */
+  price: string | undefined;
+  /** Küche, Gerichte und Präferenzen als Chips beim Aufschieben. */
+  kitchen: Category[] = [];
+  dishes: Category[] = [];
+  preferences: Category[] = [];
+  /** z.B. "5–15 Min": als Chip, wenn Platz ist, sonst erst aufgeklappt. */
   waitingTime: string | undefined;
+  /** Passt die Wartezeit noch neben Art und Preis? (wird nach dem Anzeigen gemessen) */
+  waitingFits = true;
+  /** Beispiele, bis es echte Kommentare gibt. */
+  readonly sampleComments = SAMPLE_COMMENTS;
   /** Erstellungsdatum, z.B. "12.11.2026". */
   createdText: string | undefined;
   /** "Missbrauch melden" gibt es noch nicht: kurz "kommt bald" anzeigen. */
@@ -80,7 +100,6 @@ export class PlaceDialogComponent implements OnChanges {
 
   ngOnChanges(): void {
     if (this.place) {
-      this.openingHours = this.generateOpeningHours(this.place, this.day);
       this.locations = this.generateLocations(this.place);
       this.pictureUrl = this.place.pictureId
         ? `api/get-public-picture.php?id=${this.place.pictureId}`
@@ -89,22 +108,40 @@ export class PlaceDialogComponent implements OnChanges {
         this.categoryList,
         categoriesOf(this.place, this.categoryList)
       );
-      this.categoryGroups = groups.filter(group => group.key !== 'wartezeit');
+      const group = (key: string) =>
+        groups.find(group => group.key === key)?.categories ?? [];
+      this.kind = group('art')[0]?.name;
+      this.kitchen = group('kueche');
+      this.dishes = group('gericht');
+      this.preferences = group('praeferenz');
+      this.waitingTime = group('wartezeit')
+        .map(category => category.name)
+        .join(', ') || undefined;
       const [year, month, day] = (this.place.created ?? '').split('-');
       this.createdText = day ? `${day}.${month}.${year}` : undefined;
       this.reportHint = false;
-      this.waitingTime = groups
-        .find(group => group.key === 'wartezeit')
-        ?.categories.map(category => category.name)
-        .join(', ');
+      this.price =
+        this.place.priceMin != null && this.place.priceMax != null
+          ? priceText(this.place.priceMin, this.place.priceMax)
+          : undefined;
     }
+    this.photoOpen = false;
     // Neuer Ort: wieder zugeklappt anfangen. Die Höhe erst messen, wenn der
     // neue Text auf der Seite steht (kurz danach).
     this.expanded = false;
     this.scrollable = false;
     setTimeout(() => {
+      this.waitingFits = this.measureWaitingFits();
       if (!this.expanded) this.setHeight(this.minimizedHeight());
     });
+  }
+
+  /** Steht der Wartezeit-Chip noch auf der ersten Zeile (oder ist er umgebrochen)? */
+  private measureWaitingFits(): boolean {
+    const chip = this.waitingChip?.nativeElement;
+    if (!chip) return true;
+    const row = chip.parentElement as HTMLElement;
+    return chip.offsetTop - row.offsetTop < chip.offsetHeight / 2;
   }
 
   /** Platzhalter: Melden kommt später, bis dahin nur ein kurzer Hinweis. */
@@ -121,8 +158,28 @@ export class PlaceDialogComponent implements OnChanges {
     this.setExpanded(!this.expanded);
   }
 
+  /** Klick aufs kleine Bild: gross über die ganze Infobox (quadratisch). */
+  openPhoto(event: Event): void {
+    event.stopPropagation(); // nicht zusätzlich auf-/zuklappen
+    if (this.ignoreClick) return;
+    const element = this.dialog.nativeElement;
+    element.scrollTop = 0;
+    this.scrollable = false;
+    this.photoOpen = true;
+    // So hoch wie breit, damit das Bild quadratisch Platz hat (höchstens so hoch wie Platz da ist)
+    const available = this.wrapper.nativeElement.clientHeight;
+    this.setHeight(Math.min(Math.max(element.offsetWidth, element.offsetHeight), available));
+  }
+
+  /** Klick aufs grosse Bild: wieder klein, Infobox wie vorher. */
+  closePhoto(event: Event): void {
+    event.stopPropagation();
+    this.setExpanded(this.expanded);
+  }
+
   private setExpanded(expanded: boolean): void {
     const element = this.dialog.nativeElement;
+    this.photoOpen = false;
     this.expanded = expanded;
     this.scrollable = false;
 
@@ -243,26 +300,6 @@ export class PlaceDialogComponent implements OnChanges {
 
   private setHeight(px: number) {
     if (this.dialog) this.dialog.nativeElement.style.height = `${px}px`;
-  }
-
-  /** Öffnungszeiten am gewählten Tag, bei Foodtrucks mit dem Standort dieses Tages. */
-  private generateOpeningHours(place: Place, day: number): string {
-    const dayName =
-      day === new Date().getDay()
-        ? 'Heute'
-        : WEEKDAYS.find(weekday => weekday.value === day)?.name ?? '';
-    const slots = SLOTS.filter(slot => hasOpening(place.opening, day, slot.value)).map(
-      slot => slot.name
-    );
-    const labels = place.locations
-      .filter(location => location.weekday === day && location.label)
-      .map(location => location.label);
-
-    if (slots.length === 0) {
-      return `${dayName} geschlossen`;
-    }
-    const text = `${dayName}: ${slots.join(', ')}`;
-    return labels.length > 0 ? `${text} · ${labels.join(' / ')}` : text;
   }
 
   /**

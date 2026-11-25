@@ -37,6 +37,8 @@ $mysqli->begin_transaction();
 if ($data['id'] === -1) {
 	// create new palce
 	$place = new Place(-1, $_SESSION['user_id'], NULL, $data['name'], $data['description'], $data['lat'], $data['lng'], date("Y-m-d H:i:s"), NULL);
+	$place->priceMin = $data['priceMin'] ?? NULL;
+	$place->priceMax = $data['priceMax'] ?? NULL;
 	$place = create_place($place);
 } else {
 	// update exiting place
@@ -53,6 +55,8 @@ if ($data['id'] === -1) {
 	$place->description = $data['description'];
 	$place->lat = $data['lat'];
 	$place->lng = $data['lng'];
+	$place->priceMin = $data['priceMin'] ?? NULL;
+	$place->priceMax = $data['priceMax'] ?? NULL;
 	$place->lastUpdateTime = date("Y-m-d H:i:s");
 	$place = update_place($place);
 }
@@ -152,6 +156,9 @@ function _validate_payload($data)
 	if (!isset($data['lng']) || !is_numeric($data['lng'])) {
 		return FALSE;
 	}
+	if (!_validate_price($data['priceMin'] ?? NULL, $data['priceMax'] ?? NULL)) {
+		return FALSE;
+	}
 	if (!isset($data['opening']) || !_validate_opening($data['opening'])) {
 		return FALSE;
 	}
@@ -167,6 +174,15 @@ function _validate_payload($data)
 		}
 	}
 	return TRUE;
+}
+
+/** Preisspanne in CHF: beide leer, oder ganze Zahlen 10–30 mit min <= max */
+function _validate_price($min, $max)
+{
+	if (is_null($min) && is_null($max)) {
+		return TRUE;
+	}
+	return is_int($min) && is_int($max) && $min >= 10 && $max <= 30 && $min <= $max;
 }
 
 /** Einfache Liste [a, b, c] (kein Objekt mit eigenen Schlüsseln) */

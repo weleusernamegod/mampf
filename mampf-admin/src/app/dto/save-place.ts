@@ -13,4 +13,7 @@ export interface SavePlace {
   locations: PlaceLocation[];
   /** IDs der gewählten Kategorien */
   categories: number[];
+  /** Preisspanne in CHF (10–30), null = unbekannt */
+  priceMin: number | null;
+  priceMax: number | null;
 }

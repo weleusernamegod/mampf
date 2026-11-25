@@ -13,6 +13,9 @@ export interface Place {
   locations: PlaceLocation[];
   /** IDs der Kategorien (siehe api/get-categories.php). */
   categories: number[];
+  /** Preisspanne in CHF (10–30), null = unbekannt */
+  priceMin: number | null;
+  priceMax: number | null;
   /** Erstellt am (JJJJ-MM-TT). */
   created: string;
   /** Gehört dem angemeldeten Nutzer. */

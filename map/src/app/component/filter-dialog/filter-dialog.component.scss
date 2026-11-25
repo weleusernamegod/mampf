@@ -48,6 +48,18 @@ h2 {
 
   color: var(--grey2);
   font-size: 13px;
+
+  // Anzahl passender Orte beim Preis, wie bei den Chips
+  .count {
+    margin-left: 2px;
+    font-size: 12px;
+  }
+}
+
+// Preisregler im Filter: Beträge so gross wie der Text der Chips
+mampf-price-range-input {
+  display: block;
+  font-size: 14px;
 }
 
 button {

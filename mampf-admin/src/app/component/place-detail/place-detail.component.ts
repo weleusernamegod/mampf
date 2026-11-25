@@ -12,6 +12,8 @@ import { takePendingPosition } from '../../util/pending-position';
 import { OpeningInputComponent } from '../opening-input/opening-input.component';
 import { Opening, PlaceLocation, WEEKDAYS } from '../../dto/opening';
 import { Category, CategoryGroup, CategoryList } from '../../dto/category';
+// Gleicher Preisregler wie im Filter der Karte
+import { PriceRangeInputComponent } from '../../../../../map/src/app/component/price-range-input/price-range-input.component';
 
 /** So viele Standorte pro Tag sind möglich (Sonderfall: zwei Orte am gleichen Tag). */
 const MAX_LOCATIONS_PER_DAY = 2;
@@ -33,6 +35,7 @@ function normalize(text: string): string {
     PictureInputComponent,
     LocationInputComponent,
     OpeningInputComponent,
+    PriceRangeInputComponent,
     ActionStatusModalComponent,
     FormsModule,
   ],
@@ -70,6 +73,9 @@ export class PlaceDetailComponent implements OnInit {
   categoryList: CategoryList = { groups: [], categories: [] };
   /** Gewählte Kategorien (IDs). */
   selectedCategories = new Set<number>();
+  /** Preisspanne in CHF (10–30), null = unbekannt. */
+  priceMin: number | null = null;
+  priceMax: number | null = null;
   /** Suchfeld pro Gruppe (Küche, Gerichte ...): Gruppe -> eingetippter Text. */
   searchTerms: Partial<Record<string, string>> = {};
 
@@ -125,6 +131,13 @@ export class PlaceDetailComponent implements OnInit {
         normalize(category.name).includes(term) ||
         this.selectedCategories.has(category.id)
     );
+  }
+
+  /** Kurzform für kleine Handys: "Unter 5 Min" -> "< 5 Min", "Über 15 Min" -> "> 15 Min".
+   *  undefined, wenn es keine Kurzform gibt. */
+  shortName(name: string): string | undefined {
+    const short = name.replace(/^Unter\s+/i, '< ').replace(/^Über\s+/i, '> ');
+    return short === name ? undefined : short;
   }
 
   /** Bei "genau einer Auswahl": wählen, oder abwählen, wenn schon gewählt. */
@@ -259,6 +272,8 @@ export class PlaceDetailComponent implements OnInit {
         label: location.label?.trim() || null,
       })),
       categories: [...this.selectedCategories],
+      priceMin: this.priceMin,
+      priceMax: this.priceMax,
     } as SavePlace;
 
     fetch('/api/post-place.php', {
@@ -294,6 +309,8 @@ export class PlaceDetailComponent implements OnInit {
         this.locations = data.locations;
         this.multipleLocations = data.locations.length > 0;
         this.selectedCategories = new Set(data.categories);
+        this.priceMin = data.priceMin ?? null;
+        this.priceMax = data.priceMax ?? null;
 
         this.isLoading = false;
       })

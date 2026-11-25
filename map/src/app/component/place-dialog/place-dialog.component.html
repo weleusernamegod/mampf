@@ -12,13 +12,47 @@
     (touchcancel)="onTouchEnd()"
     (transitionend)="onTransitionEnd($event)">
     <div id="summary" #summary>
-      <img id="logo" [src]="pictureUrl" width="70" height="70" alt="" />
+      <!-- Klick auf das Bild: gross anzeigen (siehe .photo-large unten) -->
+      <img
+        id="logo"
+        [src]="pictureUrl"
+        width="44"
+        height="44"
+        alt="Bild vergrössern"
+        (click)="openPhoto($event)" />
       <div id="info">
         <strong>{{ place?.name }}</strong><br />
-        <span>{{ place?.description }}</span><br />
-        <span>{{ openingHours }}</span>
+        <span>{{ place?.description }}</span>
       </div>
+      @if (kind || price || waitingTime) {
+        <!-- Unter dem Logo, ganz links: Art und Preis (die Art wird gekürzt,
+             wenn es eng wird). Die Wartezeit nur, wenn sie noch auf die Zeile
+             passt; sonst rutscht sie in die unsichtbare zweite Zeile und
+             erscheint dafür beim Aufklappen. -->
+        <div class="chip-row">
+          <div class="chip-main">
+            @if (kind) {
+              <span class="category shrink">{{ kind }}</span>
+            }
+            @if (price) {
+              <span class="category fixed">{{ price }}</span>
+            }
+          </div>
+          @if (waitingTime) {
+            <span class="category fixed" #waitingChip>{{ waitingTime }}</span>
+          }
+        </div>
+      }
     </div>
+
+    @if (photoOpen) {
+      <!-- Bild gross über die ganze Infobox; Klick macht es wieder klein -->
+      <img
+        class="photo-large"
+        [src]="pictureUrl"
+        alt="Bild verkleinern"
+        (click)="closePhoto($event)" />
+    }
 
     <!-- Erscheint beim Aufschieben -->
     <div id="details">
@@ -29,21 +63,44 @@
         </div>
       }
 
-      @if (waitingTime) {
+      @if (kitchen.length > 0) {
         <div class="section">
-          <strong class="title">Wartezeit</strong>
-          <div class="locations">{{ waitingTime }}</div>
-        </div>
-      }
-
-      @for (group of categoryGroups; track group.key) {
-        <div class="section">
-          <strong class="title">{{ group.name }}</strong>
+          <strong class="title">Küche</strong>
           <div class="categories">
-            @for (category of group.categories; track category.id) {
+            @for (category of kitchen; track category.id) {
               <span class="category">{{ category.name }}</span>
             }
           </div>
+        </div>
+      }
+
+      @if (dishes.length > 0) {
+        <div class="section">
+          <strong class="title">Gerichte</strong>
+          <div class="categories">
+            @for (category of dishes; track category.id) {
+              <span class="category">{{ category.name }}</span>
+            }
+          </div>
+        </div>
+      }
+
+      @if (preferences.length > 0) {
+        <div class="section">
+          <strong class="title">Präferenzen</strong>
+          <div class="categories">
+            @for (category of preferences; track category.id) {
+              <span class="category">{{ category.name }}</span>
+            }
+          </div>
+        </div>
+      }
+
+      @if (waitingTime && !waitingFits) {
+        <!-- Nur, wenn die Wartezeit oben keinen Platz hatte -->
+        <div class="section">
+          <strong class="title">Wartezeit</strong>
+          <div class="locations">{{ waitingTime }}</div>
         </div>
       }
 
@@ -51,6 +108,20 @@
         class="section block"
         [opening]="place?.opening ?? []"
         [day]="day"></mampf-open-days>
+
+      <!-- Kommentare: vorerst nur Beispiele, echte kommen später -->
+      <div class="section">
+        <strong class="title">Kommentare</strong>
+        <ul class="comments">
+          @for (comment of sampleComments; track comment.author) {
+            <li class="comment">
+              <span class="comment-author">{{ comment.author }}</span>
+              <p class="comment-text">{{ comment.text }}</p>
+            </li>
+          }
+        </ul>
+        <p class="hint">Beispiele – Kommentare kommen bald.</p>
+      </div>
 
       <!-- Ganz unten: eigener Ort -> bearbeiten, sonst wer ihn erstellt hat -->
       <div class="section footer">

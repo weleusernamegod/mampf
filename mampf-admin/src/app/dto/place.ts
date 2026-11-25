@@ -10,4 +10,7 @@ export interface Place {
   opening: Opening[];
   locations: PlaceLocation[];
   categories: number[];
+  /** Preisspanne in CHF (10–30), null = unbekannt */
+  priceMin: number | null;
+  priceMax: number | null;
 }

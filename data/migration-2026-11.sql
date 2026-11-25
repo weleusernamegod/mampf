@@ -217,9 +217,9 @@ INSERT INTO `tbl_category` (`gruppe`, `name`, `reihenfolge`) VALUES
   ('praeferenz', 'Frühstück', 560);
 
 INSERT INTO `tbl_category` (`gruppe`, `name`, `reihenfolge`) VALUES
-  ('wartezeit', 'Unter 5 Minuten', 10),
-  ('wartezeit', '5–15 Minuten', 20),
-  ('wartezeit', 'Über 15 Minuten', 30);
+  ('wartezeit', 'Unter 5 Min', 10),
+  ('wartezeit', '5–15 Min', 20),
+  ('wartezeit', 'Über 15 Min', 30);
 
 -- Einmalige Vorab-Zuordnung: Stichworte in Name und Beschreibung der
 -- bestehenden Orte -> Kategorien (ersetzt die alte Stichwort-Testversion

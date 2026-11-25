@@ -65,6 +65,8 @@ CREATE TABLE `tbl_place` (
   `description` varchar(255) NOT NULL,
   `lat` double NOT NULL,
   `lng` double NOT NULL,
+  `price_min` tinyint(4) DEFAULT NULL COMMENT 'Preisspanne in CHF, leer = unbekannt',
+  `price_max` tinyint(4) DEFAULT NULL,
   `create_time` datetime NOT NULL,
   `last_update_time` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

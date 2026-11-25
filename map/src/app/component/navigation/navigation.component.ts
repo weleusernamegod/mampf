@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { priceText } from '../../util/price';
+import { PriceFilter } from '../filter-dialog/filter-dialog.component';
 import { Category, CategoryList } from '../../dto/category';
 import { Slot } from '../../dto/opening';
 import { DEFAULT_SLOTS, SLOTS, isCustomSlots } from '../../util/place-util';
@@ -15,6 +17,8 @@ export class NavigationComponent {
   @Input() selectedCategories: number[] = [];
   /** Gewählte Tageszeiten. Erscheinen nur, wenn anders als der Standard (Mittag). */
   @Input() selectedSlots: Slot[] = DEFAULT_SLOTS;
+  /** Preisspanne aus dem Filter (null = alle Preise). */
+  @Input() selectedPrice: PriceFilter | null = null;
   /** Alle Kategorien, um die Namen der gewählten anzuzeigen. */
   @Input() categoryList: CategoryList = { groups: [], categories: [] };
   /** Ist die About-Seite offen? Dann erscheint rechts ein X zum Schliessen. */
@@ -29,6 +33,8 @@ export class NavigationComponent {
   @Output() categoryRemoved: EventEmitter<number> = new EventEmitter<number>();
   /** Klick auf das X bei der Tageszeit: zurück auf Mittag. */
   @Output() slotsReset: EventEmitter<void> = new EventEmitter<void>();
+  /** X beim Preis: wieder alle Preise. */
+  @Output() priceReset: EventEmitter<void> = new EventEmitter<void>();
   @Output() filterClicked: EventEmitter<void> = new EventEmitter<void>();
   @Output() locateClicked: EventEmitter<void> = new EventEmitter<void>();
   @Output() aboutClicked: EventEmitter<void> = new EventEmitter<void>();
@@ -37,7 +43,18 @@ export class NavigationComponent {
 
   /** Ist ein Filter aktiv? Dann wird das Filter-Icon grün. */
   get filterActive(): boolean {
-    return this.selectedCategories.length > 0 || isCustomSlots(this.selectedSlots);
+    return (
+      this.selectedCategories.length > 0 ||
+      isCustomSlots(this.selectedSlots) ||
+      this.selectedPrice !== null
+    );
+  }
+
+  /** z.B. "CHF 13–18"; undefined ohne Preisfilter. */
+  get priceLabel(): string | undefined {
+    return this.selectedPrice
+      ? priceText(this.selectedPrice.min, this.selectedPrice.max)
+      : undefined;
   }
 
   /** z.B. "Morgen, Abend" oder "Ganzer Tag"; undefined bei Standard (Mittag). */

@@ -1,0 +1,41 @@
+<div class="range" [class.unset]="!isSet">
+  <div class="slider">
+    <div class="track"></div>
+    <div
+      class="fill"
+      [style.left.%]="percent(low)"
+      [style.width.%]="percent(high) - percent(low)"></div>
+    <!-- Liegen beide ganz rechts, muss der untere obenauf sein, sonst klemmt er -->
+    <input
+      type="range"
+      step="1"
+      aria-label="Preis von (CHF)"
+      [min]="PRICE_MIN"
+      [max]="PRICE_MAX"
+      [value]="low"
+      [class.on-top]="low === PRICE_MAX"
+      (input)="onLowInput($event)" />
+    <input
+      type="range"
+      step="1"
+      aria-label="Preis bis (CHF)"
+      [min]="PRICE_MIN"
+      [max]="PRICE_MAX"
+      [value]="high"
+      (input)="onHighInput($event)" />
+  </div>
+
+  <!-- Beträge unter dem Regler, fest links und rechts -->
+  <div class="labels">
+    <span>{{ lowText }}</span>
+    <span>{{ highText }}</span>
+  </div>
+</div>
+
+@if (clearable) {
+  @if (isSet) {
+    <button type="button" class="clear" (click)="clear()">Preis entfernen</button>
+  } @else {
+    <p class="hint">Regler verschieben, um den Preis anzugeben.</p>
+  }
+}

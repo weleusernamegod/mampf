@@ -9,7 +9,9 @@ import { PlaceDialogComponent } from './component/place-dialog/place-dialog.comp
 import {
   FilterDialogComponent,
   FilterSelection,
+  PriceFilter,
 } from './component/filter-dialog/filter-dialog.component';
+import { matchesPrice } from './util/price';
 import { filterByCategories } from './util/category-filter';
 import { CategoryList } from './dto/category';
 import { savePendingPosition } from './util/pending-position';
@@ -41,6 +43,8 @@ export class AppComponent implements OnInit {
   /** Angewendeter Filter: IDs der gewählten Kategorien. */
   selectedCategories: number[] = [];
   selectedDay: number = new Date().getDay();
+  /** Preisspanne aus dem Filter (null = alle Preise). */
+  selectedPrice: PriceFilter | null = null;
   /** Tageszeiten aus dem Filter (Standard: Mittag). */
   selectedSlots: Slot[] = [...DEFAULT_SLOTS];
   selectedPlace: Place | undefined = undefined;
@@ -73,10 +77,13 @@ export class AppComponent implements OnInit {
   }
 
   private updateVisiblePlaces() {
+    const price = this.selectedPrice;
     this.visiblePlaces = filterByCategories(
       this.places,
       this.selectedCategories,
       this.categoryList
+    ).filter(
+      place => !price || matchesPrice(place.priceMin, place.priceMax, price.min, price.max)
     );
   }
 
@@ -120,6 +127,7 @@ export class AppComponent implements OnInit {
   onFilterApplied(selection: FilterSelection) {
     this.selectedCategories = selection.categories;
     this.selectedSlots = selection.slots;
+    this.selectedPrice = selection.price;
     this.updateVisiblePlaces();
     this.filterDialogVisible = false;
   }
@@ -127,6 +135,12 @@ export class AppComponent implements OnInit {
   /** Einzelnen Filter über das X unter der Navigation entfernen. */
   onCategoryRemoved(id: number) {
     this.selectedCategories = this.selectedCategories.filter(category => category !== id);
+    this.updateVisiblePlaces();
+  }
+
+  /** X beim Preis unter der Navigation: wieder alle Preise. */
+  onPriceReset() {
+    this.selectedPrice = null;
     this.updateVisiblePlaces();
   }
 

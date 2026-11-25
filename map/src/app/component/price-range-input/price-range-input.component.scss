@@ -1,0 +1,146 @@
+// Doppel-Regler: zwei übereinanderliegende <input type="range">.
+// Die Spur zeichnen wir selbst (.track grau, .fill im Farbton),
+// von den Inputs sieht und greift man nur die runden Knöpfe.
+
+$thumb: 24px;
+
+.range {
+  // Platz links und rechts, damit die Knöpfe an den Enden nicht abgeschnitten sind
+  padding: 0 calc($thumb / 2);
+}
+
+.labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  // Text bündig mit dem Rand des Panels, nicht mit der Mitte der Knöpfe
+  margin: 2px calc($thumb / -2) 0 calc($thumb / -2);
+
+  color: var(--grey3);
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.slider {
+  position: relative;
+  height: $thumb + 8px;
+}
+
+.track,
+.fill {
+  position: absolute;
+  top: 50%;
+  height: 6px;
+  translate: 0 -50%;
+
+  border-radius: 3px;
+}
+
+.track {
+  left: 0;
+  right: 0;
+  background-color: var(--grey1);
+}
+
+.fill {
+  background-color: var(--primary);
+  transition: background-color 0.2s ease;
+}
+
+input[type='range'] {
+  position: absolute;
+  top: 0;
+  left: calc($thumb / -2);
+  width: calc(100% + $thumb);
+  height: 100%;
+  margin: 0;
+
+  background: none;
+  appearance: none;
+  -webkit-appearance: none;
+  pointer-events: none; // nur die Knöpfe sind greifbar
+  -webkit-tap-highlight-color: transparent;
+
+  &.on-top {
+    z-index: 1;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &::-webkit-slider-runnable-track {
+    background: none;
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    box-sizing: border-box;
+    width: $thumb;
+    height: $thumb;
+
+    border: 3px solid var(--primary);
+    border-radius: 50%;
+    box-shadow: 0px 1px 3px 0px var(--shadow);
+    background-color: var(--white);
+
+    cursor: grab;
+    pointer-events: auto;
+  }
+
+  &::-moz-range-thumb {
+    box-sizing: border-box;
+    width: $thumb;
+    height: $thumb;
+
+    border: 3px solid var(--primary);
+    border-radius: 50%;
+    box-shadow: 0px 1px 3px 0px var(--shadow);
+    background-color: var(--white);
+
+    cursor: grab;
+    pointer-events: auto;
+  }
+
+  &:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 0 0 4px var(--primary-light);
+  }
+}
+
+// Noch kein Preis angegeben: alles grau
+.unset {
+  .fill {
+    background-color: var(--grey1);
+  }
+
+  .labels {
+    color: var(--grey2);
+  }
+
+  input[type='range']::-webkit-slider-thumb {
+    border-color: var(--grey2);
+  }
+
+  input[type='range']::-moz-range-thumb {
+    border-color: var(--grey2);
+  }
+}
+
+// "Preis entfernen" und der Hinweis: grau und kursiv
+.clear,
+.hint {
+  margin: 8px 0 0 0;
+  padding: 0;
+
+  border: none;
+  background: none;
+
+  color: var(--grey2);
+  font-family: inherit;
+  font-size: 15px;
+  font-style: italic;
+}
+
+.clear {
+  cursor: pointer;
+}

@@ -60,6 +60,16 @@
             (click)="slotsReset.emit()"></button>
         </div>
       }
+      @if (priceLabel) {
+        <div class="overlay filter-chip">
+          <span>{{ priceLabel }}</span>
+          <button
+            type="button"
+            class="remove"
+            aria-label="Preisfilter entfernen"
+            (click)="priceReset.emit()"></button>
+        </div>
+      }
       @for (category of activeCategories; track category.id) {
         <div class="overlay filter-chip">
           <span>{{ category.name }}</span>

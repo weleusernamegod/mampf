@@ -70,7 +70,13 @@
                 [class.selected]="selectedCategories.has(category.id)"
                 [attr.aria-checked]="selectedCategories.has(category.id)"
                 (click)="toggleSingle(group, category.id)">
-                {{ category.name }}
+                @if (shortName(category.name); as short) {
+                  <!-- Kleine Handys: "< 5 Min" statt "Unter 5 Min" -->
+                  <span class="long-name">{{ category.name }}</span>
+                  <span class="short-name">{{ short }}</span>
+                } @else {
+                  {{ category.name }}
+                }
               </button>
             }
           </div>
@@ -108,6 +114,12 @@
           </div>
         }
       }
+
+      <!-- Preisspanne: zwei Regler, 10 bis 30 Franken -->
+      <span class="question group-title">Preis in CHF</span>
+      <mampf-price-range-input
+        [(min)]="priceMin"
+        [(max)]="priceMax"></mampf-price-range-input>
     </section>
 
     <!-- Öffnungszeiten -->
@@ -117,7 +129,7 @@
       <mampf-opening-input
         [opening]="opening"
         (openingChange)="onOpeningChanged($event)"></mampf-opening-input>
-      <p class="hint">Klick auf einen Tag oder eine Tageszeit kreuzt die ganze Reihe an.</p>
+      <p class="hint">Klick auf einen Tag / Tageszeit kreuzt die ganze Reihe an.</p>
     </section>
 
     <!-- Standort -->
@@ -144,8 +156,11 @@
       </div>
 
       @if (!multipleLocations) {
-        <span class="question">Wo genau?</span>
-        <mampf-location-input [(lat)]="lat" [(lng)]="lng"></mampf-location-input>
+        <mampf-location-input
+          class="d-block mt-3"
+          [height]="340"
+          [(lat)]="lat"
+          [(lng)]="lng"></mampf-location-input>
         <p class="hint">
           @if (positionFromMap) {
             Standort von der Karte übernommen.

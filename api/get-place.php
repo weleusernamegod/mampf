@@ -39,7 +39,9 @@ function _map_place_to_dto($place)
         'lng' => $place->lng,
         'opening' => $place->opening,
         'locations' => $place->locations,
-        'categories' => $place->categories
+        'categories' => $place->categories,
+        'priceMin' => $place->priceMin,
+        'priceMax' => $place->priceMax
     ];
 }
 ?>

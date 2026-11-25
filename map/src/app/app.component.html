@@ -14,8 +14,10 @@
         class="inline-block"
         [selectedCategories]="selectedCategories"
         [selectedSlots]="selectedSlots"
+        [selectedPrice]="selectedPrice"
         [categoryList]="categoryList"
         (slotsReset)="onSlotsReset()"
+        (priceReset)="onPriceReset()"
         (categoryRemoved)="onCategoryRemoved($event)"
         (locateClicked)="onLocateClicked()"
         (filterClicked)="onFilterClicked()"
@@ -39,6 +41,7 @@
           [categoryList]="categoryList"
           [selectedCategories]="selectedCategories"
           [selectedSlots]="selectedSlots"
+          [selectedPrice]="selectedPrice"
           [day]="selectedDay"
           (filterApplied)="onFilterApplied($event)"></mampf-filter-dialog>
       } @else if (placeDialogVisible) {

@@ -25,7 +25,29 @@
         }
       </div>
 
+      <p class="label">
+        Preis in CHF
+        <span class="count">{{ priceCount }}</span>
+      </p>
+      <mampf-price-range-input
+        [clearable]="false"
+        [min]="draftPriceMin"
+        [max]="draftPriceMax"
+        (minChange)="draftPriceMin = $event ?? PRICE_MIN"
+        (maxChange)="draftPriceMax = $event ?? PRICE_MAX"></mampf-price-range-input>
+
+      @if (waitingSection) {
+        <ng-container
+          *ngTemplateOutlet="sectionChips; context: { $implicit: waitingSection }"></ng-container>
+      }
+
       @for (section of sections; track section.key) {
+        <ng-container
+          *ngTemplateOutlet="sectionChips; context: { $implicit: section }"></ng-container>
+      }
+
+      <!-- Überschrift und Chips einer Gruppe -->
+      <ng-template #sectionChips let-section>
         <p class="label">{{ section.name }}</p>
 
         <div class="chips">
@@ -41,7 +63,7 @@
             </button>
           }
         </div>
-      }
+      </ng-template>
     </div>
   </div>
 </div>
