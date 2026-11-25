@@ -100,7 +100,7 @@ export class PlaceDialogComponent implements OnChanges {
   ngOnChanges(): void {
     if (this.place) {
       this.locations = this.generateLocations(this.place);
-      this.pictureUrl = this.place.pictureUrl ?? 'assets/no-picture.jpg';
+      this.pictureUrl = this.place.pictureUrl ?? 'assets/marktstand.svg';
       const groups = groupCategories(
         this.categoryList,
         categoriesOf(this.place, this.categoryList)

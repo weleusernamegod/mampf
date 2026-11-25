@@ -50,7 +50,7 @@ export class MyPlacesListComponent implements OnInit {
   }
 
   getPictureUrl(pictureUrl: string | null) {
-    return pictureUrl ?? 'assets/no-picture.jpg';
+    return pictureUrl ?? 'assets/marktstand.svg';
   }
 
   private loadPlaces() {
