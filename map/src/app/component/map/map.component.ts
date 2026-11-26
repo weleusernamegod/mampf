@@ -133,7 +133,7 @@ export class MapComponent implements OnInit, OnChanges {
   private map: google.maps.Map | undefined = undefined;
 
   ngOnChanges(): void {
-    this.placesOverlay?.setHidden(this.placing);
+    // Beim Platzieren bleiben die anderen Orte sichtbar (man sieht, was schon da ist)
     this.placesOverlay?.update(this.pins());
   }
 
@@ -173,7 +173,6 @@ export class MapComponent implements OnInit, OnChanges {
     this.placesOverlay = createPlacesOverlay(map, pin =>
       this.zone.run(() => this.onPinClicked(pin))
     );
-    this.placesOverlay.setHidden(this.placing);
     this.placesOverlay.update(this.pins());
   }
 

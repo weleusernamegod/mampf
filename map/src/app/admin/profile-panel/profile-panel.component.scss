@@ -4,22 +4,6 @@
   padding: 4px 20px 16px 20px;
 }
 
-.question {
-  display: block;
-  margin: 16px 0 8px 0;
-
-  color: var(--grey3);
-  font-size: 15px;
-}
-
-.hint {
-  margin: 6px 0 0 0;
-
-  color: var(--grey2);
-  font-size: 13px;
-  font-style: italic;
-}
-
 .name-row {
   display: flex;
   gap: 8px;
@@ -40,7 +24,7 @@
   margin: 0;
 
   color: var(--grey3);
-  font-size: 15px;
+  font-size: 14px;
   user-select: text;
 }
 

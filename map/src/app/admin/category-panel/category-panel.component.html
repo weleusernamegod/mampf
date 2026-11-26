@@ -1,13 +1,13 @@
 <div id="wrapper">
-  <div id="dialog" class="overlay wide">
+  <div id="dialog" class="overlay">
     <div id="header">
       <h2>Kategorien</h2>
-      @if (message) {
-        <p class="message" [class.error]="message.error">{{ message.text }}</p>
-      }
     </div>
 
     <div id="content">
+      @if (message) {
+        <p class="message" [class.error]="message.error">{{ message.text }}</p>
+      }
       @if (isLoading) {
         <p class="info">Wird geladen …</p>
       } @else if (!isAdmin) {

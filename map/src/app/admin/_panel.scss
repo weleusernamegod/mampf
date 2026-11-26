@@ -1,6 +1,6 @@
-// Gemeinsamer Rahmen der kleinen Admin-Panels (Meine Orte, Profil, Kategorien),
-// gleich aufgebaut wie das About-Fenster und der Filter: mittig über der Karte,
-// Kopf und Fuss stehen, nur der Inhalt dazwischen scrollt.
+// Gemeinsamer Rahmen aller Admin-Fenster (Meine Orte, Ort bearbeiten, Profil, Kategorien).
+// Gleich breit wie das About-Fenster, mittig über der Karte.
+// Kopf grau, Inhalt weiss (scrollt), Fuss grau mit den Knöpfen.
 // Einbinden mit: @import '../panel';
 
 #wrapper {
@@ -16,50 +16,72 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  width: 339px;
+  width: 339px; // wie das About-Fenster
   max-width: calc(100vw - 34px); // 17px Karte links und rechts, wie die Knöpfe
   max-height: 100%;
 
   overflow: hidden;
 
-  &.wide {
-    width: 480px;
-  }
+  background-color: var(--white);
 }
+
+// ---------- Kopf (grau): Titel links, kleine Links rechts ----------
 
 #header {
   flex: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
 
-  padding: 20px 20px 12px 20px;
+  padding: 16px 20px 13px 20px;
 
   border-bottom: 1px solid var(--grey1);
+
+  background-color: var(--grey0);
+
+  h2 {
+    margin: 0;
+
+    color: var(--grey3);
+    font-size: 17px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
 }
 
-h2 {
-  margin: 0;
+.header-links {
+  display: flex;
+  gap: 12px;
 
-  color: var(--grey3);
-  font-size: 19px;
-  font-weight: 800;
+  font-size: 13px;
+
+  a,
+  button {
+    padding: 0;
+
+    border: none;
+    background: none;
+
+    color: var(--grey3);
+    font-size: inherit;
+    text-decoration: none;
+  }
+
+  .danger {
+    color: var(--accent);
+  }
 }
+
+// ---------- Inhalt (weiss, scrollt) ----------
 
 #content {
   flex: 1 1 auto;
   min-height: 0;
 
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   user-select: text;
-}
-
-#footer {
-  flex: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 12px 20px;
-
-  border-top: 1px solid var(--grey1);
 }
 
 .info {
@@ -74,13 +96,28 @@ h2 {
   }
 }
 
+// ---------- Fuss (grau): links Text-Knopf, rechts grüner Knopf ----------
+
+#footer {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 10px 20px;
+
+  border-top: 1px solid var(--grey1);
+
+  background-color: var(--grey0);
+}
+
 button {
   font-family: inherit;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
 
-// Knopf, der wie Text aussieht (Schliessen, Zurück)
+// Knopf, der wie Text aussieht (Schliessen, Zurück, Abbrechen)
 .text-button {
   padding: 8px 0;
 
@@ -111,7 +148,7 @@ button {
   }
 }
 
-// Eingabefeld wie im Formular "Ort bearbeiten"
+// Eingabefeld
 .field {
   box-sizing: border-box;
   width: 100%;
@@ -129,6 +166,10 @@ button {
 
   user-select: text;
 
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
   &::placeholder {
     color: var(--grey2);
   }
@@ -137,4 +178,26 @@ button {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px var(--primary-light);
   }
+}
+
+// Kurzer Hinweis: grau und kursiv
+.hint {
+  margin: 6px 0 0 0;
+
+  color: var(--grey2);
+  font-size: 13px;
+  font-style: italic;
+
+  &.error {
+    color: var(--accent);
+  }
+}
+
+// Frage über einem Eingabefeld
+.question {
+  display: block;
+  margin: 16px 0 8px 0;
+
+  color: var(--grey3);
+  font-size: 14px;
 }

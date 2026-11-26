@@ -88,18 +88,27 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-@media (max-width: 480px) {
-  .check {
-    width: 26px;
-    height: 26px;
-  }
+// Schmales Fenster (wie das About-Fenster): etwas kleinere Kästchen
+.check {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+}
 
-  .week {
-    gap: 10px 2px;
-    padding: 10px 8px 12px 6px;
-  }
+.tick {
+  width: 22px;
+  height: 22px;
+}
 
-  .slot {
-    font-size: 13px;
-  }
+.week {
+  gap: 8px 2px;
+  padding: 10px 8px 12px 6px;
+}
+
+.day {
+  font-size: 13px;
+}
+
+.slot {
+  font-size: 13px;
 }

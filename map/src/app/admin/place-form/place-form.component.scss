@@ -1,118 +1,33 @@
-// ViewEncapsulation.None: alles steht unter "mampf-place-form",
-// damit nichts in die Karte ausläuft. Keine Farbwerte, nur Variablen (vars.scss).
+// ViewEncapsulation.None: alles steht unter "mampf-place-form", damit nichts in die
+// Karte ausläuft. Rahmen (Kopf grau, Inhalt weiss, Fuss grau) wie alle Admin-Fenster.
+// Keine Farbwerte, nur Variablen (vars.scss).
 
-// Wie das About-Fenster: mittig zwischen den Knöpfen oben und dem Tages-Wähler,
-// etwas breiter, aber rundherum bleibt immer ein Rand der Karte sichtbar.
 mampf-place-form {
-  display: grid;
-  justify-content: center;
-  align-items: center;
+  display: block;
   height: 100%;
 
   color: var(--grey3);
 
-  button {
-    font-family: inherit;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
+  @import '../panel';
 
-  // ---------- Aufbau: Kopf, scrollender Inhalt, Speichern-Leiste ----------
-
-  .form {
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    width: min(
-      480px,
-      calc(100vw - 34px)
-    ); // 17px Karte links und rechts, wie die Knöpfe
-    max-height: 100%;
-
-    overflow: hidden;
-
-    border-radius: 11px;
-    box-shadow: 0px 2px 5px 0px var(--shadow);
-
-    background-color: var(--grey0);
-
-    pointer-events: all;
-  }
-
-  .form-header {
-    flex: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    padding: 18px 22px 14px 22px;
-
-    border-bottom: 1px solid var(--grey1);
-
-    background-color: var(--white);
-
-    h2 {
-      margin: 0;
-
-      font-size: 19px;
-      font-weight: 800;
-    }
-  }
-
-  .delete {
-    padding: 6px 0;
-
-    border: none;
-    background: none;
-
-    color: var(--accent);
-    font-size: 14px;
-  }
-
-  .form-content {
-    flex: 1 1 auto;
-    min-height: 0;
-
-    // Weisse Felder gehen bis an den Rand, grau bleibt nur dazwischen
-    padding: 10px 0;
-
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  // "Wird geladen …" direkt im grauen Bereich: nicht am Rand kleben
-  .form-content > .hint {
-    padding: 0 22px;
-  }
-
-  // ---------- Karten (Abschnitte) ----------
+  // ---------- Abschnitte (Allgemein, Angebot ...) durch Linien getrennt ----------
 
   .panel {
-    margin-bottom: 10px;
-    padding: 22px 22px 24px 22px;
+    padding: 16px 20px 20px 20px;
 
-    background-color: var(--white);
-
-    &:last-child {
-      margin-bottom: 0;
+    & + .panel {
+      border-top: 1px solid var(--grey1);
     }
   }
 
   .panel-title {
-    margin: 0 0 6px 0;
+    margin: 0;
 
-    font-size: 17px;
+    color: var(--grey3);
+    font-size: 13px;
     font-weight: 800;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-  }
-
-  // Frage über einem Eingabefeld
-  .question {
-    display: block;
-    margin: 20px 0 8px 0;
-
-    font-size: 15px;
   }
 
   .group-title {
@@ -120,29 +35,16 @@ mampf-place-form {
   }
 
   .question-row {
-    margin: 20px 0 10px 0;
+    margin: 16px 0 8px 0;
 
     .question {
       margin: 0 0 8px 0;
     }
   }
 
-  // Kurzer Hinweis: grau und kursiv
-  .hint {
-    margin: 8px 0 0 0;
-
-    color: var(--grey2);
-    font-size: 15px;
-    font-style: italic;
-
-    &.error {
-      color: var(--accent);
-    }
-  }
-
   .gap-top {
     display: block;
-    margin-top: 16px;
+    margin-top: 12px;
   }
 
   .gap-bottom {
@@ -153,40 +55,11 @@ mampf-place-form {
     margin: 0;
   }
 
-  // ---------- Textfelder ----------
-
-  .field {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 10px 14px;
-
-    border: 1px solid var(--grey1);
-    border-radius: 10px;
-    outline: none;
-
-    background-color: var(--white);
-
-    color: var(--grey3);
-    font-family: inherit;
-    font-size: 16px; // ab 16px zoomt das iPhone beim Antippen nicht hinein
-
-    transition:
-      border-color 0.2s ease,
-      box-shadow 0.2s ease;
-
-    &::placeholder {
-      color: var(--grey2);
-    }
-
-    &:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-light);
-    }
-
-    &.small {
-      padding: 7px 12px;
-    }
+  .field.small {
+    padding: 6px 10px;
   }
+
+  // ---------- Suchfeld mit Lupe ----------
 
   .search {
     position: relative;
@@ -194,7 +67,7 @@ mampf-place-form {
     margin: 0;
 
     input.field {
-      padding-left: 34px;
+      padding-left: 32px;
       border-radius: 50px;
     }
   }
@@ -202,10 +75,10 @@ mampf-place-form {
   .search-icon {
     position: absolute;
     top: 50%;
-    left: 8px;
+    left: 7px;
     translate: 0 -50%;
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
 
     background-color: var(--grey2);
     pointer-events: none;
@@ -219,12 +92,12 @@ mampf-place-form {
   .chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
   }
 
   .chip {
     display: inline-block;
-    padding: 6px 12px;
+    padding: 5px 11px;
 
     border: 1px solid var(--grey1);
     border-radius: 50px;
@@ -232,7 +105,7 @@ mampf-place-form {
     background-color: var(--white);
 
     color: var(--grey3);
-    font-size: 14px;
+    font-size: 13px;
 
     transition:
       background-color 0.2s ease,
@@ -252,14 +125,8 @@ mampf-place-form {
   }
 
   // Knopf, der wie ein Link aussieht ("+ Zweiter Standort")
-  .text-button {
-    padding: 6px 0;
-
-    border: none;
-    background: none;
-
+  .text-button.link {
     color: var(--primary);
-    font-size: 14px;
   }
 
   // ---------- Schieberegler mit mehreren Optionen ----------
@@ -275,7 +142,7 @@ mampf-place-form {
 
     button {
       flex: 1 1 0;
-      padding: 9px 8px;
+      padding: 7px 4px;
 
       border: none;
       border-radius: 9px;
@@ -283,7 +150,7 @@ mampf-place-form {
       background: none;
 
       color: var(--grey2);
-      font-size: 15px;
+      font-size: 13px;
       line-height: 1.25;
       white-space: nowrap;
 
@@ -300,7 +167,8 @@ mampf-place-form {
     }
   }
 
-  .short-name {
+  // Im schmalen Fenster immer die Kurzform ("< 5 Min" statt "Unter 5 Min")
+  .long-name {
     display: none;
   }
 
@@ -309,28 +177,28 @@ mampf-place-form {
   .radio-list {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 4px 16px;
+    gap: 2px;
   }
 
   .radio {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 5px 0;
+    gap: 10px;
+    padding: 4px 0;
 
     border: none;
     background: none;
 
     color: var(--grey3);
-    font-size: 15px;
+    font-size: 14px;
     text-align: left;
 
     &::before {
       content: '';
       flex: none;
       box-sizing: border-box;
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
 
       border: 2px solid var(--grey2);
       border-radius: 50%;
@@ -343,21 +211,21 @@ mampf-place-form {
     }
 
     &.selected::before {
-      border: 7px solid var(--primary);
+      border: 6px solid var(--primary);
     }
   }
 
   // Preisregler: Beträge so gross wie der übrige Text
   mampf-price-range-input {
     display: block;
-    font-size: 15px;
+    font-size: 14px;
   }
 
   // ---------- Standorte je Wochentag ----------
 
   .day-location {
-    margin-top: 22px;
-    padding-top: 18px;
+    margin-top: 18px;
+    padding-top: 14px;
 
     border-top: 1px solid var(--grey1);
   }
@@ -365,84 +233,19 @@ mampf-place-form {
   .day-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
+    gap: 6px;
+    margin-bottom: 8px;
   }
 
   .day-name {
     margin-right: auto;
 
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 800;
   }
 
   .day-index {
     color: var(--grey2);
     font-weight: 400;
-  }
-
-  // ---------- Speichern-Leiste ----------
-
-  .save-bar {
-    flex: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 22px;
-    align-self: center;
-    margin: 4px 0 14px 0;
-    padding: 6px 6px 6px 24px;
-
-    border-radius: 50px;
-    box-shadow: 0px 2px 5px 0px var(--shadow);
-
-    background-color: var(--white);
-  }
-
-  .cancel {
-    padding: 8px 0;
-
-    border: none;
-    background: none;
-
-    color: var(--grey3);
-    font-size: 15px;
-  }
-
-  .save {
-    padding: 11px 30px;
-
-    border: none;
-    border-radius: 50px;
-
-    background-color: var(--primary);
-
-    color: var(--white);
-    font-size: 15px;
-    font-weight: 800;
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
-  }
-
-  // ---------- Handy: ganzer Bildschirm, schmalere Ränder ----------
-
-  @media (max-width: 480px) {
-    .panel {
-      padding: 20px 14px 22px 14px;
-    }
-  }
-
-  // Kurzform im Schieberegler nur auf kleinen Handys ("< 5 Min" statt "Unter 5 Min")
-  @media (max-width: 389px) {
-    .long-name {
-      display: none;
-    }
-
-    .short-name {
-      display: inline;
-    }
   }
 }

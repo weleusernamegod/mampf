@@ -190,9 +190,9 @@ export class AppComponent implements OnInit {
     this.filterDialogVisible = false;
   }
 
-  /** Ort auf der Karte angetippt. Während das Formular offen ist: nichts tun. */
+  /** Ort auf der Karte angetippt. Während Formular oder Platzieren-Modus: nichts tun. */
   onMapPlaceClicked(place: Place) {
-    if (!this.panelClosesOnMapClick) return;
+    if (!this.panelClosesOnMapClick || this.placing) return;
     this.onPlaceClicked(place);
   }
 
