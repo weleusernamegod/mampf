@@ -141,11 +141,12 @@
 
 /* Blickrichtung (heading-overlay.ts): dezenter blauer Lichtkegel wie beim
    aktuellen Google Maps. Beginnt nicht spitz im Standort, sondern schon so
-   breit wie der blaue Punkt, öffnet sich mit ca. 55° und verblasst schnell. */
+   breit wie der blaue Punkt, öffnet sich nur mit ca. 40°, ist kurz und
+   verblasst schnell (nachgebaut nach einem Screenshot von Google Maps). */
 ::ng-deep .heading-beam {
   position: absolute;
-  width: 84px;
-  height: 62px;
+  width: 50px;
+  height: 44px;
   /* Drehpunkt = unteres Ende in der Mitte = eigener Standort */
   translate: -50% -100%;
   transform-origin: 50% 100%;
@@ -154,12 +155,12 @@
 
   background: radial-gradient(
     circle at 50% 100%,
-    color-mix(in srgb, var(--location-blue) 45%, transparent) 0,
-    color-mix(in srgb, var(--location-blue) 20%, transparent) 26px,
-    transparent 56px
+    color-mix(in srgb, var(--location-blue) 55%, transparent) 0,
+    color-mix(in srgb, var(--location-blue) 22%, transparent) 20px,
+    transparent 42px
   );
-  /* Trapez: unten 20px breit (wie der Punkt), oben ca. 55° geöffnet */
-  clip-path: polygon(38% 100%, 0% 0%, 100% 0%, 62% 100%);
+  /* Trapez: unten 18px breit (wie der Punkt), ca. 40° geöffnet */
+  clip-path: polygon(32% 100%, 0% 0%, 100% 0%, 68% 100%);
 
   &[hidden] {
     display: none;
