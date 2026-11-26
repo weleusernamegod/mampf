@@ -46,6 +46,18 @@ export interface FilterSelection {
   price: PriceFilter | null;
 }
 
+/** Klein, ohne Akzente: "Café" findet man auch mit "cafe". */
+function normalize(text: string): string {
+  return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+/** Passt der Name zur Suche? Jedes Wort der Suche muss irgendwo im Namen vorkommen. */
+function matchesQuery(name: string, query: string): boolean {
+  const words = normalize(query).split(/\s+/).filter(Boolean);
+  const target = normalize(name);
+  return words.length > 0 && words.every(word => target.includes(word));
+}
+
 @Component({
   selector: 'mampf-filter-dialog',
   standalone: true,
@@ -82,6 +94,21 @@ export class FilterDialogComponent implements OnChanges {
   readonly PRICE_MAX = PRICE_MAX;
   draftPriceMin: number = PRICE_MIN;
   draftPriceMax: number = PRICE_MAX;
+
+  /** Text im Suchfeld: zeigt passende Chips aus allen Gruppen. */
+  query = '';
+
+  /** Tageszeiten, die zur Suche passen. */
+  get searchSlots(): SlotOption[] {
+    return this.slotOptions.filter(option => matchesQuery(option.name, this.query));
+  }
+
+  /** Kategorien aus allen Gruppen, die zur Suche passen. */
+  get searchCategories(): CategoryOption[] {
+    return [...(this.waitingSection ? [this.waitingSection] : []), ...this.sections]
+      .flatMap(section => section.options)
+      .filter(option => matchesQuery(option.category.name, this.query));
+  }
 
   ngOnChanges(): void {
     this.draft = new Set(this.selectedCategories);

@@ -1,7 +1,7 @@
 /**
- * Blickrichtung des Nutzers, wie bei Google Maps: ein blauer, nach aussen
- * durchsichtig werdender Fächer, der vom eigenen Standort in die Richtung zeigt,
- * in die das Handy schaut. Liegt unter dem blauen Punkt.
+ * Blickrichtung des Nutzers, wie bei Google Maps: ein dezenter blauer Lichtkegel,
+ * der beim eigenen Standort schon so breit wie der Punkt beginnt und schnell
+ * verblasst. Zeigt in die Richtung, in die das Handy schaut. Liegt unter dem blauen Punkt.
  * Aussehen per CSS (map.component.scss, Klasse .heading-beam).
  */
 export interface HeadingOverlay {

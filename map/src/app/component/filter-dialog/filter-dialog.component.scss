@@ -7,6 +7,34 @@
   user-select: none;
 }
 
+// Suchfeld ganz oben
+.search {
+  box-sizing: border-box;
+  width: 100%;
+  margin-top: 16px;
+  padding: 9px 12px;
+
+  border: 1px solid var(--grey1);
+  border-radius: 20px;
+  background: var(--grey0);
+  color: var(--black);
+  font: inherit;
+  font-size: 16px; // unter 16px zoomt iOS beim Antippen hinein;
+  user-select: text;
+  outline: none;
+
+  &:focus {
+    border-color: var(--primary);
+    background: var(--white);
+  }
+}
+
+.empty {
+  margin: 0;
+  color: var(--grey3);
+  font-size: 14px;
+}
+
 .label {
   margin: 14px 0 8px 0;
 

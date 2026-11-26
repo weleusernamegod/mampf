@@ -6,6 +6,49 @@
     </div>
 
     <div id="content">
+      <!-- Suche über alle Chips, egal aus welcher Gruppe -->
+      <input
+        type="search"
+        class="search"
+        placeholder="Suchen, z.B. vegan, Thai, Abend"
+        aria-label="Filter durchsuchen"
+        autocomplete="off"
+        enterkeyhint="search"
+        [value]="query"
+        (input)="query = $any($event.target).value"
+        (keydown.escape)="query = ''" />
+
+      @if (query.trim()) {
+        <p class="label">Treffer</p>
+        @if (searchSlots.length || searchCategories.length) {
+          <div class="chips">
+            @for (option of searchSlots; track option.slot) {
+              <button
+                type="button"
+                class="chip"
+                [class.selected]="draftSlots.has(option.slot)"
+                [attr.aria-pressed]="draftSlots.has(option.slot)"
+                (click)="toggleSlot(option.slot)">
+                {{ option.name }}
+                <span class="count">{{ option.count }}</span>
+              </button>
+            }
+            @for (option of searchCategories; track option.category.id) {
+              <button
+                type="button"
+                class="chip"
+                [class.selected]="draft.has(option.category.id)"
+                [attr.aria-pressed]="draft.has(option.category.id)"
+                (click)="toggle(option.category.id)">
+                {{ option.category.name }}
+                <span class="count">{{ option.count }}</span>
+              </button>
+            }
+          </div>
+        } @else {
+          <p class="empty">Nichts gefunden.</p>
+        }
+      } @else {
       <p class="label">Tageszeit</p>
       <div class="chips">
         @for (option of slotOptions; track option.slot) {
@@ -40,6 +83,7 @@
       @for (section of sections; track section.key) {
         <ng-container
           *ngTemplateOutlet="sectionChips; context: { $implicit: section }"></ng-container>
+      }
       }
 
       <!-- Überschrift und Chips einer Gruppe -->
