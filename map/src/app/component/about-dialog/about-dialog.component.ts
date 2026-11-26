@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, OnInit, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { VERSION } from '../../version';
 import { DEFAULT_HUE, currentHue, setHue } from '../../util/color';
 
@@ -20,7 +21,7 @@ const HUE_SNAP = 12;
 @Component({
   selector: 'mampf-about-dialog',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './about-dialog.component.html',
   styleUrl: './about-dialog.component.scss',
 })

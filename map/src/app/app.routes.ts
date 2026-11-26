@@ -1,3 +1,24 @@
 import { Routes } from '@angular/router';
+import { loginGuard } from './admin/login-guard';
 
-export const routes: Routes = [];
+/**
+ * Unterseiten der Karte. Die Admin-Panels liegen über der Karte (wie die About-Seite).
+ * Ihr Code wird erst geladen, wenn jemand sie öffnet ("Lazy Loading"),
+ * damit die Karte für normale Besucher gleich schnell bleibt.
+ *
+ * Achtung: /admin/... gehört noch der alten Admin-App (mampf-admin/).
+ * Neue Adressen deshalb auf Deutsch, ohne /admin.
+ */
+export const routes: Routes = [
+  { path: '', children: [] },
+  {
+    path: 'meine-orte',
+    canActivate: [loginGuard],
+    loadComponent: () =>
+      import('./admin/my-places-panel/my-places-panel.component').then(
+        m => m.MyPlacesPanelComponent
+      ),
+  },
+  // Unbekannte Adresse: einfach die Karte
+  { path: '**', redirectTo: '' },
+];

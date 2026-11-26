@@ -1,4 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router, RouterOutlet } from '@angular/router';
 import { Place } from './dto/place';
 import { MapComponent } from './component/map/map.component';
 import { DaySelectorComponent } from './component/day-selector/day-selector.component';
@@ -18,6 +20,7 @@ import { savePendingPosition } from './util/pending-position';
 import { DEFAULT_SLOTS } from './util/place-util';
 import { takePendingComment } from './util/pending-comment';
 import { takePendingShowPlace } from './util/pending-show-place';
+import { MapActionsService } from './admin/map-actions.service';
 
 @Component({
   selector: 'app-root',
@@ -29,6 +32,7 @@ import { takePendingShowPlace } from './util/pending-show-place';
     AboutDialogComponent,
     PlaceDialogComponent,
     FilterDialogComponent,
+    RouterOutlet,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -57,6 +61,16 @@ export class AppComponent implements OnInit {
   filterDialogVisible = false;
   /** Platzieren-Modus: neuen Ort mit dem roten Punkt in der Kartenmitte wählen. */
   placing = false;
+  /** Ein Admin-Panel (z.B. /meine-orte) ist offen. */
+  panelOpen = false;
+
+  constructor(
+    private router: Router,
+    mapActions: MapActionsService
+  ) {
+    mapActions.showPlace.pipe(takeUntilDestroyed()).subscribe(id => this.showPlaceById(id));
+    mapActions.startPlacing.pipe(takeUntilDestroyed()).subscribe(() => this.startPlacing());
+  }
 
   ngOnInit(): void {
     fetch('api/get-public-places.php')
@@ -101,6 +115,51 @@ export class AppComponent implements OnInit {
     this.onPlaceClicked(place);
   }
 
+  /** Ort aus einem Admin-Panel: Karte darauf ausrichten und Infobox öffnen. */
+  private showPlaceById(placeId: number) {
+    const place = this.places.find(place => place.id === placeId);
+    if (!place) {
+      this.closePanel();
+      return;
+    }
+    this.mapComponent?.showPlace(place.position);
+    this.onPlaceClicked(place);
+  }
+
+  private startPlacing() {
+    this.closePanel();
+    this.placing = true;
+    this.placeDialogVisible = false;
+    this.aboutDialogVisible = false;
+    this.filterDialogVisible = false;
+  }
+
+  /** Ein Admin-Panel wurde geöffnet: alle anderen Fenster zu. */
+  onPanelActivated() {
+    this.panelOpen = true;
+    this.placing = false;
+    this.aboutDialogVisible = false;
+    this.placeDialogVisible = false;
+    this.filterDialogVisible = false;
+  }
+
+  onPanelDeactivated() {
+    this.panelOpen = false;
+  }
+
+  /** Offenes Admin-Panel schliessen (zurück zur Adresse der Karte). */
+  closePanel() {
+    if (this.panelOpen) {
+      this.router.navigate(['/']);
+    }
+  }
+
+  /** X oben rechts: About-Seite bzw. Admin-Panel schliessen. */
+  onCloseClicked() {
+    this.aboutDialogVisible = false;
+    this.closePanel();
+  }
+
   private updateVisiblePlaces() {
     const price = this.selectedPrice;
     this.visiblePlaces = filterByCategories(
@@ -117,12 +176,14 @@ export class AppComponent implements OnInit {
    * About-Seite, Infobox und Filter schliessen. Der Filter bleibt dabei wie er war.
    */
   onMapClicked() {
+    this.closePanel();
     this.aboutDialogVisible = false;
     this.placeDialogVisible = false;
     this.filterDialogVisible = false;
   }
 
   onPlaceClicked(place: Place) {
+    this.closePanel();
     this.startComment = false;
     this.selectedPlace = place;
 
@@ -132,6 +193,7 @@ export class AppComponent implements OnInit {
   }
 
   onDaySelected(day: number) {
+    this.closePanel();
     this.placeDialogVisible = false;
     this.aboutDialogVisible = false;
     this.filterDialogVisible = false;
@@ -144,6 +206,7 @@ export class AppComponent implements OnInit {
   }
 
   onFilterClicked() {
+    this.closePanel();
     this.placing = false;
     this.placeDialogVisible = false;
     this.aboutDialogVisible = false;
@@ -176,6 +239,7 @@ export class AppComponent implements OnInit {
   }
 
   onAboutClicked() {
+    this.closePanel();
     this.placing = false;
     this.placeDialogVisible = false;
     this.filterDialogVisible = false;
@@ -183,6 +247,7 @@ export class AppComponent implements OnInit {
   }
 
   onAddClicked() {
+    this.closePanel();
     // "+" schaltet den Platzieren-Modus ein bzw. wieder aus
     this.placing = !this.placing;
     this.placeDialogVisible = false;

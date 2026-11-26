@@ -9,5 +9,17 @@
   </FilesMatch>
 </IfModule>
 
+# Unterseiten der Karte (z.B. /meine-orte) gibt es nur in der Angular-App.
+# Alles, was keine echte Datei ist, geht an index.html (auch Neuladen und direkte Links).
+# /api, /admin, /login und /bilder sind ausgenommen (eigene Regeln bzw. echte 404).
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^(api|admin|login|bilder)(/|$) - [L]
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  RewriteRule ^ index.html [L]
+</IfModule>
+
 # Web-App-Manifest (Name und Icon für den Home-Bildschirm) mit richtigem Typ ausliefern
 AddType application/manifest+json .webmanifest

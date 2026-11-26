@@ -22,10 +22,10 @@
         (locateClicked)="onLocateClicked()"
         (filterClicked)="onFilterClicked()"
         (addClicked)="onAddClicked()"
-        [aboutOpen]="aboutDialogVisible"
+        [aboutOpen]="aboutDialogVisible || panelOpen"
         [placing]="placing"
         (aboutClicked)="onAboutClicked()"
-        (closeClicked)="aboutDialogVisible = false"></mampf-navigation>
+        (closeClicked)="onCloseClicked()"></mampf-navigation>
     </div>
     <div>
       @if (aboutDialogVisible) {
@@ -51,6 +51,10 @@
           [categoryList]="categoryList"
           (closed)="placeDialogVisible = false"></mampf-place-dialog>
       }
+      <!-- Admin-Panels (z.B. /meine-orte), siehe app.routes.ts -->
+      <router-outlet
+        (activate)="onPanelActivated()"
+        (deactivate)="onPanelDeactivated()"></router-outlet>
     </div>
     <div class="align-center bottom">
       <!-- Im Platzieren-Modus ausgeblendet (bleibt aber erhalten, damit der Tag bleibt) -->

@@ -1,0 +1,51 @@
+<div id="wrapper">
+  <div id="dialog" class="overlay">
+    <!-- Titel und Konto-Links bleiben oben stehen, nur die Liste scrollt -->
+    <div id="header">
+      <h2>Meine Orte</h2>
+      <div id="account">
+        <!-- Profil kommt erst später ins Panel, bis dahin die alte Admin-Seite -->
+        <a href="/admin/profile">Profil</a>
+        <a href="/api/get-logout.php">Abmelden</a>
+      </div>
+    </div>
+
+    <div id="content">
+      @if (places === undefined) {
+        <p class="info">Wird geladen …</p>
+      } @else if (loadError) {
+        <p class="info">Die Orte konnten nicht geladen werden.</p>
+      } @else {
+        <ul id="places">
+          @for (place of places; track place.id) {
+            <li>
+              <button type="button" class="place" (click)="onPlaceClicked(place)">
+                <img
+                  [src]="pictureUrl(place)"
+                  alt=""
+                  width="44"
+                  height="44"
+                  (error)="onPictureError($event)" />
+                <span class="text">
+                  <span class="name">{{ place.name }}</span>
+                  <span class="description">{{ place.description }}</span>
+                </span>
+              </button>
+              <!-- Bearbeiten vorerst noch in der alten Admin-App -->
+              <a class="edit" [href]="'/admin/place/' + place.id" title="bearbeiten">
+                <span class="icon-edit"></span>
+              </a>
+            </li>
+          } @empty {
+            <li class="info">Du hast noch keine Orte erfasst.</li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div id="footer">
+      <button type="button" class="close" (click)="onCloseClicked()">Schliessen</button>
+      <button type="button" class="add" (click)="onAddClicked()">Neuer Ort</button>
+    </div>
+  </div>
+</div>

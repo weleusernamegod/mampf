@@ -19,9 +19,9 @@
         </button>
       </li>
       <li>
-        <!-- Angemeldet: Admin-Bereich (eigene Orte, Konto). Sonst zum Login, danach zurück zur Karte. -->
+        <!-- Angemeldet: Panel "Meine Orte" über der Karte. Sonst zum Login, danach zurück zur Karte. -->
         @if (loggedIn) {
-          <a class="action" href="/admin/my-places" (click)="$event.stopPropagation()">
+          <a class="action" routerLink="/meine-orte">
             <span class="circle"><span class="icon icon-edit"></span></span>
             <span class="text">meine Orte &amp; Konto</span>
           </a>

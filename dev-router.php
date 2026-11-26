@@ -17,6 +17,13 @@ if (str_starts_with($path, '/admin/') && !is_file($file)) {
     exit;
 }
 
+// Unterseiten der Karte (z.B. /meine-orte) -> index.html (wie map/public/.htaccess)
+if (!file_exists($file) && !preg_match('#^/(api|admin|login|bilder)(/|$)#', $path)) {
+    header('Cache-Control: no-cache');
+    readfile($_SERVER['DOCUMENT_ROOT'] . '/index.html');
+    exit;
+}
+
 // HTML-Seiten nicht cachen
 if (str_ends_with($path, '/') || str_ends_with($path, '.html')) {
     header('Cache-Control: no-cache');
