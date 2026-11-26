@@ -58,6 +58,23 @@ function matchesQuery(name: string, query: string): boolean {
   return words.length > 0 && words.every(word => target.includes(word));
 }
 
+/** Gemischte Kopie (Fisher-Yates). */
+function shuffle<T>(items: T[]): T[] {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+/** ["Thai", "vegan", "Burger"] -> "Suchen: Thai, vegan oder Burger" */
+function placeholderText(names: string[]): string {
+  if (names.length === 0) return 'Suchen';
+  if (names.length === 1) return `Suchen: ${names[0]}`;
+  return `Suchen: ${names.slice(0, -1).join(', ')} oder ${names[names.length - 1]}`;
+}
+
 @Component({
   selector: 'mampf-filter-dialog',
   standalone: true,
@@ -97,6 +114,8 @@ export class FilterDialogComponent implements OnChanges {
 
   /** Text im Suchfeld: zeigt passende Chips aus allen Gruppen. */
   query = '';
+  /** z.B. "Suchen: Thai, vegan oder Burger", bei jedem Öffnen drei andere Chips. */
+  placeholder = 'Suchen';
 
   /** Tageszeiten, die zur Suche passen. */
   get searchSlots(): SlotOption[] {
@@ -146,6 +165,26 @@ export class FilterDialogComponent implements OnChanges {
       .filter(section => section.options.length > 0);
     this.waitingSection = all.find(section => section.key === WAITING_GROUP);
     this.sections = all.filter(section => section.key !== WAITING_GROUP);
+    // Nur einmal pro Öffnen auslosen (nicht bei jedem Neuladen wechseln)
+    if (this.placeholder === 'Suchen') this.placeholder = this.randomPlaceholder();
+  }
+
+  /**
+   * "Suchen: x, y oder z" mit drei zufälligen Chips (Kategorien ohne Wartezeit).
+   * Mehrmals auslosen, bis der Text ins Suchfeld passt (sonst abgeschnitten).
+   */
+  private randomPlaceholder(): string {
+    const names = this.sections.flatMap(section =>
+      section.options.map(option => option.category.name)
+    );
+    const MAX_LENGTH = 32; // so viele Zeichen passen etwa ins Feld (Handy)
+    let best = 'Suchen';
+    for (let attempt = 0; attempt < 30; attempt++) {
+      const text = placeholderText(shuffle(names).slice(0, 3));
+      if (text.length <= MAX_LENGTH) return text;
+      if (best === 'Suchen' || text.length < best.length) best = text;
+    }
+    return best;
   }
 
   /** So viele Orte passen zum Preisregler (ganz offen: alle). */

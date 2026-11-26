@@ -289,7 +289,7 @@ export class PlaceFormComponent implements OnInit {
       .then(response => {
         if (!response.ok) throw new Error('HTTP ' + response.status);
         this.actionStatus = ActionStatus.NoOperation;
-        this.mapActions.placesChanged.next(undefined);
+        this.finish(undefined);
       })
       .catch(() => (this.actionStatus = ActionStatus.CompletedError));
   }
@@ -370,13 +370,25 @@ export class PlaceFormComponent implements OnInit {
         }
         const data = await response.json().catch(() => undefined);
         const id = Number(data?.id ?? this.place?.id);
-        // Panel zu, Karte lädt die Orte neu und öffnet diesen
         this.actionStatus = ActionStatus.NoOperation;
-        this.mapActions.placesChanged.next(id > 0 ? id : undefined);
+        this.finish(id > 0 ? id : undefined);
       })
       .catch(() => {
         this.actionStatus = ActionStatus.CompletedError;
       });
+  }
+
+  /**
+   * Gespeichert oder gelöscht: Kam man aus der Liste "Meine Orte" (?zurueck=liste),
+   * geht es dorthin zurück. Sonst (von der Karte aus) Panel zu und auf den Ort springen.
+   */
+  private finish(placeId: number | undefined) {
+    if (this.route.snapshot.queryParams['zurueck'] === 'liste') {
+      this.mapActions.placesReloaded.next();
+      this.router.navigate(['/meine-orte'], { replaceUrl: true });
+    } else {
+      this.mapActions.placesChanged.next(placeId);
+    }
   }
 
   private initFromExistingPlace(id: string) {

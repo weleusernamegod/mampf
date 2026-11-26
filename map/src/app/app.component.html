@@ -11,7 +11,7 @@
   <div id="grid">
     <div>
       <mampf-navigation
-        class="inline-block"
+        class="block"
         [selectedCategories]="selectedCategories"
         [selectedSlots]="selectedSlots"
         [selectedPrice]="selectedPrice"
@@ -67,7 +67,7 @@
         <div class="overlay place-bar">
           <button type="button" class="place-cancel" (click)="placing = false">Abbrechen</button>
           <button type="button" class="place-confirm" (click)="onPlaceConfirmed()">
-            Ort hier erfassen
+            Ort erfassen
           </button>
         </div>
       }

@@ -45,9 +45,9 @@ export class MyPlacesPanelComponent implements OnInit {
       });
   }
 
-  /** Ort antippen: Formular "Ort bearbeiten" öffnen. */
+  /** Ort antippen: Formular "Ort bearbeiten" öffnen (nach dem Speichern zurück in diese Liste). */
   onPlaceClicked(place: PlaceSummary) {
-    this.router.navigate(['/ort', place.id]);
+    this.router.navigate(['/ort', place.id], { queryParams: { zurueck: 'liste' } });
   }
 
   onAddClicked() {

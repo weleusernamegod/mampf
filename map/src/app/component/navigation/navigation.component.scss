@@ -1,12 +1,18 @@
+// Knöpfe oben in einer Zeile, aktive Filter darunter über die ganze Breite
 #navigation {
-  display: grid;
-  grid-template-columns: repeat(4, 52px);
-  grid-template-rows: 52px; // Knöpfe
-  grid-auto-rows: auto; // aktive Filter darunter
-  grid-auto-columns: 52px; // Platz für das X bzw. ✓ ✕ rechts
+  display: block;
+  margin: 17px 17px 0px 17px;
+}
+
+.buttons {
+  display: flex;
   gap: 11px;
 
-  margin: 17px 17px 0px 17px;
+  > * {
+    flex: none;
+    width: 52px;
+    height: 52px;
+  }
 }
 
 .button {
@@ -28,9 +34,9 @@
 // ✓ und ✕ im Platzieren-Modus, zusammen in einem Knopf
 // Aktive Filter unter den Knöpfen, z.B. "Griechisch ×"
 #active-filters {
-  grid-column: 1 / -1;
-
   display: flex;
+  margin-top: 11px;
+
   flex-wrap: wrap;
   gap: 8px;
 }

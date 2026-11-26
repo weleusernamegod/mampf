@@ -14,6 +14,9 @@ export class MapActionsService {
   /** Ein Ort wurde gespeichert oder gelöscht: Panel zu, Orte neu laden.
    *  Mit Ort-ID: diesen Ort danach zeigen und seine Infobox öffnen. */
   readonly placesChanged = new Subject<number | undefined>();
+  /** Ein Ort wurde gespeichert oder gelöscht, aber das Panel bleibt offen
+   *  (z.B. zurück in "Meine Orte"): nur die Orte der Karte neu laden. */
+  readonly placesReloaded = new Subject<void>();
   /** Angemeldet und zurück zur Karte (z.B. um zu kommentieren). */
   readonly loggedIn = new Subject<void>();
 }

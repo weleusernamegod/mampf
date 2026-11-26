@@ -30,8 +30,10 @@ mampf-place-form {
     text-transform: uppercase;
   }
 
-  .group-title {
-    font-weight: 800;
+  // Fragen wie die Überschriften im Filtermenü (filter-dialog .label): grau, 13px
+  .question {
+    color: var(--grey2);
+    font-size: 13px;
   }
 
   .question-row {

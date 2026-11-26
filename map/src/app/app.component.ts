@@ -73,6 +73,7 @@ export class AppComponent implements OnInit {
     mapActions.placesChanged
       .pipe(takeUntilDestroyed())
       .subscribe(id => this.onPlacesChanged(id));
+    mapActions.placesReloaded.pipe(takeUntilDestroyed()).subscribe(() => this.loadPlaces());
     mapActions.loggedIn.pipe(takeUntilDestroyed()).subscribe(() => this.onLoggedIn());
   }
 
