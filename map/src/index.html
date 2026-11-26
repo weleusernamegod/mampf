@@ -92,6 +92,14 @@
         transition: opacity var(--logo-fade, 700ms) ease;
         color: var(--primary, #2e9991); /* Linien des Logos (currentColor) */
       }
+      /* Neue Variante: Logo 15 % kleiner (0.85 * 363.18px), mittlerer Ring bleibt in der
+         Bildmitte: left = 50% - 833 * (308.70 / 1700) = 50% - 151.27px.
+         Die alte Variante (morph) braucht die genaue Grösse oben, damit die Ringe passen. */
+      #splash:not(.morph) svg {
+        left: calc(50% - 151.27px);
+        width: 308.7px;
+        height: 136.2px;
+      }
       /* Logo blendet aus, kurz nachdem die grauen Punkte einzublenden beginnen */
       #splash.fade-logo svg {
         opacity: 0;
