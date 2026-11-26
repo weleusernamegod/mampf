@@ -59,3 +59,15 @@ können in Cyberduck gelöscht werden. Darf mehrmals aufgerufen werden.
    Klappt das nicht (Fehler beim Speichern), darf PHP nicht in den Ordner
    schreiben: in Cyberduck Rechtsklick auf `/bilder/orte` → „Info“ →
    Berechtigungen auf 755 setzen (oder beim Hoster nachfragen).
+
+## Nachtrag: fehlende Bilder Kreis 4 und 5 (zweite Runde)
+
+56 weitere Bilder, schon fertig umbenannt (`<Ort-ID>-<name>-<zufall>.jpg`) und
+aufbereitet wie beim Hochladen im Admin (quadratisch, höchstens 512 px, JPEG).
+
+1. Alle Dateien aus `data/kreis4-5/bilder-fuer-server/orte-neu/` (nur lokal, nicht
+   im Git) mit Cyberduck in den Server-Ordner `/bilder/orte/` hochladen.
+   Nur die Dateien hineinziehen, nicht den Ordner. Nichts löschen, nicht „Synchronisieren“.
+2. In phpMyAdmin (Reiter „SQL“) den Inhalt von `data/kreis4-5/bilder-zuordnen-2.sql`
+   einfügen, „OK“. Gesetzt wird nur bei Orten, die noch kein Bild haben.
+3. mampf.io neu laden und ein paar dieser Orte antippen.
