@@ -1,12 +1,8 @@
 <div id="wrapper">
   <div id="dialog" class="overlay">
-    <!-- Titel und Knöpfe bleiben oben stehen, nur die Auswahl darunter scrollt -->
+    <!-- Gleicher Rahmen wie die Admin-Fenster: Kopf grau, Auswahl weiss (scrollt), Fuss grau -->
     <div id="header">
       <h2>Filtern</h2>
-      <div id="actions">
-        <button type="button" class="reset" (click)="reset()">Zurücksetzen</button>
-        <button type="button" class="apply" (click)="apply()">Anwenden</button>
-      </div>
     </div>
 
     <div id="content">
@@ -64,6 +60,11 @@
           }
         </div>
       </ng-template>
+    </div>
+
+    <div id="footer">
+      <button type="button" class="text-button" (click)="reset()">Zurücksetzen</button>
+      <button type="button" class="primary-button" (click)="apply()">Anwenden</button>
     </div>
   </div>
 </div>

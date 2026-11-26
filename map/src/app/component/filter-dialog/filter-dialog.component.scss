@@ -1,46 +1,9 @@
-#wrapper {
-  display: grid;
-  justify-content: center;
-  align-items: center;
-
-  width: 100%;
-  height: 100%;
-}
-
-// Spalte: oben Titel + Knöpfe (bleiben stehen), darunter die Auswahl (scrollt)
-#dialog {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  width: 339px;
-  max-height: 100%;
-
-  overflow: hidden;
-}
-
-#header {
-  flex: none;
-
-  padding: 20px 20px 12px 20px;
-
-  border-bottom: 1px solid var(--grey1);
-}
+// Rahmen (Kopf grau, Inhalt weiss, Fuss grau) wie die Admin-Fenster
+@import '../../admin/panel';
 
 #content {
-  flex: 1 1 auto;
-  min-height: 0;
-
   padding: 0 20px 20px 20px;
-
-  overflow-y: auto;
-}
-
-h2 {
-  margin: 0;
-
-  color: var(--grey3);
-  font-size: 19px;
-  font-weight: 800;
+  user-select: none;
 }
 
 .label {
@@ -60,12 +23,6 @@ h2 {
 mampf-price-range-input {
   display: block;
   font-size: 14px;
-}
-
-button {
-  font-family: inherit;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .chips {
@@ -112,34 +69,3 @@ button {
   }
 }
 
-#actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  margin-top: 12px;
-}
-
-.reset {
-  padding: 8px 0;
-
-  border: none;
-
-  background: none;
-
-  color: var(--grey3);
-  font-size: 14px;
-}
-
-.apply {
-  padding: 8px 20px;
-
-  border: none;
-  border-radius: 50px;
-
-  background-color: var(--primary);
-
-  color: var(--white);
-  font-size: 14px;
-  font-weight: 800;
-}
