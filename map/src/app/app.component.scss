@@ -41,7 +41,7 @@ main,
   grid-area: 1 / 1;
 }
 
-/* Platzieren-Modus: Abbrechen und "Ort hier erfassen", wie der graue Fuss der Admin-Fenster
+/* Platzieren-Modus: Abbrechen und "Ort hier erfassen" als weisse Pille
    (gleich breit wie das About-Fenster) */
 .place-bar {
   box-sizing: border-box;
@@ -55,10 +55,8 @@ main,
   margin-bottom: var(--day-selector-bottom);
   padding: 10px 10px 10px 20px;
 
-  /* Rundung passend zur Pille darin: Radius der Pille + Abstand rundherum */
-  border-radius: 28px;
-
-  background-color: var(--grey0);
+  /* Weisse Pille wie der Tages-Wähler darunter */
+  border-radius: 50px;
 
   animation: place-bar-in 0.3s ease-out;
 }

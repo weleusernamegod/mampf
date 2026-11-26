@@ -1,18 +1,24 @@
 @import '../panel';
 @import '../tabs';
 
-// Logo in der Oberflächenfarbe, wie auf der About-Seite (Spruch darunter aus slogan.js)
+// Das Logo ragt seitlich etwas hinaus (siehe .logo): nicht seitlich scrollen
+#content {
+  overflow-x: hidden;
+}
+
+// Logo in der Oberflächenfarbe, wie auf der About-Seite (Spruch darunter aus slogan.js).
+// Die Logo-Datei hat links und rechts leeren Rand: die Box ragt deshalb etwas über
+// das Fenster hinaus, damit die Buchstaben ungefähr bündig mit den Eingabefeldern sind.
 .logo {
-  width: 170px;
-  margin: 18px auto 0 auto;
+  margin: 14px -24px 0 -24px;
 
   text-align: center;
 }
 
 .logo-image {
   display: block;
-  width: 170px;
-  height: 75px;
+  width: 100%;
+  aspect-ratio: 200 / 88; // Seitenverhältnis des Logos wie auf der About-Seite
 
   background-color: var(--primary);
   -webkit-mask: url('/assets/logo.svg') center / contain no-repeat;
