@@ -78,7 +78,9 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadPlaces().then(() => {
-      this.openPendingComment();
+      // Steht das Fenster "Anmelden" offen, kommt der Kommentar erst nach dem Anmelden dran
+      const loggingIn = /^\/(anmelden|registrieren)/.test(location.pathname);
+      if (!loggingIn) this.openPendingComment();
     });
 
     fetch('api/get-categories.php')

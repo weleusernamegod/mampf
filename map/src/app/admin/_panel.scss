@@ -45,7 +45,7 @@
     margin: 0;
 
     color: var(--grey3);
-    font-size: 17px;
+    font-size: 14px; // gleich gross wie die Reiter (_tabs.scss)
     font-weight: 800;
     white-space: nowrap;
   }
@@ -149,6 +149,33 @@ button {
   }
 }
 
+// Roter runder Knopf (Löschen bestätigen)
+.danger-button {
+  padding: 8px 20px;
+
+  border: none;
+  border-radius: 50px;
+
+  background-color: var(--accent);
+
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+// Rückfrage im Fuss: Frage links, Knöpfe rechts
+.confirm-text {
+  color: var(--grey3);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.confirm-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 // Eingabefeld
 .field {
   box-sizing: border-box;
@@ -156,7 +183,7 @@ button {
   padding: 8px 12px;
 
   border: 1px solid var(--grey1);
-  border-radius: 10px;
+  border-radius: 11px;
   outline: none;
 
   background-color: var(--white);

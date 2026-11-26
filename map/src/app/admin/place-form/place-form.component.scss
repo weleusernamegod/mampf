@@ -87,42 +87,7 @@ mampf-place-form {
     mask: url('/assets/icons/search.svg') center / 220% no-repeat;
   }
 
-  // ---------- Chips (wie im Filter der Karte) ----------
-
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .chip {
-    display: inline-block;
-    padding: 5px 11px;
-
-    border: 1px solid var(--grey1);
-    border-radius: 50px;
-
-    background-color: var(--white);
-
-    color: var(--grey3);
-    font-size: 13px;
-
-    transition:
-      background-color 0.2s ease,
-      border-color 0.2s ease,
-      color 0.2s ease;
-
-    &.selected {
-      border-color: var(--primary);
-      background-color: var(--primary);
-      color: var(--white);
-    }
-
-    &.danger:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-  }
+  @import '../chips'; // Chips wie im Filter
 
   // Knopf, der wie ein Link aussieht ("+ Zweiter Standort")
   .text-button.link {
@@ -136,7 +101,7 @@ mampf-place-form {
     padding: 3px;
 
     border: 1px solid var(--grey1);
-    border-radius: 12px;
+    border-radius: 11px;
 
     background-color: var(--grey0);
 
@@ -145,7 +110,7 @@ mampf-place-form {
       padding: 7px 4px;
 
       border: none;
-      border-radius: 9px;
+      border-radius: 8px; // innen: 11px minus 3px Abstand
 
       background: none;
 

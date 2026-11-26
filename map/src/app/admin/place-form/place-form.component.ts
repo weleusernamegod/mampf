@@ -73,6 +73,8 @@ export class PlaceFormComponent implements OnInit {
 
   name = '';
   description = '';
+  /** Rückfrage "Wirklich löschen?" ist offen. */
+  confirmingDelete = false;
   /** Ort konnte nicht geladen werden. */
   loadError = false;
   /** Kreuze in der Öffnungszeiten-Matrix. */
@@ -269,16 +271,19 @@ export class PlaceFormComponent implements OnInit {
     }
   }
 
-  /** Ort löschen (nur bestehende Orte), mit Rückfrage. */
+  /** "Löschen" oben: unten erscheint die Rückfrage (statt Abbrechen/Speichern). */
   onDeleteClicked() {
+    this.confirmingDelete = true;
+  }
+
+  onDeleteCancelled() {
+    this.confirmingDelete = false;
+  }
+
+  /** Rückfrage bestätigt: Ort löschen. */
+  onDeleteConfirmed() {
     if (!this.place) return;
-    if (
-      !confirm(
-        `"${this.place.name}" wirklich löschen? Das lässt sich nicht rückgängig machen.`
-      )
-    ) {
-      return;
-    }
+    this.confirmingDelete = false;
     this.actionStatus = ActionStatus.Loading;
     fetch(`/api/delete-place.php?id=${this.place.id}`, { method: 'delete' })
       .then(response => {

@@ -14,10 +14,14 @@ export type AccountTab = 'orte' | 'profil' | 'kategorien';
   imports: [RouterLink],
   template: `
     <nav class="tabs">
-      <a routerLink="/meine-orte" [class.active]="active === 'orte'">Meine Orte</a>
+      <a routerLink="/meine-orte" [class.active]="active === 'orte'"
+        >Meine Orte</a
+      >
       <a routerLink="/profil" [class.active]="active === 'profil'">Profil</a>
       @if (isAdmin) {
-        <a routerLink="/kategorien" [class.active]="active === 'kategorien'">Kategorien</a>
+        <a routerLink="/kategorien" [class.active]="active === 'kategorien'"
+          >Kategorien</a
+        >
       }
       <a href="/api/get-logout.php">Abmelden</a>
     </nav>

@@ -294,16 +294,35 @@
     </div>
 
     <div id="footer">
-      <button type="button" class="text-button" (click)="onCancel()">
-        Abbrechen
-      </button>
-      <button
-        type="submit"
-        class="primary-button"
-        [disabled]="isLoading || loadError"
-        (pointerup)="onSavePointerUp($event, placeForm)">
-        Speichern
-      </button>
+      @if (confirmingDelete) {
+        <!-- Rückfrage beim Löschen, im gleichen Stil statt Browser-Dialog -->
+        <span class="confirm-text">Wirklich löschen?</span>
+        <span class="confirm-actions">
+          <button
+            type="button"
+            class="text-button"
+            (click)="onDeleteCancelled()">
+            Nein
+          </button>
+          <button
+            type="button"
+            class="danger-button"
+            (click)="onDeleteConfirmed()">
+            Löschen
+          </button>
+        </span>
+      } @else {
+        <button type="button" class="text-button" (click)="onCancel()">
+          Abbrechen
+        </button>
+        <button
+          type="submit"
+          class="primary-button"
+          [disabled]="isLoading || loadError"
+          (pointerup)="onSavePointerUp($event, placeForm)">
+          Speichern
+        </button>
+      }
     </div>
   </form>
 </div>

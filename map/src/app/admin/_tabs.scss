@@ -3,7 +3,7 @@
 .tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 16px;
+  gap: 4px 12px; // eng genug, dass auch 4 Reiter (Admins) auf eine Linie passen
 
   a,
   button {
@@ -14,7 +14,7 @@
 
     color: var(--grey3);
     font-family: inherit;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 400;
     text-decoration: none;
     white-space: nowrap;

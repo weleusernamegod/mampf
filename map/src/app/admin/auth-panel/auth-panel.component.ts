@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MapActionsService } from '../map-actions.service';
@@ -42,12 +48,16 @@ export class AuthPanelComponent implements OnInit, AfterViewInit {
     const state = this.router.getCurrentNavigation()?.extras.state;
     if (state?.['registered']) {
       this.mail = state['mail'] ?? '';
-      this.message = { text: 'Registrierung erfolgreich. Melde dich jetzt an.', error: false };
+      this.message = {
+        text: 'Registrierung erfolgreich. Melde dich jetzt an.',
+        error: false,
+      };
     }
   }
 
   ngOnInit(): void {
-    this.mode = this.route.snapshot.data['mode'] === 'register' ? 'register' : 'login';
+    this.mode =
+      this.route.snapshot.data['mode'] === 'register' ? 'register' : 'login';
     if (this.mode === 'register') loadRandomNameScript();
   }
 
@@ -76,10 +86,16 @@ export class AuthPanelComponent implements OnInit, AfterViewInit {
 
   private login() {
     this.busy = true;
-    this.post('/api/post-login.php', { mail: this.mail, password: this.password })
+    this.post('/api/post-login.php', {
+      mail: this.mail,
+      password: this.password,
+    })
       .then(ok => {
         if (!ok) {
-          this.message = { text: 'Anmelden hat nicht geklappt. Stimmen E-Mail und Passwort?', error: true };
+          this.message = {
+            text: 'Anmelden hat nicht geklappt. Stimmen E-Mail und Passwort?',
+            error: true,
+          };
           return;
         }
         fetchOwnUser(true);
@@ -91,11 +107,18 @@ export class AuthPanelComponent implements OnInit, AfterViewInit {
   private register() {
     const name = this.name.trim().replace(/\s+/g, ' ');
     if (this.password !== this.password2) {
-      this.message = { text: 'Die beiden Passwörter sind nicht gleich.', error: true };
+      this.message = {
+        text: 'Die beiden Passwörter sind nicht gleich.',
+        error: true,
+      };
       return;
     }
     this.busy = true;
-    this.post('/api/post-register.php', { mail: this.mail.trim(), name, password: this.password })
+    this.post('/api/post-register.php', {
+      mail: this.mail.trim(),
+      name,
+      password: this.password,
+    })
       .then(ok => {
         if (!ok) {
           this.message = {
@@ -128,7 +151,10 @@ export class AuthPanelComponent implements OnInit, AfterViewInit {
   private post(url: string, body: object): Promise<boolean> {
     return fetch(url, {
       method: 'post',
-      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(body),
     })
       .then(response => response.ok)
@@ -138,7 +164,8 @@ export class AuthPanelComponent implements OnInit, AfterViewInit {
 
 /** random-name.js nur einmal und erst bei Bedarf laden. */
 function loadRandomNameScript() {
-  if (window.mampfRandomName || document.getElementById('random-name-script')) return;
+  if (window.mampfRandomName || document.getElementById('random-name-script'))
+    return;
   const script = document.createElement('script');
   script.id = 'random-name-script';
   script.src = '/assets/random-name.js';

@@ -1,5 +1,6 @@
 // Rahmen (Kopf grau, Inhalt weiss, Fuss grau) wie die Admin-Fenster
 @import '../../admin/panel';
+@import '../../admin/chips';
 
 #content {
   padding: 0 20px 20px 20px;
@@ -24,48 +25,3 @@ mampf-price-range-input {
   display: block;
   font-size: 14px;
 }
-
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.chip {
-  padding: 6px 12px;
-
-  border: 1px solid var(--grey1);
-  border-radius: 50px;
-
-  background-color: var(--white);
-
-  color: var(--grey3);
-  font-size: 14px;
-
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease;
-
-  .count {
-    margin-left: 2px;
-
-    color: var(--grey2);
-    font-size: 12px;
-
-    transition: color 0.2s ease;
-  }
-
-  &.selected {
-    border-color: var(--primary);
-
-    background-color: var(--primary);
-
-    color: var(--white);
-
-    .count {
-      color: var(--primary-light);
-    }
-  }
-}
-

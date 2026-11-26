@@ -7,9 +7,14 @@ import { CanActivateFn, Router } from '@angular/router';
  */
 export const loginGuard: CanActivateFn = async (_route, state) => {
   const router = inject(Router);
-  const loggedIn = await fetch('/api/get-login-status.php', { cache: 'no-store' })
+  const loggedIn = await fetch('/api/get-login-status.php', {
+    cache: 'no-store',
+  })
     .then(response => response.json())
     .then(data => !!data.loggedIn)
     .catch(() => false);
-  return loggedIn || router.createUrlTree(['/anmelden'], { queryParams: { zurueck: state.url } });
+  return (
+    loggedIn ||
+    router.createUrlTree(['/anmelden'], { queryParams: { zurueck: state.url } })
+  );
 };
