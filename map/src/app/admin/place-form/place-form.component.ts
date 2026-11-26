@@ -6,7 +6,13 @@ import { LocationInputComponent } from '../inputs/location-input/location-input.
 import { OpeningInputComponent } from '../inputs/opening-input/opening-input.component';
 import { StatusModalComponent } from '../status-modal/status-modal.component';
 import { ActionStatus } from '../status-modal/action-status';
-import { EditPlace, Opening, PlaceLocation, SavePlace, WEEKDAYS } from '../place-edit';
+import {
+  EditPlace,
+  Opening,
+  PlaceLocation,
+  SavePlace,
+  WEEKDAYS,
+} from '../place-edit';
 import { Category, CategoryGroup, CategoryList } from '../../dto/category';
 import { PriceRangeInputComponent } from '../../component/price-range-input/price-range-input.component';
 import { MapActionsService } from '../map-actions.service';
@@ -255,7 +261,8 @@ export class PlaceFormComponent implements OnInit {
 
   /** Abbrechen: zurück, woher man kam (Liste "Meine Orte" oder Karte). */
   onCancel() {
-    const cameFromApp = !!this.router.lastSuccessfulNavigation?.previousNavigation;
+    const cameFromApp =
+      !!this.router.lastSuccessfulNavigation?.previousNavigation;
     if (cameFromApp) {
       history.back();
     } else {
@@ -266,7 +273,11 @@ export class PlaceFormComponent implements OnInit {
   /** Ort löschen (nur bestehende Orte), mit Rückfrage. */
   onDeleteClicked() {
     if (!this.place) return;
-    if (!confirm(`"${this.place.name}" wirklich löschen? Das lässt sich nicht rückgängig machen.`)) {
+    if (
+      !confirm(
+        `"${this.place.name}" wirklich löschen? Das lässt sich nicht rückgängig machen.`
+      )
+    ) {
       return;
     }
     this.actionStatus = ActionStatus.Loading;
@@ -293,7 +304,10 @@ export class PlaceFormComponent implements OnInit {
   onFormSubmitted() {
     // Antippen und Klick lösen beide aus: nur einmal speichern
     const now = Date.now();
-    if (this.actionStatus === ActionStatus.Loading || now - this.lastSubmitTime < DOUBLE_SUBMIT_MS) {
+    if (
+      this.actionStatus === ActionStatus.Loading ||
+      now - this.lastSubmitTime < DOUBLE_SUBMIT_MS
+    ) {
       return;
     }
     this.lastSubmitTime = now;
@@ -301,7 +315,9 @@ export class PlaceFormComponent implements OnInit {
     // Nur Standorte von offenen Tagen speichern
     const openWeekdays = this.openDays.map(day => day.value);
     const locations = this.multipleLocations
-      ? this.locations.filter(location => openWeekdays.includes(location.weekday))
+      ? this.locations.filter(location =>
+          openWeekdays.includes(location.weekday)
+        )
       : [];
     if (this.multipleLocations && locations.length === 0) {
       this.locationError = true;

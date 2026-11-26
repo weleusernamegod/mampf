@@ -1,5 +1,9 @@
 @if (status !== ActionStatus.NoOperation) {
-  <div class="backdrop" role="dialog" aria-modal="true" [attr.aria-label]="title">
+  <div
+    class="backdrop"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="title">
     <div class="box">
       @switch (status) {
         @case (ActionStatus.Loading) {
@@ -15,8 +19,13 @@
           <h2>Erledigt!</h2>
         }
       }
-      @if (status === ActionStatus.CompletedSuccess || status === ActionStatus.CompletedError) {
-        <button type="button" class="close" (click)="resetModal()">Schliessen</button>
+      @if (
+        status === ActionStatus.CompletedSuccess ||
+        status === ActionStatus.CompletedError
+      ) {
+        <button type="button" class="close" (click)="resetModal()">
+          Schliessen
+        </button>
       }
     </div>
   </div>

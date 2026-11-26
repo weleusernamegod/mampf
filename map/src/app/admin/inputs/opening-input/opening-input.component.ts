@@ -47,7 +47,12 @@ export class OpeningInputComponent {
     const allOpen = this.slots.every(slot => this.isOpen(weekday, slot.value));
     const others = this.opening.filter(o => o.weekday !== weekday);
     this.emit(
-      allOpen ? others : [...others, ...this.slots.map(slot => ({ weekday, slot: slot.value }))]
+      allOpen
+        ? others
+        : [
+            ...others,
+            ...this.slots.map(slot => ({ weekday, slot: slot.value })),
+          ]
     );
   }
 
@@ -56,7 +61,12 @@ export class OpeningInputComponent {
     const allOpen = this.weekdays.every(day => this.isOpen(day.value, slot));
     const others = this.opening.filter(o => o.slot !== slot);
     this.emit(
-      allOpen ? others : [...others, ...this.weekdays.map(day => ({ weekday: day.value, slot }))]
+      allOpen
+        ? others
+        : [
+            ...others,
+            ...this.weekdays.map(day => ({ weekday: day.value, slot })),
+          ]
     );
   }
 

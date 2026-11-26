@@ -218,7 +218,7 @@ export class AppComponent implements OnInit {
   }
 
   onDaySelected(day: number) {
-    this.closePanel();
+    if (this.panelClosesOnMapClick) this.closePanel();
     this.placeDialogVisible = false;
     this.aboutDialogVisible = false;
     this.filterDialogVisible = false;

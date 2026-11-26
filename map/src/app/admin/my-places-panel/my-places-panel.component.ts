@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { PlaceSummary } from '../place-summary';
 import { MapActionsService } from '../map-actions.service';
+import { fetchOwnUser } from '../own-user';
 
 const FALLBACK_PICTURE = 'assets/marktstand.svg';
 
@@ -21,6 +22,8 @@ export class MyPlacesPanelComponent implements OnInit {
   /** undefined = wird noch geladen */
   places: PlaceSummary[] | undefined = undefined;
   loadError = false;
+  /** Admins sehen zusätzlich "Kategorien". */
+  isAdmin = false;
 
   constructor(
     private router: Router,
@@ -28,13 +31,16 @@ export class MyPlacesPanelComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    fetchOwnUser().then(user => (this.isAdmin = !!user?.admin));
     fetch('/api/get-own-places.php')
       .then(response => {
         if (!response.ok) throw new Error('HTTP ' + response.status);
         return response.json();
       })
       .then((data: PlaceSummary[]) => {
-        this.places = [...data].sort((a, b) => a.name.localeCompare(b.name, 'de'));
+        this.places = [...data].sort((a, b) =>
+          a.name.localeCompare(b.name, 'de')
+        );
       })
       .catch(error => {
         console.error('Could not fetch my places', error);

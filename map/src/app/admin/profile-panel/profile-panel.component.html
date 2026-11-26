@@ -1,0 +1,65 @@
+<div id="wrapper">
+  <form
+    id="dialog"
+    class="overlay"
+    ngNativeValidate
+    (submit)="$event.preventDefault(); onSave()">
+    <div id="header">
+      <h2>Profil</h2>
+    </div>
+
+    <div id="content">
+      @if (isLoading) {
+        <p class="info">Wird geladen …</p>
+      } @else {
+        <div class="body">
+          <label class="question" for="input-name">Dein Name</label>
+          <div class="name-row">
+            <input
+              type="text"
+              minlength="2"
+              maxlength="30"
+              required
+              class="field"
+              id="input-name"
+              name="name"
+              autocomplete="nickname"
+              placeholder="z.B. Knusprige Bratwurst"
+              [(ngModel)]="name"
+              (ngModelChange)="message = undefined" />
+            <button
+              type="button"
+              class="random"
+              title="Zufälligen Namen erzeugen"
+              (click)="onRandomName()">
+              🎲
+            </button>
+          </div>
+          <p class="hint">
+            Steht bei deinen Kommentaren auf der Karte, auch bei den bisherigen.
+          </p>
+
+          <span class="question">E-Mail</span>
+          <p class="mail">{{ mail }}</p>
+          <p class="hint">Wird nie angezeigt.</p>
+        </div>
+
+        @if (message) {
+          <p class="info" [class.error]="message.error">{{ message.text }}</p>
+        }
+      }
+    </div>
+
+    <div id="footer">
+      <button type="button" class="text-button" (click)="onBack()">
+        Zurück
+      </button>
+      <button
+        type="submit"
+        class="primary-button"
+        [disabled]="!changed || saving">
+        {{ saving ? 'Speichere …' : 'Speichern' }}
+      </button>
+    </div>
+  </form>
+</div>

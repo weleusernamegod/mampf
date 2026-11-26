@@ -1,0 +1,108 @@
+<div id="wrapper">
+  <div id="dialog" class="overlay wide">
+    <div id="header">
+      <h2>Kategorien</h2>
+      @if (message) {
+        <p class="message" [class.error]="message.error">{{ message.text }}</p>
+      }
+    </div>
+
+    <div id="content">
+      @if (isLoading) {
+        <p class="info">Wird geladen …</p>
+      } @else if (!isAdmin) {
+        <p class="info error">Diese Seite ist nur für Admins.</p>
+      } @else {
+        <p class="info">
+          Änderungen wirken sofort auf der Karte und im Formular. Ausgeblendete
+          Kategorien erscheinen nirgends mehr, bleiben aber bei den Orten
+          gespeichert.
+        </p>
+
+        @for (group of groups; track group.key) {
+          <section class="group">
+            <h3>
+              {{ group.name }}
+              @if (group.single) {
+                <span class="note">(pro Ort genau eine Auswahl)</span>
+              }
+            </h3>
+            <ul>
+              @for (
+                row of rowsOf(group);
+                track row.category.id;
+                let index = $index;
+                let last = $last
+              ) {
+                <li [class.inactive]="!row.category.active">
+                  <span class="arrows">
+                    <button
+                      type="button"
+                      class="arrow"
+                      title="Nach oben"
+                      [disabled]="index === 0"
+                      (click)="move(group, index, -1)">
+                      ▲
+                    </button>
+                    <button
+                      type="button"
+                      class="arrow"
+                      title="Nach unten"
+                      [disabled]="last"
+                      (click)="move(group, index, 1)">
+                      ▼
+                    </button>
+                  </span>
+                  <input
+                    type="text"
+                    maxlength="50"
+                    class="field"
+                    [attr.aria-label]="'Name von ' + row.category.name"
+                    [(ngModel)]="row.editName"
+                    (keydown.enter)="rename(row)" />
+                  @if (isChanged(row)) {
+                    <button
+                      type="button"
+                      class="small-button primary"
+                      (click)="rename(row)">
+                      OK
+                    </button>
+                  } @else {
+                    <button
+                      type="button"
+                      class="small-button"
+                      (click)="toggleActive(row)">
+                      {{ row.category.active ? 'Ausblenden' : 'Einblenden' }}
+                    </button>
+                  }
+                </li>
+              }
+              <li>
+                <input
+                  type="text"
+                  maxlength="50"
+                  class="field"
+                  [placeholder]="'Neu bei ' + group.name"
+                  [(ngModel)]="newNames[group.key]"
+                  (keydown.enter)="add(group)" />
+                <button
+                  type="button"
+                  class="small-button primary"
+                  [disabled]="!(newNames[group.key] || '').trim()"
+                  (click)="add(group)">
+                  Hinzufügen
+                </button>
+              </li>
+            </ul>
+          </section>
+        }
+      }
+    </div>
+
+    <div id="footer">
+      <button type="button" class="text-button" (click)="onBack()">
+        Zurück
+      </button>
+    </div>
+  </div>
+</div>

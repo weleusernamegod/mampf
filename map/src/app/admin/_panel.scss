@@ -1,0 +1,140 @@
+// Gemeinsamer Rahmen der kleinen Admin-Panels (Meine Orte, Profil, Kategorien),
+// gleich aufgebaut wie das About-Fenster und der Filter: mittig über der Karte,
+// Kopf und Fuss stehen, nur der Inhalt dazwischen scrollt.
+// Einbinden mit: @import '../panel';
+
+#wrapper {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+}
+
+#dialog {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 339px;
+  max-width: calc(100vw - 34px); // 17px Karte links und rechts, wie die Knöpfe
+  max-height: 100%;
+
+  overflow: hidden;
+
+  &.wide {
+    width: 480px;
+  }
+}
+
+#header {
+  flex: none;
+
+  padding: 20px 20px 12px 20px;
+
+  border-bottom: 1px solid var(--grey1);
+}
+
+h2 {
+  margin: 0;
+
+  color: var(--grey3);
+  font-size: 19px;
+  font-weight: 800;
+}
+
+#content {
+  flex: 1 1 auto;
+  min-height: 0;
+
+  overflow-y: auto;
+  user-select: text;
+}
+
+#footer {
+  flex: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 12px 20px;
+
+  border-top: 1px solid var(--grey1);
+}
+
+.info {
+  margin: 0;
+  padding: 16px 20px;
+
+  color: var(--grey2);
+  font-size: 14px;
+
+  &.error {
+    color: var(--accent);
+  }
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+// Knopf, der wie Text aussieht (Schliessen, Zurück)
+.text-button {
+  padding: 8px 0;
+
+  border: none;
+  background: none;
+
+  color: var(--grey3);
+  font-size: 14px;
+}
+
+// Grüner runder Knopf (Neuer Ort, Speichern)
+.primary-button {
+  padding: 8px 20px;
+
+  border: none;
+  border-radius: 50px;
+
+  background-color: var(--primary);
+
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 800;
+
+  &:disabled {
+    background-color: var(--grey1);
+    color: var(--grey2);
+    cursor: default;
+  }
+}
+
+// Eingabefeld wie im Formular "Ort bearbeiten"
+.field {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 12px;
+
+  border: 1px solid var(--grey1);
+  border-radius: 10px;
+  outline: none;
+
+  background-color: var(--white);
+
+  color: var(--grey3);
+  font-family: inherit;
+  font-size: 16px; // ab 16px zoomt das iPhone beim Antippen nicht hinein
+
+  user-select: text;
+
+  &::placeholder {
+    color: var(--grey2);
+  }
+
+  &:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+  }
+}

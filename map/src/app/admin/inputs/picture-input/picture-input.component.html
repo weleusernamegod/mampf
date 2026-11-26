@@ -9,7 +9,11 @@
       <!-- Eigener Knopf statt dem Datei-Feld des Browsers (das wäre je nach Browser englisch) -->
       <label class="chip">
         Bild auswählen
-        <input type="file" accept="image/*" hidden (change)="onFileSelected($event)" />
+        <input
+          type="file"
+          accept="image/*"
+          hidden
+          (change)="onFileSelected($event)" />
       </label>
       <p class="hint">Am besten quadratisch.</p>
     }

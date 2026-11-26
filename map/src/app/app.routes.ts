@@ -23,13 +23,33 @@ export const routes: Routes = [
     path: 'ort/neu',
     canActivate: [loginGuard],
     loadComponent: () =>
-      import('./admin/place-form/place-form.component').then(m => m.PlaceFormComponent),
+      import('./admin/place-form/place-form.component').then(
+        m => m.PlaceFormComponent
+      ),
   },
   {
     path: 'ort/:id',
     canActivate: [loginGuard],
     loadComponent: () =>
-      import('./admin/place-form/place-form.component').then(m => m.PlaceFormComponent),
+      import('./admin/place-form/place-form.component').then(
+        m => m.PlaceFormComponent
+      ),
+  },
+  {
+    path: 'profil',
+    canActivate: [loginGuard],
+    loadComponent: () =>
+      import('./admin/profile-panel/profile-panel.component').then(
+        m => m.ProfilePanelComponent
+      ),
+  },
+  {
+    path: 'kategorien',
+    canActivate: [loginGuard],
+    loadComponent: () =>
+      import('./admin/category-panel/category-panel.component').then(
+        m => m.CategoryPanelComponent
+      ),
   },
   // Unbekannte Adresse: einfach die Karte
   { path: '**', redirectTo: '' },
