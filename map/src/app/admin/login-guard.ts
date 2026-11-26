@@ -1,16 +1,15 @@
-import { CanActivateFn } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 
 /**
- * Admin-Panels nur mit Login. Ohne Login geht es zur Login-Seite,
- * danach wieder zurück an dieselbe Stelle (login/index.html, Parameter "zurueck").
+ * Admin-Fenster nur mit Login. Ohne Login öffnet sich das Fenster "Anmelden",
+ * danach geht es wieder zurück an dieselbe Stelle (Parameter "zurueck").
  */
 export const loginGuard: CanActivateFn = async (_route, state) => {
-  const loggedIn = await fetch('/api/get-login-status.php')
+  const router = inject(Router);
+  const loggedIn = await fetch('/api/get-login-status.php', { cache: 'no-store' })
     .then(response => response.json())
     .then(data => !!data.loggedIn)
     .catch(() => false);
-  if (!loggedIn) {
-    window.location.href = '/login/?zurueck=' + encodeURIComponent(state.url);
-  }
-  return loggedIn;
+  return loggedIn || router.createUrlTree(['/anmelden'], { queryParams: { zurueck: state.url } });
 };

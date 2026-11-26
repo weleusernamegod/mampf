@@ -53,7 +53,10 @@ main,
   width: 339px;
   max-width: calc(100vw - 34px);
   margin-bottom: var(--day-selector-bottom);
-  padding: 10px 20px;
+  padding: 10px 10px 10px 20px;
+
+  /* Rundung passend zur Pille darin: Radius der Pille + Abstand rundherum */
+  border-radius: 28px;
 
   background-color: var(--grey0);
 

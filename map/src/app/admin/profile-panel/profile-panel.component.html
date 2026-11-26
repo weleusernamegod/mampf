@@ -5,7 +5,7 @@
     ngNativeValidate
     (submit)="$event.preventDefault(); onSave()">
     <div id="header">
-      <h2>Profil</h2>
+      <mampf-account-tabs active="profil"></mampf-account-tabs>
     </div>
 
     <div id="content">
@@ -51,9 +51,7 @@
     </div>
 
     <div id="footer">
-      <button type="button" class="text-button" (click)="onBack()">
-        Zurück
-      </button>
+      <button type="button" class="text-button" (click)="onClose()">Schliessen</button>
       <button
         type="submit"
         class="primary-button"

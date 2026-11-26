@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CategoryGroup } from '../../dto/category';
 import { fetchOwnUser } from '../own-user';
+import { AccountTabsComponent } from '../account-tabs/account-tabs.component';
 
 /** Kategorie, wie sie die Verwaltung sieht (auch ausgeblendete). */
 interface Category {
@@ -33,7 +34,7 @@ interface Row {
 @Component({
   selector: 'mampf-category-panel',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, AccountTabsComponent],
   templateUrl: './category-panel.component.html',
   styleUrl: './category-panel.component.scss',
   host: { class: 'block full-height' },
@@ -60,8 +61,8 @@ export class CategoryPanelComponent implements OnInit {
     });
   }
 
-  onBack(): void {
-    this.router.navigate(['/meine-orte']);
+  onClose(): void {
+    this.router.navigate(['/']);
   }
 
   rowsOf(group: CategoryGroup): Row[] {

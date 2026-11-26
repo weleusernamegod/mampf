@@ -73,6 +73,7 @@ export class AppComponent implements OnInit {
     mapActions.placesChanged
       .pipe(takeUntilDestroyed())
       .subscribe(id => this.onPlacesChanged(id));
+    mapActions.loggedIn.pipe(takeUntilDestroyed()).subscribe(() => this.onLoggedIn());
   }
 
   ngOnInit(): void {
@@ -109,6 +110,11 @@ export class AppComponent implements OnInit {
     this.loadPlaces().then(() => {
       if (placeId !== undefined) this.showPlaceById(placeId);
     });
+  }
+
+  /** Angemeldet, zurück zur Karte: wollte jemand kommentieren, gleich dort weiter. */
+  private onLoggedIn() {
+    this.router.navigate(['/'], { replaceUrl: true }).then(() => this.openPendingComment());
   }
 
   /** Vom Login zurück, wollte kommentieren: diesen Ort öffnen, Kommentarfeld offen. */

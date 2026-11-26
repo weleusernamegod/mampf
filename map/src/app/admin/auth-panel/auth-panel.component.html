@@ -1,0 +1,108 @@
+<div id="wrapper">
+  <form
+    id="dialog"
+    class="overlay"
+    ngNativeValidate
+    (submit)="$event.preventDefault(); onSubmit()">
+    <div id="header">
+      <nav class="tabs">
+        <a
+          routerLink="/anmelden"
+          queryParamsHandling="preserve"
+          replaceUrl
+          [class.active]="mode === 'login'">
+          Anmelden
+        </a>
+        <a
+          routerLink="/registrieren"
+          queryParamsHandling="preserve"
+          replaceUrl
+          [class.active]="mode === 'register'">
+          Registrieren
+        </a>
+      </nav>
+    </div>
+
+    <div id="content">
+      <!-- Logo mit Zufallsspruch (assets/slogan.js), wie auf der About-Seite -->
+      <div #logo class="logo">
+        <span class="logo-image" role="img" aria-label="mampf"></span>
+      </div>
+
+      <div class="body">
+        <label class="question" for="input-mail">E-Mail</label>
+        <input
+          type="email"
+          class="field"
+          id="input-mail"
+          name="mail"
+          autocomplete="email"
+          maxlength="128"
+          minlength="5"
+          required
+          [(ngModel)]="mail" />
+
+        @if (mode === 'register') {
+          <label class="question" for="input-name">Dein Name</label>
+          <div class="name-row">
+            <input
+              type="text"
+              class="field"
+              id="input-name"
+              name="name"
+              autocomplete="nickname"
+              placeholder="z.B. Knusprige Bratwurst"
+              minlength="2"
+              maxlength="30"
+              required
+              [(ngModel)]="name" />
+            <button
+              type="button"
+              class="random"
+              title="Zufälligen Namen erzeugen"
+              (click)="onRandomName()">
+              🎲
+            </button>
+          </div>
+          <p class="hint">Steht bei deinen Kommentaren. Du kannst ihn später ändern.</p>
+        }
+
+        <label class="question" for="input-password">Passwort</label>
+        <input
+          type="password"
+          class="field"
+          id="input-password"
+          name="password"
+          [attr.autocomplete]="mode === 'login' ? 'current-password' : 'new-password'"
+          [attr.minlength]="mode === 'register' ? 6 : null"
+          maxlength="128"
+          required
+          [(ngModel)]="password" />
+
+        @if (mode === 'register') {
+          <label class="question" for="input-password2">Passwort bestätigen</label>
+          <input
+            type="password"
+            class="field"
+            id="input-password2"
+            name="password2"
+            autocomplete="new-password"
+            maxlength="128"
+            required
+            [(ngModel)]="password2" />
+        }
+
+        @if (message) {
+          <p class="message" [class.error]="message.error">{{ message.text }}</p>
+        }
+      </div>
+    </div>
+
+    <div id="footer">
+      <button type="button" class="text-button" (click)="onClose()">Schliessen</button>
+      <button type="submit" class="primary-button" [disabled]="busy">
+        {{ mode === 'login' ? 'Anmelden' : 'Registrieren' }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -7,7 +7,9 @@ import {
   Output,
   SimpleChanges,
   ViewChild,
+  inject,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { PlaceComment, CommentList } from '../../../dto/comment';
 import { savePendingComment } from '../../../util/pending-comment';
 
@@ -30,6 +32,7 @@ const MAX_LENGTH = 130;
   styleUrl: './comments.component.scss',
 })
 export class CommentsComponent implements OnChanges {
+  private router = inject(Router);
   @Input() placeId: number | undefined;
   /** Nach dem Login zurück: Textfeld gleich öffnen. */
   @Input() startComposing = false;
@@ -85,7 +88,7 @@ export class CommentsComponent implements OnChanges {
     } else if (this.placeId !== undefined) {
       // Nach dem Login (oder der Registrierung) zurück zu diesem Ort
       savePendingComment(this.placeId);
-      window.location.href = '/login/?zurueck=karte';
+      this.router.navigate(['/anmelden'], { queryParams: { zurueck: 'karte' } });
     }
   }
 

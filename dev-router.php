@@ -4,9 +4,11 @@
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $file = $_SERVER['DOCUMENT_ROOT'] . $path;
 
-// /login ohne Schrägstrich -> mit Schrägstrich (wie Apache)
-if ($path === '/login') {
-    header('Location: /login/', true, 301);
+// Frühere Login-Seiten -> Fenster in der Karte (wie map/public/.htaccess)
+if ($path === '/login' || str_starts_with($path, '/login/')) {
+    $target = str_ends_with($path, 'register.html') ? '/registrieren' : '/anmelden';
+    $query = $_SERVER['QUERY_STRING'] ?? '';
+    header('Location: ' . $target . ($query !== '' ? '?' . $query : ''), true, 301);
     exit;
 }
 
@@ -22,7 +24,7 @@ if ($path === '/admin' || str_starts_with($path, '/admin/')) {
 }
 
 // Unterseiten der Karte (z.B. /meine-orte) -> index.html (wie map/public/.htaccess)
-if (!file_exists($file) && !preg_match('#^/(api|admin|login|bilder)(/|$)#', $path)) {
+if (!file_exists($file) && !preg_match('#^/(api|admin|bilder)(/|$)#', $path)) {
     header('Cache-Control: no-cache');
     readfile($_SERVER['DOCUMENT_ROOT'] . '/index.html');
     exit;

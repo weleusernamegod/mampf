@@ -7,7 +7,6 @@ Web-App mit einer Karte von Foodtrucks/Imbissständen. Live unter https://mampf.
 | Ordner | Was | Technik |
 |---|---|---|
 | `map/` | Öffentliche Karte (Startseite `/`) mit dem Admin-Bereich als Fenster über der Karte | Angular 18, @angular/google-maps |
-| `login/` | Login & Registrierung (`/login`) | Plain HTML + fetch |
 | `api/` | Backend (`/api/*.php`) | PHP (mysqli), Sessions |
 | `mampf.sql` | Datenbankschema (tbl_user, tbl_place, tbl_place_opening, tbl_place_location, tbl_category, tbl_place_category, tbl_picture, tbl_comment) | MySQL/MariaDB |
 | `bilder/orte/` | Nur `.htaccess` (Bilder selbst liegen nur auf dem Server) | Apache |
@@ -16,10 +15,13 @@ Web-App mit einer Karte von Foodtrucks/Imbissständen. Live unter https://mampf.
 
 Admin-Bereich (auf der About-Seite "meine Orte & Konto"): liegt in `map/src/app/admin/`, als
 Fenster über der Karte wie die About-Seite. Adressen (`map/src/app/app.routes.ts`): `/meine-orte`,
-`/ort/neu?lat=..&lng=..`, `/ort/123`, `/profil`, `/kategorien` (nur Admins). Der Code lädt erst beim
-Öffnen (Lazy Loading), Login-Prüfung in `admin/login-guard.ts`. Die alten Adressen `/admin/...`
-leiten weiter (`map/public/admin/.htaccess`, lokal `dev-router.php`). Die frühere eigene Admin-App
-`mampf-admin/` gibt es nicht mehr.
+`/ort/neu?lat=..&lng=..`, `/ort/123`, `/profil`, `/kategorien` (nur Admins), `/anmelden` und
+`/registrieren` (`?zurueck=karte` oder `?zurueck=/pfad`). Alle Fenster teilen denselben Rahmen
+(`admin/_panel.scss`: oben zentriert, so breit wie die About-Seite, Kopf grau, Inhalt weiss, Fuss grau)
+und dieselben Reiter (`admin/_tabs.scss`). Der Code lädt erst beim Öffnen (Lazy Loading),
+Login-Prüfung in `admin/login-guard.ts`. Die alten Adressen `/admin/...` und `/login/...` leiten weiter
+(`map/public/admin/.htaccess`, `map/public/.htaccess`, lokal `dev-router.php`). Die früheren
+eigenen Apps `mampf-admin/` und `login/` gibt es nicht mehr.
 
 Sprüche unter dem Logo: `map/public/assets/slogans.txt` (einer pro Zeile). `map/public/assets/slogan.js`
 wählt bei jedem Anzeigen des Logos zufällig einen (Splashscreen, About-Seite, Login, Registrierung).
@@ -27,7 +29,7 @@ Schrift dafür: `map/public/assets/fonts/Mampf-Light.woff2` (dünne Variante) (w
 
 Farben: Alles hängt am Farbton `--hue` in `map/src/vars.scss` (`--primary` = mampf-Grün,
 `--primary-light`, `--accent` = Gegenfarbe/Weinrot). Keine Farbwerte direkt in SCSS schreiben.
-Der Farbregler auf der About-Seite setzt `--hue` über `map/public/assets/theme.js` (auch in `login/`);
+Der Farbregler auf der About-Seite setzt `--hue` über `map/public/assets/theme.js`;
 der Kartenstil (`map/src/app/util/map-styles.ts`) dreht seine Farbtöne mit.
 
 `build.sh` baut alles nach `dist/`. Diese Struktur entspricht 1:1 dem Webroot auf dem Server.

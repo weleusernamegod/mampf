@@ -14,4 +14,6 @@ export class MapActionsService {
   /** Ein Ort wurde gespeichert oder gelöscht: Panel zu, Orte neu laden.
    *  Mit Ort-ID: diesen Ort danach zeigen und seine Infobox öffnen. */
   readonly placesChanged = new Subject<number | undefined>();
+  /** Angemeldet und zurück zur Karte (z.B. um zu kommentieren). */
+  readonly loggedIn = new Subject<void>();
 }

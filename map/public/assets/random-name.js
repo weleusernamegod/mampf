@@ -1,7 +1,7 @@
 /*
  * Zufälliger Anzeigename, z.B. "Knusprige Bratwurst" oder "Hungriger Falafel".
- * Verwendet bei der Registrierung (login/register.html) und im Admin-Bereich
- * (Profil). Aufruf: mampfRandomName()
+ * Verwendet im Fenster "Registrieren" und im Profil (beide laden die Datei erst bei Bedarf)
+ * Aufruf: mampfRandomName()
  *
  * Das Adjektiv bekommt je nach Geschlecht des Nomens die passende Endung:
  * m = der (-er), f = die (-e), n = das (-es).

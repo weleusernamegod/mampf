@@ -49,6 +49,18 @@ export const routes: Routes = [
         m => m.CategoryPanelComponent
       ),
   },
+  {
+    path: 'anmelden',
+    data: { mode: 'login' },
+    loadComponent: () =>
+      import('./admin/auth-panel/auth-panel.component').then(m => m.AuthPanelComponent),
+  },
+  {
+    path: 'registrieren',
+    data: { mode: 'register' },
+    loadComponent: () =>
+      import('./admin/auth-panel/auth-panel.component').then(m => m.AuthPanelComponent),
+  },
   // Unbekannte Adresse: einfach die Karte
   { path: '**', redirectTo: '' },
 ];

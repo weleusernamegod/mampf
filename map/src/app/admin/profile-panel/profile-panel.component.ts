@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { fetchOwnUser } from '../own-user';
+import { AccountTabsComponent } from '../account-tabs/account-tabs.component';
 
 /** Aus /assets/random-name.js, z.B. "Knusprige Bratwurst". Wird erst hier geladen. */
 declare global {
@@ -17,7 +18,7 @@ declare global {
 @Component({
   selector: 'mampf-profile-panel',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, AccountTabsComponent],
   templateUrl: './profile-panel.component.html',
   styleUrl: './profile-panel.component.scss',
   host: { class: 'block full-height' },
@@ -34,7 +35,7 @@ export class ProfilePanelComponent implements OnInit {
 
   ngOnInit(): void {
     loadRandomNameScript();
-    fetchOwnUser().then(user => {
+    fetchOwnUser(true).then(user => {
       this.isLoading = false;
       if (!user) {
         this.message = {
@@ -59,8 +60,8 @@ export class ProfilePanelComponent implements OnInit {
     this.message = undefined;
   }
 
-  onBack(): void {
-    this.router.navigate(['/meine-orte']);
+  onClose(): void {
+    this.router.navigate(['/']);
   }
 
   onSave(): void {

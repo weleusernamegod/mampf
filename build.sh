@@ -2,7 +2,6 @@
 # Baut die komplette Website nach ./dist (so wie sie auf dem Server liegt):
 #   dist/            -> Karte (map), mit dem Admin-Bereich (/meine-orte, /ort/...)
 #   dist/admin/      -> nur Weiterleitungen der alten Admin-Adressen
-#   dist/login/      -> Login-Seiten
 #   dist/api/        -> PHP-API
 set -e
 cd "$(dirname "$0")"
@@ -33,8 +32,7 @@ cp ./map/public/.htaccess ./dist/.htaccess   # Angular kopiert keine versteckten
 mkdir -p ./dist/admin
 cp ./map/public/admin/.htaccess ./dist/admin/.htaccess
 
-# Login & API (ohne Editor-/Systemdateien und ohne Vorlage)
-rsync -a --exclude '.DS_Store' ./login/ ./dist/login/
+# API (ohne Editor-/Systemdateien und ohne Vorlage)
 rsync -a --exclude '.DS_Store' --exclude '.vscode' --exclude '.gitignore' \
   --exclude 'config.example.php' ./api/ ./dist/api/
 

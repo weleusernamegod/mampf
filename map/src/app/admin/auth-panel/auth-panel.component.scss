@@ -1,0 +1,51 @@
+@import '../panel';
+@import '../tabs';
+
+// Logo in der Oberflächenfarbe, wie auf der About-Seite (Spruch darunter aus slogan.js)
+.logo {
+  width: 170px;
+  margin: 18px auto 0 auto;
+
+  text-align: center;
+}
+
+.logo-image {
+  display: block;
+  width: 170px;
+  height: 75px;
+
+  background-color: var(--primary);
+  -webkit-mask: url('/assets/logo.svg') center / contain no-repeat;
+  mask: url('/assets/logo.svg') center / contain no-repeat;
+}
+
+.body {
+  padding: 0 20px 18px 20px;
+}
+
+.name-row {
+  display: flex;
+  gap: 8px;
+}
+
+.random {
+  flex: none;
+  width: 44px;
+
+  border: 1px solid var(--grey1);
+  border-radius: 10px;
+  background-color: var(--white);
+
+  font-size: 18px;
+}
+
+.message {
+  margin: 14px 0 0 0;
+
+  color: var(--primary);
+  font-size: 14px;
+
+  &.error {
+    color: var(--accent);
+  }
+}

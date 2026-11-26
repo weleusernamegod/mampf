@@ -26,7 +26,7 @@
             <span class="text">meine Orte &amp; Konto</span>
           </a>
         } @else {
-          <a class="action" href="/login/?zurueck=karte" (click)="$event.stopPropagation()">
+          <a class="action" routerLink="/anmelden" [queryParams]="{ zurueck: 'karte' }">
             <span class="circle"><span class="icon icon-person"></span></span>
             <span class="text">Login / Anmelden</span>
           </a>

@@ -222,8 +222,15 @@ export class MapComponent implements OnInit, OnChanges {
     };
   }
 
+  /** Karte auf eine Position mit der Detail-Zoomstufe ausrichten (immer gleich, auch mehrmals). */
   private goToPosition(position: google.maps.LatLngLiteral) {
-    this.mapZoom = this.DETAIL_ZOOM + Math.random(); // random offset used to trigger change
+    if (this.map) {
+      this.map.setZoom(this.DETAIL_ZOOM);
+      this.map.panTo(position);
+      return;
+    }
+    // Karte noch nicht bereit: Startwerte setzen
+    this.mapZoom = this.DETAIL_ZOOM;
     this.mapCenter = { ...position };
   }
 }

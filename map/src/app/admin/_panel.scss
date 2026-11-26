@@ -3,10 +3,11 @@
 // Kopf grau, Inhalt weiss (scrollt), Fuss grau mit den Knöpfen.
 // Einbinden mit: @import '../panel';
 
+// Oben zentriert (nicht mittig): beim Wechsel der Reiter springt der Kopf nicht
 #wrapper {
   display: grid;
   justify-content: center;
-  align-items: center;
+  align-items: start;
 
   width: 100%;
   height: 100%;
