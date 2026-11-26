@@ -2,10 +2,9 @@
 @import '../tabs';
 
 // Logo in der Oberflächenfarbe, wie auf der About-Seite (Spruch darunter aus slogan.js).
-// Etwas grösser als auf der About-Seite (die Datei hat links und rechts leeren Rand,
-// sichtbar sind die Buchstaben etwa 230px breit).
+// Gleiche Grösse wie auf der About-Seite (about-dialog)
 .logo {
-  width: 300px;
+  width: 240px;
   max-width: 100%;
   margin: 18px auto 0 auto;
 

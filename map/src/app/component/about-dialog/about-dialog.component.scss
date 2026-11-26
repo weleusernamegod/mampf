@@ -18,15 +18,16 @@
 #header {
   padding: 16px 0 10px 0;
 
+  // Gleiche Grösse wie im Fenster "Anmelden" (admin/auth-panel)
   .logo {
-    width: 200px;
+    width: 240px;
     margin: 0 auto;
   }
 
   .logo-image {
     display: block;
-    width: 200px;
-    height: 88px;
+    width: 240px;
+    height: 106px;
 
     background-color: var(--primary);
     -webkit-mask: url('/assets/logo.svg') center / contain no-repeat;
