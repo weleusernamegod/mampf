@@ -15,13 +15,13 @@ Web-App mit einer Karte von Foodtrucks/Imbissständen. Live unter https://mampf.
 
 Admin-Bereich (auf der About-Seite "meine Orte & Konto"): liegt in `map/src/app/admin/`, als
 Fenster über der Karte wie die About-Seite. Adressen (`map/src/app/app.routes.ts`): `/meine-orte`,
-`/ort/neu?lat=..&lng=..`, `/ort/123`, `/konto` (früher `/profil`, leitet weiter), `/kategorien` (nur Admins), `/anmelden` und
+`/ort/neu?lat=..&lng=..`, `/ort/123`, `/konto`, `/kategorien` (nur Admins), `/anmelden` und
 `/registrieren` (`?zurueck=karte` oder `?zurueck=/pfad`). Alle Fenster teilen denselben Rahmen
 (`admin/_panel.scss`: oben zentriert, so breit wie die About-Seite, Kopf grau, Inhalt weiss, Fuss grau)
 und dieselben Reiter (`admin/_tabs.scss`). Der Code lädt erst beim Öffnen (Lazy Loading),
-Login-Prüfung in `admin/login-guard.ts`. Die alten Adressen `/admin/...` und `/login/...` leiten weiter
-(`map/public/admin/.htaccess`, `map/public/.htaccess`, lokal `dev-router.php`). Die früheren
-eigenen Apps `mampf-admin/` und `login/` gibt es nicht mehr.
+Login-Prüfung in `admin/login-guard.ts`. Nach dem Login geht es zu "Meine Orte", ausser man kam
+von woanders (Kommentieren, neuer Ort, geschützte Adresse: dann dorthin zurück). Die früheren eigenen
+Apps `mampf-admin/` und `login/` gibt es nicht mehr, ihre alten Adressen leiten nicht weiter.
 
 Sprüche unter dem Logo: `map/public/assets/slogans.txt` (einer pro Zeile). `map/public/assets/slogan.js`
 wählt bei jedem Anzeigen des Logos zufällig einen (Splashscreen, About-Seite, Login, Registrierung).
@@ -46,7 +46,7 @@ den Ordner nie löschen. Im Git liegt nur `bilder/orte/.htaccess` (sperrt alles 
 - `./dev.sh` baut alles und startet den PHP-Server auf http://localhost:8080 (wie live).
 - `./dev.sh --no-build` startet nur den Server mit dem bestehenden `dist/`.
 - Für schnelles Frontend-Arbeiten mit Live-Reload: in `map/` `npm start`
-  (Port 4200, Proxy für `/api`, `/login`, `/admin`, `/bilder` → localhost:8080, PHP-Server muss laufen).
+  (Port 4200, Proxy für `/api`, `/bilder` → localhost:8080, PHP-Server muss laufen).
 - Angular 18 braucht **Node 22**: `export PATH="/opt/homebrew/opt/node@22/bin:$PATH"`
   (build.sh macht das automatisch). Node 26 ist global installiert, aber nicht kompatibel.
 - Lokale DB: MariaDB via Homebrew (`brew services start mariadb`),

@@ -1,7 +1,6 @@
 #!/bin/bash
 # Baut die komplette Website nach ./dist (so wie sie auf dem Server liegt):
 #   dist/            -> Karte (map), mit dem Admin-Bereich (/meine-orte, /ort/...)
-#   dist/admin/      -> nur Weiterleitungen der alten Admin-Adressen
 #   dist/api/        -> PHP-API
 set -e
 cd "$(dirname "$0")"
@@ -27,10 +26,6 @@ mkdir ./dist
 (cd ./map && npm ci && npm run build)
 cp -R ./map/dist/map/browser/* ./dist
 cp ./map/public/.htaccess ./dist/.htaccess   # Angular kopiert keine versteckten Dateien
-
-# Alte Admin-Adressen (/admin/...) -> neue Adressen in der Karte
-mkdir -p ./dist/admin
-cp ./map/public/admin/.htaccess ./dist/admin/.htaccess
 
 # API (ohne Editor-/Systemdateien und ohne Vorlage)
 rsync -a --exclude '.DS_Store' --exclude '.vscode' --exclude '.gitignore' \

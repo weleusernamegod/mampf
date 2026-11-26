@@ -19,14 +19,14 @@
         </button>
       </li>
       <li>
-        <!-- Angemeldet: Panel "Meine Orte" über der Karte. Sonst zum Login, danach zurück zur Karte. -->
+        <!-- Angemeldet: Panel "Meine Orte" über der Karte. Sonst zum Login, danach zu "Meine Orte". -->
         @if (loggedIn) {
           <a class="action" routerLink="/meine-orte">
             <span class="circle"><span class="icon icon-edit"></span></span>
             <span class="text">meine Orte &amp; Konto</span>
           </a>
         } @else {
-          <a class="action" routerLink="/anmelden" [queryParams]="{ zurueck: 'karte' }">
+          <a class="action" routerLink="/anmelden">
             <span class="circle"><span class="icon icon-person"></span></span>
             <span class="text">Login / Anmelden</span>
           </a>

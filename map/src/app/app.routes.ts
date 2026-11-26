@@ -33,8 +33,6 @@ export const routes: Routes = [
         m => m.PlaceFormComponent
       ),
   },
-  // Frühere Adresse /profil (Seite heisst jetzt "Konto")
-  { path: 'profil', redirectTo: 'konto' },
   {
     path: 'konto',
     canActivate: [loginGuard],

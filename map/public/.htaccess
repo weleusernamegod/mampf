@@ -11,13 +11,10 @@
 
 # Unterseiten der Karte (z.B. /meine-orte) gibt es nur in der Angular-App.
 # Alles, was keine echte Datei ist, geht an index.html (auch Neuladen und direkte Links).
-# /api, /admin (Weiterleitungen) und /bilder sind ausgenommen.
+# /api und /bilder sind ausgenommen.
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  # Frühere Login-Seiten -> Fenster in der Karte (die Angaben nach ? bleiben erhalten)
-  RewriteRule ^login/register\.html$ /registrieren [R=301,L]
-  RewriteRule ^login(/.*)?$ /anmelden [R=301,L]
-  RewriteRule ^(api|admin|bilder)(/|$) - [L]
+  RewriteRule ^(api|bilder)(/|$) - [L]
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
