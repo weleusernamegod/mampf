@@ -14,6 +14,13 @@ import { Opening, PlaceLocation, WEEKDAYS } from '../../dto/opening';
 import { Category, CategoryGroup, CategoryList } from '../../dto/category';
 // Gleicher Preisregler wie im Filter der Karte
 import { PriceRangeInputComponent } from '../../../../../map/src/app/component/price-range-input/price-range-input.component';
+// Nach dem Speichern: Karte öffnet den Ort gleich
+import { savePendingShowPlace } from '../../../../../map/src/app/util/pending-show-place';
+
+/** So lange bleibt "Erledigt!" stehen, bevor es zurück zur Karte geht. */
+const BACK_TO_MAP_DELAY_MS = 1200;
+/** Zweites Auslösen innerhalb dieser Zeit ignorieren (Antippen + Klick). */
+const DOUBLE_SUBMIT_MS = 800;
 
 /** So viele Standorte pro Tag sind möglich (Sonderfall: zwei Orte am gleichen Tag). */
 const MAX_LOCATIONS_PER_DAY = 2;
@@ -80,6 +87,9 @@ export class PlaceDetailComponent implements OnInit {
   website = '';
   /** Suchfeld pro Gruppe (Küche, Gerichte ...): Gruppe -> eingetippter Text. */
   searchTerms: Partial<Record<string, string>> = {};
+
+  /** Wann zuletzt gespeichert wurde (gegen doppeltes Speichern). */
+  private lastSubmitTime = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -241,7 +251,25 @@ export class PlaceDetailComponent implements OnInit {
     this.router.navigate(['/my-places']);
   }
 
+  /**
+   * Handy: Speichern schon beim Loslassen des Fingers auslösen.
+   * Ist noch die Tastatur offen, schliesst sie sich beim Antippen und die
+   * Seite verschiebt sich, bevor der Klick ankommt. Dann landete der Klick
+   * daneben und man musste zweimal tippen.
+   */
+  onSavePointerUp(event: PointerEvent, form: HTMLFormElement) {
+    if (event.pointerType === 'mouse') return;
+    form.requestSubmit();
+  }
+
   onFormSubmitted() {
+    // Antippen und Klick lösen beide aus: nur einmal speichern
+    const now = Date.now();
+    if (this.actionStatus === ActionStatus.Loading || now - this.lastSubmitTime < DOUBLE_SUBMIT_MS) {
+      return;
+    }
+    this.lastSubmitTime = now;
+
     // Nur Standorte von offenen Tagen speichern
     const openWeekdays = this.openDays.map(day => day.value);
     const locations = this.multipleLocations
@@ -287,10 +315,17 @@ export class PlaceDetailComponent implements OnInit {
       },
       body: JSON.stringify(savePlace),
     })
-      .then(response => {
-        this.actionStatus = response.ok
-          ? ActionStatus.CompletedSuccess
-          : ActionStatus.CompletedError;
+      .then(async response => {
+        if (!response.ok) {
+          this.actionStatus = ActionStatus.CompletedError;
+          return;
+        }
+        this.actionStatus = ActionStatus.CompletedSuccess;
+        const data = await response.json().catch(() => undefined);
+        const id = Number(data?.id ?? this.place?.id);
+        if (id > 0) savePendingShowPlace(id);
+        // Kurz "Erledigt!" zeigen, dann zurück zur Karte (Ort ist dort ausgewählt)
+        setTimeout(() => (window.location.href = '/'), BACK_TO_MAP_DELAY_MS);
       })
       .catch(() => {
         this.actionStatus = ActionStatus.CompletedError;

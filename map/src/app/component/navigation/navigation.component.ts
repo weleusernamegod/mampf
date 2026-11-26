@@ -23,11 +23,9 @@ export class NavigationComponent {
   @Input() categoryList: CategoryList = { groups: [], categories: [] };
   /** Ist die About-Seite offen? Dann erscheint rechts ein X zum Schliessen. */
   @Input() aboutOpen = false;
-  /** Platzieren-Modus für einen neuen Ort aktiv? Dann erscheinen ✓ und ✕. */
+  /** Platzieren-Modus für einen neuen Ort aktiv? Dann ist "+" grün und es erscheint ein Hinweis.
+   *  (Bestätigen/Abbrechen sind unten, siehe app.component.html.) */
   @Input() placing = false;
-
-  @Output() placeConfirmed: EventEmitter<void> = new EventEmitter<void>();
-  @Output() placeCancelled: EventEmitter<void> = new EventEmitter<void>();
 
   /** Klick auf das X bei einem Filter: diesen Filter entfernen. */
   @Output() categoryRemoved: EventEmitter<number> = new EventEmitter<number>();
@@ -92,14 +90,6 @@ export class NavigationComponent {
 
   onAboutClicked() {
     this.aboutClicked.emit();
-  }
-
-  onPlaceConfirmed() {
-    this.placeConfirmed.emit();
-  }
-
-  onPlaceCancelled() {
-    this.placeCancelled.emit();
   }
 
   onCloseClicked() {

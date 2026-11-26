@@ -88,24 +88,52 @@ export class CompassWatcher {
 
   constructor(private callback: (heading: number) => void) {}
 
-  /** Android & Co.: ohne Erlaubnis starten. iOS braucht zuerst requestPermission(). */
+  /** Läuft gerade eine Anfrage (iOS zeigt dann den Erlaubnis-Dialog)? */
+  private asking = false;
+  /** Erlaubnis erteilt oder abgelehnt: nicht mehr fragen. */
+  private answered = false;
+
+  /**
+   * Android & Co.: ohne Erlaubnis starten.
+   * iOS: Die Erlaubnis darf nur nach einem Antippen abgefragt werden. Darum
+   * beim ersten Antippen irgendwo auf der Seite automatisch fragen.
+   */
   start(): void {
-    const permission = (window.DeviceOrientationEvent as unknown as OrientationEventWithPermission | undefined)?.requestPermission;
-    if (!permission) this.listen();
+    if (!this.permissionFunction()) {
+      this.listen();
+      return;
+    }
+    const onTap = () => {
+      this.requestPermission();
+      if (this.answered || this.started) {
+        document.removeEventListener('click', onTap, true);
+        document.removeEventListener('touchend', onTap, true);
+      }
+    };
+    document.addEventListener('click', onTap, true);
+    document.addEventListener('touchend', onTap, true);
   }
 
-  /** Muss direkt aus einem Antippen kommen (z.B. Standort-Knopf), sonst lehnt iOS ab. */
+  /** Muss direkt aus einem Antippen kommen, sonst lehnt iOS ab. */
   requestPermission(): void {
-    const permission = (window.DeviceOrientationEvent as unknown as OrientationEventWithPermission | undefined)?.requestPermission;
-    if (!permission || this.started) return;
+    const permission = this.permissionFunction();
+    if (!permission || this.started || this.answered || this.asking) return;
+    this.asking = true;
     permission
       .call(window.DeviceOrientationEvent)
       .then(result => {
+        this.answered = true;
         if (result === 'granted') this.listen();
       })
       .catch(() => {
-        // abgelehnt oder nicht möglich: ohne Blickrichtung weiter
-      });
+        // Nicht aus einem Antippen (z.B. Karte nur gezogen): beim nächsten Mal nochmals
+      })
+      .finally(() => (this.asking = false));
+  }
+
+  private permissionFunction() {
+    return (window.DeviceOrientationEvent as unknown as OrientationEventWithPermission | undefined)
+      ?.requestPermission;
   }
 
   private listen(): void {

@@ -79,6 +79,14 @@
   }
 }
 
+/* Wochenende (Samstag, Sonntag): offene Orte und Blasen weinrot, wie im Tages-Wähler */
+:host(.weekend) ::ng-deep {
+  .place-marker.open .dot,
+  .place-cluster .bubble {
+    background-color: var(--accent);
+  }
+}
+
 /* Platzieren-Modus: roter Punkt genau in der Mitte der Karte */
 :host {
   display: block;

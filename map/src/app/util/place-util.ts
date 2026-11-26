@@ -22,6 +22,20 @@ export function hasOpening(opening: Opening[], day: number, slot: Slot): boolean
   return opening.some(entry => entry.weekday === day && entry.slot === slot);
 }
 
+/**
+ * Annahme für Orte ohne Öffnungszeiten: nur werktags (Montag bis Freitag)
+ * und nur am Mittag, nicht am Morgen und nicht am Abend.
+ */
+export const DEFAULT_OPENING: Opening[] = [1, 2, 3, 4, 5].map(weekday => ({
+  weekday,
+  slot: 'noon' as Slot,
+}));
+
+/** Öffnungszeiten des Orts, oder die Annahme (werktags mittags), wenn keine angegeben sind. */
+export function effectiveOpening(opening: Opening[]): Opening[] {
+  return opening.length > 0 ? opening : DEFAULT_OPENING;
+}
+
 /** Tageszeit im Filter, wenn nichts anderes gewählt ist (auch nach "Zurücksetzen"). */
 export const DEFAULT_SLOTS: Slot[] = ['noon'];
 
@@ -33,15 +47,15 @@ export function isCustomSlots(slots: Slot[]): boolean {
 /**
  * Hat der Shop am Wochentag zu einer der gewählten Tageszeiten offen?
  * Keine Tageszeit gewählt = egal wann an diesem Tag.
- * Shops ohne Öffnungszeiten (keine Angaben) gelten immer als offen.
+ * Shops ohne Öffnungszeiten (keine Angaben) gelten als werktags mittags offen.
  * day wie Date.getDay(): 0 = Sonntag, ...
  */
 export function isPlaceOpen(place: Place, day: number, slots: Slot[]): boolean {
-  if (place.opening.length === 0) return true;
+  const opening = effectiveOpening(place.opening);
   if (slots.length === 0) {
-    return place.opening.some(entry => entry.weekday === day);
+    return opening.some(entry => entry.weekday === day);
   }
-  return slots.some(slot => hasOpening(place.opening, day, slot));
+  return slots.some(slot => hasOpening(opening, day, slot));
 }
 
 /** Ein Punkt auf der Karte: ein Shop an einem seiner Standorte. */

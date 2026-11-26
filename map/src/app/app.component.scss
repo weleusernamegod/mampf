@@ -31,3 +31,65 @@ main,
 .selectors.hidden ::ng-deep .overlay {
   pointer-events: none;
 }
+
+/* Tages-Wähler und Platzieren-Leiste liegen übereinander an der gleichen Stelle */
+.bottom {
+  display: grid;
+}
+
+.bottom > * {
+  grid-area: 1 / 1;
+}
+
+/* Platzieren-Modus: Abbrechen und "Ort hier erfassen", wie die Speichern-Leiste im Admin */
+.place-bar {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  justify-self: center;
+  align-self: end;
+  margin-bottom: var(--day-selector-bottom);
+  padding: 6px 6px 6px 24px;
+
+  border-radius: 50px;
+
+  animation: place-bar-in 0.3s ease-out;
+}
+
+.place-cancel {
+  padding: 8px 0;
+
+  border: none;
+  background: none;
+
+  color: var(--grey3);
+  font-family: inherit;
+  font-size: 15px;
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.place-confirm {
+  padding: 14px 28px;
+
+  border: none;
+  border-radius: 50px;
+
+  background-color: var(--primary);
+
+  color: var(--white);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes place-bar-in {
+  from {
+    transform: translateY(120%);
+    opacity: 0;
+  }
+}

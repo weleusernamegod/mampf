@@ -24,8 +24,6 @@
         (addClicked)="onAddClicked()"
         [aboutOpen]="aboutDialogVisible"
         [placing]="placing"
-        (placeConfirmed)="onPlaceConfirmed()"
-        (placeCancelled)="placing = false"
         (aboutClicked)="onAboutClicked()"
         (closeClicked)="aboutDialogVisible = false"></mampf-navigation>
     </div>
@@ -54,13 +52,23 @@
           (closed)="placeDialogVisible = false"></mampf-place-dialog>
       }
     </div>
-    <div class="align-center">
+    <div class="align-center bottom">
       <!-- Im Platzieren-Modus ausgeblendet (bleibt aber erhalten, damit der Tag bleibt) -->
       <div class="selectors" [class.hidden]="placing">
         <mampf-day-selector
           class="inline-block"
           (daySelected)="onDaySelected($event)"></mampf-day-selector>
       </div>
+      @if (placing) {
+        <!-- Platzieren-Modus: unten statt oben beim "+", damit man nicht aus
+             Versehen gleich weitertippt -->
+        <div class="overlay place-bar">
+          <button type="button" class="place-cancel" (click)="placing = false">Abbrechen</button>
+          <button type="button" class="place-confirm" (click)="onPlaceConfirmed()">
+            Ort hier erfassen
+          </button>
+        </div>
+      }
     </div>
   </div>
 </main>

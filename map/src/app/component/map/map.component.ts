@@ -1,13 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  NgZone,
-  OnChanges,
-  OnInit,
-  Output,
-  inject,
-} from '@angular/core';
+import { Component, EventEmitter, Input, NgZone, OnChanges, OnInit, Output, inject, HostBinding } from '@angular/core';
 import { GoogleMap, MapCircle, MapMarker } from '@angular/google-maps';
 import { mapStyles } from '../../util/map-styles';
 import { currentHue } from '../../util/color';
@@ -100,6 +91,10 @@ export class MapComponent implements OnInit, OnChanges {
   @Input() places: Place[] = [];
   /** Gewählter Wochentag wie Date.getDay(): 0 = Sonntag, 1 = Montag, ... */
   @Input() day: number = new Date().getDay();
+  /** Samstag/Sonntag: offene Orte und Blasen weinrot wie das Wochenende im Tages-Wähler. */
+  @HostBinding('class.weekend') get weekend(): boolean {
+    return this.day === 0 || this.day === 6;
+  }
   /** Gewählte Tageszeiten aus dem Filter (Standard: Mittag). */
   @Input() slots: Slot[] = DEFAULT_SLOTS;
   /** Platzieren-Modus: Shops ausblenden, roter Punkt in der Kartenmitte. */

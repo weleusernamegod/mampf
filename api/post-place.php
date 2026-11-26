@@ -104,6 +104,10 @@ if (!is_null($oldPictureFile)) {
 	delete_picture_file($oldPictureFile);
 }
 
+// ID zurückgeben, damit die Karte den Ort danach gleich öffnen kann
+header('Content-Type: application/json');
+echo json_encode(['id' => $place->id]);
+
 function _load_picture($data)
 {
 	if (!isset($data['pictureData'])) {
@@ -145,10 +149,10 @@ function _validate_payload($data)
 	if (!isset($data['updatePicture']) || !is_bool($data['updatePicture'])) {
 		return FALSE;
 	}
-	if (!isset($data['name']) || !is_string($data['name']) || strlen($data['name']) < 2 || strlen($data['name']) > 30) {
+	if (!isset($data['name']) || !is_string($data['name']) || mb_strlen($data['name']) < 2 || mb_strlen($data['name']) > 30) {
 		return FALSE;
 	}
-	if (!isset($data['description']) || !is_string($data['description']) || strlen($data['description']) < 2 || strlen($data['description']) > 50) {
+	if (!isset($data['description']) || !is_string($data['description']) || mb_strlen($data['description']) < 2 || mb_strlen($data['description']) > 50) {
 		return FALSE;
 	}
 	if (!isset($data['lat']) || !is_numeric($data['lat'])) {

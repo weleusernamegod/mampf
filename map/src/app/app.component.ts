@@ -17,6 +17,7 @@ import { CategoryList } from './dto/category';
 import { savePendingPosition } from './util/pending-position';
 import { DEFAULT_SLOTS } from './util/place-util';
 import { takePendingComment } from './util/pending-comment';
+import { takePendingShowPlace } from './util/pending-show-place';
 
 @Component({
   selector: 'app-root',
@@ -64,6 +65,7 @@ export class AppComponent implements OnInit {
         this.places = data;
         this.updateVisiblePlaces();
         this.openPendingComment();
+        this.openPendingShowPlace();
       })
       .catch(error => {
         console.error('Could not fetch places', error);
@@ -88,6 +90,15 @@ export class AppComponent implements OnInit {
     this.mapComponent?.showPlace(place.position);
     this.onPlaceClicked(place);
     this.startComment = true;
+  }
+
+  /** Zurück vom Speichern im Admin-Bereich: diesen Ort zeigen und öffnen. */
+  private openPendingShowPlace() {
+    const placeId = takePendingShowPlace();
+    const place = this.places.find(place => place.id === placeId);
+    if (!place) return;
+    this.mapComponent?.showPlace(place.position);
+    this.onPlaceClicked(place);
   }
 
   private updateVisiblePlaces() {

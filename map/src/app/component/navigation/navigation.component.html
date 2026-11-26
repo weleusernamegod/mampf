@@ -20,25 +20,7 @@
     <span class="icon icon-about"></span>
   </div>
 
-  @if (placing) {
-    <!-- Platzieren-Modus: Position bestätigen oder abbrechen -->
-    <div class="overlay confirm-cancel">
-      <button
-        type="button"
-        class="half"
-        title="Position bestätigen"
-        (click)="onPlaceConfirmed()">
-        <span class="icon icon-yes"></span>
-      </button>
-      <button
-        type="button"
-        class="half"
-        title="Abbrechen"
-        (click)="onPlaceCancelled()">
-        <span class="icon icon-close"></span>
-      </button>
-    </div>
-  } @else if (aboutOpen) {
+  @if (aboutOpen) {
     <div class="overlay button close" title="Schliessen" (click)="onCloseClicked()">
       <span class="icon icon-close"></span>
     </div>

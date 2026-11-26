@@ -6,7 +6,7 @@
     <base href="/" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, user-scalable=0" />
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
     <meta
       name="description"
       content="Foodtrucks, Imbisse und Take-aways auf einer Karte. Sieh auf einen Blick, wer heute offen hat." />
@@ -18,6 +18,16 @@
     <meta name="theme-color" content="#2e9991" />
     <!-- Oberflächenfarbe (Farbregler auf der About-Seite) vor allem anderen setzen -->
     <script src="assets/theme.js"></script>
+    <!--
+      Kein Zoomen der ganzen Seite (nur die Karte selbst zoomt). iPhones
+      ignorieren "user-scalable=0", darum zusätzlich die Zwei-Finger-Geste
+      von Safari abfangen. Die Karte verarbeitet ihre Gesten selbst.
+    -->
+    <script>
+      ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (name) {
+        document.addEventListener(name, function (event) { event.preventDefault(); }, { passive: false });
+      });
+    </script>
     <meta name="apple-mobile-web-app-title" content="mampf" />
 
     <!-- Vorschau beim Teilen (WhatsApp, iMessage, Signal usw.) -->
@@ -301,6 +311,21 @@
           splash.remove();
           html.classList.remove('intro', 'intro-hidden', 'intro-dots', 'intro-thumb', 'intro-weekend');
         };
+
+        // Logo nur beim frischen Öffnen oder Neuladen der Karte zeigen, nicht
+        // wenn man aus dem Admin-Bereich oder vom Login zurückkommt.
+        const navigation = performance.getEntriesByType('navigation')[0];
+        const reloaded = navigation?.type === 'reload';
+        let fromOwnSite = false;
+        try {
+          fromOwnSite = !!document.referrer && new URL(document.referrer).origin === location.origin;
+        } catch {
+          // ungültiger Referrer: wie von aussen
+        }
+        if (fromOwnSite && !reloaded) {
+          cleanUp();
+          return;
+        }
 
         // Das Logo wird als Code in die Seite eingefügt (nicht als Bild):
         // So startet die Animation bei jedem Laden von vorn. Ein Bild würde der

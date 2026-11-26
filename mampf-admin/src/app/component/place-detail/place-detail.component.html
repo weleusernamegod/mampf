@@ -1,5 +1,5 @@
 @if (!isLoading) {
-  <form class="page" ngNativeValidate (submit)="$event.preventDefault(); onFormSubmitted()">
+  <form #placeForm class="page" ngNativeValidate (submit)="$event.preventDefault(); onFormSubmitted()">
     <!-- Name, Beschreibung, Bild -->
     <section class="panel">
       <h2 class="panel-title">Allgemein</h2>
@@ -145,7 +145,10 @@
       <mampf-opening-input
         [opening]="opening"
         (openingChange)="onOpeningChanged($event)"></mampf-opening-input>
-      <p class="hint">Klick auf einen Tag / Tageszeit kreuzt die ganze Reihe an.</p>
+      <p class="hint">
+        Klick auf einen Tag / Tageszeit kreuzt die ganze Reihe an.
+        Ohne Kreuze gilt: werktags am Mittag.
+      </p>
     </section>
 
     <!-- Standort -->
@@ -235,7 +238,12 @@
     <!-- Leiste ganz am Ende, rund wie der Tages-Wähler auf der Karte -->
     <div class="save-bar">
       <button type="button" class="cancel" (click)="onCancel()">Abbrechen</button>
-      <button type="submit" class="save">Speichern</button>
+      <button
+        type="submit"
+        class="save"
+        (pointerup)="onSavePointerUp($event, placeForm)">
+        Speichern
+      </button>
     </div>
   </form>
 } @else {
