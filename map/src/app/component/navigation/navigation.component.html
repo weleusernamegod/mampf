@@ -20,12 +20,6 @@
     <span class="icon icon-about"></span>
   </div>
 
-  @if (aboutOpen) {
-    <div class="overlay button close" title="Schliessen" (click)="onCloseClicked()">
-      <span class="icon icon-close"></span>
-    </div>
-  }
-
   @if (placing) {
     <div id="active-filters">
       <div class="overlay filter-chip hint">Karte verschieben, um neuen Ort zu erfassen</div>

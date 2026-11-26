@@ -21,8 +21,6 @@ export class NavigationComponent {
   @Input() selectedPrice: PriceFilter | null = null;
   /** Alle Kategorien, um die Namen der gewählten anzuzeigen. */
   @Input() categoryList: CategoryList = { groups: [], categories: [] };
-  /** Ist die About-Seite offen? Dann erscheint rechts ein X zum Schliessen. */
-  @Input() aboutOpen = false;
   /** Platzieren-Modus für einen neuen Ort aktiv? Dann ist "+" grün und es erscheint ein Hinweis.
    *  (Bestätigen/Abbrechen sind unten, siehe app.component.html.) */
   @Input() placing = false;
@@ -37,7 +35,6 @@ export class NavigationComponent {
   @Output() locateClicked: EventEmitter<void> = new EventEmitter<void>();
   @Output() aboutClicked: EventEmitter<void> = new EventEmitter<void>();
   @Output() addClicked: EventEmitter<void> = new EventEmitter<void>();
-  @Output() closeClicked: EventEmitter<void> = new EventEmitter<void>();
 
   /** Ist ein Filter aktiv? Dann wird das Filter-Icon grün. */
   get filterActive(): boolean {
@@ -90,10 +87,6 @@ export class NavigationComponent {
 
   onAboutClicked() {
     this.aboutClicked.emit();
-  }
-
-  onCloseClicked() {
-    this.closeClicked.emit();
   }
 
   onAddClicked() {

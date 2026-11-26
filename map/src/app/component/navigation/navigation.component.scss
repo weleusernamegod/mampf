@@ -26,14 +26,6 @@
 }
 
 // ✓ und ✕ im Platzieren-Modus, zusammen in einem Knopf
-// X rechts neben dem Benutzer-Icon, nur bei offener About-Seite
-.close {
-  grid-row: 1;
-  grid-column: 5;
-
-  animation: chip-pop 0.3s ease-out;
-}
-
 // Aktive Filter unter den Knöpfen, z.B. "Griechisch ×"
 #active-filters {
   grid-column: 1 / -1;
@@ -137,7 +129,4 @@
   @include icon('about');
 }
 
-.icon-close {
-  @include icon('no');
-}
 

@@ -162,12 +162,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  /** X oben rechts: About-Seite bzw. Admin-Panel schliessen. */
-  onCloseClicked() {
-    this.aboutDialogVisible = false;
-    this.closePanel();
-  }
-
   private updateVisiblePlaces() {
     const price = this.selectedPrice;
     this.visiblePlaces = filterByCategories(

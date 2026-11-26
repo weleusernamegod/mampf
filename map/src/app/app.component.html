@@ -22,10 +22,8 @@
         (locateClicked)="onLocateClicked()"
         (filterClicked)="onFilterClicked()"
         (addClicked)="onAddClicked()"
-        [aboutOpen]="aboutDialogVisible || panelOpen"
         [placing]="placing"
-        (aboutClicked)="onAboutClicked()"
-        (closeClicked)="onCloseClicked()"></mampf-navigation>
+        (aboutClicked)="onAboutClicked()"></mampf-navigation>
     </div>
     <div>
       @if (aboutDialogVisible) {

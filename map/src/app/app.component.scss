@@ -41,17 +41,21 @@ main,
   grid-area: 1 / 1;
 }
 
-/* Platzieren-Modus: Abbrechen und "Ort hier erfassen", wie die Speichern-Leiste im Admin */
+/* Platzieren-Modus: Abbrechen und "Ort hier erfassen", wie der graue Fuss der Admin-Fenster
+   (gleich breit wie das About-Fenster) */
 .place-bar {
+  box-sizing: border-box;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 22px;
   justify-self: center;
   align-self: end;
+  width: 339px;
+  max-width: calc(100vw - 34px);
   margin-bottom: var(--day-selector-bottom);
-  padding: 6px 6px 6px 24px;
+  padding: 10px 20px;
 
-  border-radius: 50px;
+  background-color: var(--grey0);
 
   animation: place-bar-in 0.3s ease-out;
 }
@@ -64,14 +68,14 @@ main,
 
   color: var(--grey3);
   font-family: inherit;
-  font-size: 15px;
+  font-size: 14px;
 
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
 
 .place-confirm {
-  padding: 14px 28px;
+  padding: 8px 20px;
 
   border: none;
   border-radius: 50px;
@@ -80,7 +84,7 @@ main,
 
   color: var(--white);
   font-family: inherit;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
 
   cursor: pointer;
