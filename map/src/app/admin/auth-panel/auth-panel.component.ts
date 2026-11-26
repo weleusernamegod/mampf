@@ -17,7 +17,7 @@ type Mode = 'login' | 'register';
  * Ersetzt die früheren Seiten login/index.html und login/register.html.
  *
  * ?zurueck=karte  -> nach dem Anmelden zurück zur Karte (z.B. zum Kommentieren)
- * ?zurueck=/profil -> nach dem Anmelden zu dieser Seite der Karte
+ * ?zurueck=/konto -> nach dem Anmelden zu dieser Seite der Karte
  * sonst           -> nach dem Anmelden zu "Meine Orte"
  */
 @Component({

@@ -17,7 +17,7 @@ if ($path === '/admin' || str_starts_with($path, '/admin/')) {
     $target = '/meine-orte';
     if (preg_match('#^/admin/place/new/?$#', $path)) $target = '/ort/neu';
     elseif (preg_match('#^/admin/place/([0-9]+)/?$#', $path, $m)) $target = '/ort/' . $m[1];
-    elseif (preg_match('#^/admin/profile/?$#', $path)) $target = '/profil';
+    elseif (preg_match('#^/admin/profile/?$#', $path)) $target = '/konto';
     elseif (preg_match('#^/admin/categories/?$#', $path)) $target = '/kategorien';
     header('Location: ' . $target, true, 301);
     exit;

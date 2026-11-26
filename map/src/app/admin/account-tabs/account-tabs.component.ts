@@ -2,10 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { fetchOwnUser } from '../own-user';
 
-export type AccountTab = 'orte' | 'profil' | 'kategorien';
+export type AccountTab = 'orte' | 'konto' | 'kategorien';
 
 /**
- * Reiter "Meine Orte | Profil | (Kategorien) | Abmelden" im Kopf der Konto-Fenster.
+ * Reiter "Meine Orte | Konto | (Kategorien) | Abmelden" im Kopf der Konto-Fenster.
  * Der aktuelle ist fett. Kategorien nur für Admins. Abmelden lädt die Karte neu.
  */
 @Component({
@@ -17,7 +17,7 @@ export type AccountTab = 'orte' | 'profil' | 'kategorien';
       <a routerLink="/meine-orte" [class.active]="active === 'orte'"
         >Meine Orte</a
       >
-      <a routerLink="/profil" [class.active]="active === 'profil'">Profil</a>
+      <a routerLink="/konto" [class.active]="active === 'konto'">Konto</a>
       @if (isAdmin) {
         <a routerLink="/kategorien" [class.active]="active === 'kategorien'"
           >Kategorien</a

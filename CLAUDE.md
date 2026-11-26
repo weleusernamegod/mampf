@@ -15,7 +15,7 @@ Web-App mit einer Karte von Foodtrucks/Imbissständen. Live unter https://mampf.
 
 Admin-Bereich (auf der About-Seite "meine Orte & Konto"): liegt in `map/src/app/admin/`, als
 Fenster über der Karte wie die About-Seite. Adressen (`map/src/app/app.routes.ts`): `/meine-orte`,
-`/ort/neu?lat=..&lng=..`, `/ort/123`, `/profil`, `/kategorien` (nur Admins), `/anmelden` und
+`/ort/neu?lat=..&lng=..`, `/ort/123`, `/konto` (früher `/profil`, leitet weiter), `/kategorien` (nur Admins), `/anmelden` und
 `/registrieren` (`?zurueck=karte` oder `?zurueck=/pfad`). Alle Fenster teilen denselben Rahmen
 (`admin/_panel.scss`: oben zentriert, so breit wie die About-Seite, Kopf grau, Inhalt weiss, Fuss grau)
 und dieselben Reiter (`admin/_tabs.scss`). Der Code lädt erst beim Öffnen (Lazy Loading),

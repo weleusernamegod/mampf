@@ -5,7 +5,7 @@
   RewriteEngine On
   RewriteRule ^place/new/?$ /ort/neu [R=301,L]
   RewriteRule ^place/([0-9]+)/?$ /ort/$1 [R=301,L]
-  RewriteRule ^profile/?$ /profil [R=301,L]
+  RewriteRule ^profile/?$ /konto [R=301,L]
   RewriteRule ^categories/?$ /kategorien [R=301,L]
   RewriteRule ^ /meine-orte [R=301,L]
 </IfModule>

@@ -33,8 +33,10 @@ export const routes: Routes = [
         m => m.PlaceFormComponent
       ),
   },
+  // Frühere Adresse /profil (Seite heisst jetzt "Konto")
+  { path: 'profil', redirectTo: 'konto' },
   {
-    path: 'profil',
+    path: 'konto',
     canActivate: [loginGuard],
     loadComponent: () =>
       import('./admin/profile-panel/profile-panel.component').then(

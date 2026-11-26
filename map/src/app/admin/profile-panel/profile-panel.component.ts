@@ -12,7 +12,7 @@ declare global {
 }
 
 /**
- * Panel "Profil" über der Karte (Adresse /profil): Anzeigename ändern
+ * Panel "Konto" über der Karte (Adresse /konto): Anzeigename ändern
  * (erscheint bei den Kommentaren).
  */
 @Component({
@@ -39,7 +39,7 @@ export class ProfilePanelComponent implements OnInit {
       this.isLoading = false;
       if (!user) {
         this.message = {
-          text: 'Das Profil konnte nicht geladen werden.',
+          text: 'Das Konto konnte nicht geladen werden.',
           error: true,
         };
         return;
