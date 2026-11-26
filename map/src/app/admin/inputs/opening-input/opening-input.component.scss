@@ -1,0 +1,105 @@
+// Raster: links die Tageszeiten, oben MO–SO, dazwischen Kästchen zum Ankreuzen
+.week {
+  display: grid;
+  grid-template-columns: auto repeat(7, 1fr);
+  justify-items: center;
+  align-items: center;
+  gap: 10px 4px;
+  padding: 12px 14px 14px 10px;
+
+  border: 1px solid var(--grey1);
+  border-radius: 12px;
+
+  background-color: var(--grey0);
+}
+
+.day,
+.slot {
+  padding: 0;
+
+  border: none;
+  background: none;
+
+  color: var(--grey2);
+  font-size: 15px;
+
+  transition: color 0.2s ease;
+}
+
+.day {
+  text-transform: uppercase;
+
+  &.active {
+    color: var(--grey3);
+  }
+}
+
+.slot {
+  justify-self: start;
+  padding-right: 6px;
+
+  color: var(--grey3);
+  font-size: 14px;
+}
+
+// Kästchen zum Ankreuzen
+.check {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+
+  border: 2px solid var(--grey2);
+  border-radius: 7px;
+
+  background-color: var(--white);
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+
+  &.selected {
+    border-color: var(--primary);
+    background-color: var(--primary);
+  }
+}
+
+// Häkchen (Symbol füllt nur einen Teil der Datei, deshalb gross maskiert)
+.tick {
+  width: 24px;
+  height: 24px;
+
+  background-color: var(--white);
+
+  -webkit-mask: url('/assets/icons/yes_small.svg') center / 200% no-repeat;
+  mask: url('/assets/icons/yes_small.svg') center / 200% no-repeat;
+}
+
+.day,
+.slot {
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 480px) {
+  .check {
+    width: 26px;
+    height: 26px;
+  }
+
+  .week {
+    gap: 10px 2px;
+    padding: 10px 8px 12px 6px;
+  }
+
+  .slot {
+    font-size: 13px;
+  }
+}

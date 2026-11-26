@@ -5,7 +5,7 @@
     [day]="selectedDay"
     [slots]="selectedSlots"
     [placing]="placing"
-    (placeClicked)="onPlaceClicked($event)"
+    (placeClicked)="onMapPlaceClicked($event)"
     (mapClicked)="onMapClicked()"></mampf-map>
 
   <div id="grid">
@@ -53,7 +53,7 @@
       }
       <!-- Admin-Panels (z.B. /meine-orte), siehe app.routes.ts -->
       <router-outlet
-        (activate)="onPanelActivated()"
+        (activate)="onPanelActivated($event)"
         (deactivate)="onPanelDeactivated()"></router-outlet>
     </div>
     <div class="align-center bottom">

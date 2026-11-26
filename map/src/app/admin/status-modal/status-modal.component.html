@@ -1,0 +1,23 @@
+@if (status !== ActionStatus.NoOperation) {
+  <div class="backdrop" role="dialog" aria-modal="true" [attr.aria-label]="title">
+    <div class="box">
+      @switch (status) {
+        @case (ActionStatus.Loading) {
+          <h2>{{ title }}</h2>
+          <div class="spinner" role="status" aria-label="Bitte warten"></div>
+        }
+        @case (ActionStatus.CompletedError) {
+          <h2>Hoppla</h2>
+          <p>Das hat leider nicht geklappt. Bitte versuche es nochmals.</p>
+        }
+        @case (ActionStatus.CompletedSuccess) {
+          <div class="done"><span class="tick"></span></div>
+          <h2>Erledigt!</h2>
+        }
+      }
+      @if (status === ActionStatus.CompletedSuccess || status === ActionStatus.CompletedError) {
+        <button type="button" class="close" (click)="resetModal()">Schliessen</button>
+      }
+    </div>
+  </div>
+}

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { PlaceSummary } from '../place-summary';
 import { MapActionsService } from '../map-actions.service';
 
@@ -12,7 +12,7 @@ const FALLBACK_PICTURE = 'assets/marktstand.svg';
 @Component({
   selector: 'mampf-my-places-panel',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './my-places-panel.component.html',
   styleUrl: './my-places-panel.component.scss',
   host: { class: 'block full-height' },

@@ -1,0 +1,302 @@
+<form
+  #placeForm
+  class="form"
+  ngNativeValidate
+  (submit)="$event.preventDefault(); onFormSubmitted()">
+  <div class="form-header">
+    <h2>{{ place ? 'Ort bearbeiten' : 'Neuer Ort' }}</h2>
+    @if (place) {
+      <button type="button" class="delete" (click)="onDeleteClicked()">
+        Löschen
+      </button>
+    }
+  </div>
+
+  <div class="form-content">
+    @if (isLoading) {
+      <p class="hint">Wird geladen …</p>
+    } @else if (loadError) {
+      <p class="hint error">Der Ort konnte nicht geladen werden.</p>
+    } @else {
+      <!-- Name, Beschreibung, Bild -->
+      <section class="panel">
+        <h2 class="panel-title">Allgemein</h2>
+
+        <label class="question" for="input-name">Wie heisst der Ort?</label>
+        <input
+          type="text"
+          minlength="2"
+          maxlength="30"
+          required
+          class="field"
+          id="input-name"
+          name="name"
+          placeholder="z.B. Pizza Paolo"
+          [(ngModel)]="name" />
+
+        <label class="question" for="input-description"
+          >Was gibt es dort, in ein paar Worten?</label
+        >
+        <input
+          type="text"
+          minlength="2"
+          maxlength="50"
+          required
+          class="field"
+          id="input-description"
+          name="description"
+          placeholder="z.B. Holzofenpizza zum Mitnehmen"
+          [(ngModel)]="description" />
+
+        <label class="question" for="input-website"
+          >Link zur Website oder zum Menü (freiwillig)</label
+        >
+        <input
+          type="text"
+          inputmode="url"
+          autocapitalize="off"
+          autocomplete="url"
+          spellcheck="false"
+          maxlength="255"
+          pattern="\s*(https?:\/\/)?[^\s\/]+\.\S{2,}.*"
+          title="Eine Web-Adresse, z.B. www.pizza-paolo.ch"
+          class="field"
+          id="input-website"
+          name="website"
+          placeholder="z.B. www.pizza-paolo.ch"
+          [(ngModel)]="website" />
+
+        <span class="question">Bild</span>
+        <mampf-picture-input
+          [originalPictureUrl]="place?.pictureUrl"
+          (pictureDeleted)="onPictureDeleted()"
+          (pictureUploaded)="onPictureUploaded($event)"></mampf-picture-input>
+      </section>
+
+      <!-- Kategorien -->
+      <section class="panel">
+        <h2 class="panel-title">Angebot</h2>
+        @for (group of categoryList.groups; track group.key) {
+          @if (!group.single) {
+            <!-- Viele Chips: Überschrift, darunter Suchfeld; nicht passende Chips verschwinden -->
+            <div class="question-row">
+              <span class="question group-title">{{ group.name }}</span>
+              <label class="search">
+                <span class="search-icon"></span>
+                <input
+                  type="search"
+                  class="field small"
+                  autocomplete="off"
+                  placeholder="Suchen"
+                  [attr.aria-label]="group.name + ' durchsuchen'"
+                  [value]="searchTerms[group.key] ?? ''"
+                  (input)="searchTerms[group.key] = $any($event.target).value"
+                  (keydown.enter)="$event.preventDefault()" />
+              </label>
+            </div>
+          } @else if (group.key !== 'art') {
+            <!-- "Art des Lokals" braucht keine Überschrift, das ist klar genug -->
+            <span class="question group-title">{{ group.name }}</span>
+          }
+          @if (group.single && categoriesOf(group).length <= 4) {
+            <!-- Wenige Optionen: Schieberegler -->
+            <div
+              class="segmented"
+              role="radiogroup"
+              [attr.aria-label]="group.name">
+              @for (category of categoriesOf(group); track category.id) {
+                <button
+                  type="button"
+                  role="radio"
+                  [class.selected]="selectedCategories.has(category.id)"
+                  [attr.aria-checked]="selectedCategories.has(category.id)"
+                  (click)="toggleSingle(group, category.id)">
+                  @if (shortName(category.name); as short) {
+                    <!-- Kleine Handys: "< 5 Min" statt "Unter 5 Min" -->
+                    <span class="long-name">{{ category.name }}</span>
+                    <span class="short-name">{{ short }}</span>
+                  } @else {
+                    {{ category.name }}
+                  }
+                </button>
+              }
+            </div>
+          } @else if (group.single) {
+            <!-- Viele Optionen, nur eine erlaubt: runde Knöpfe -->
+            <div
+              class="radio-list gap-top"
+              role="radiogroup"
+              [attr.aria-label]="group.name">
+              @for (category of categoriesOf(group); track category.id) {
+                <button
+                  type="button"
+                  role="radio"
+                  class="radio"
+                  [class.selected]="selectedCategories.has(category.id)"
+                  [attr.aria-checked]="selectedCategories.has(category.id)"
+                  (click)="toggleSingle(group, category.id)">
+                  {{ category.name }}
+                </button>
+              }
+            </div>
+            <p class="hint">Anklicken hebt eine Auswahl wieder auf.</p>
+          } @else {
+            <!-- Mehrere erlaubt: Chips wie im Filter der Karte -->
+            <div class="chips">
+              @for (category of visibleCategoriesOf(group); track category.id) {
+                <button
+                  type="button"
+                  class="chip"
+                  [class.selected]="selectedCategories.has(category.id)"
+                  [attr.aria-pressed]="selectedCategories.has(category.id)"
+                  (click)="toggleCategory(category.id)">
+                  {{ category.name }}
+                </button>
+              } @empty {
+                <p class="hint no-gap">Nichts gefunden.</p>
+              }
+            </div>
+          }
+        }
+
+        <!-- Preisspanne: zwei Regler, 10 bis 30 Franken -->
+        <span class="question group-title">Preis in CHF</span>
+        <mampf-price-range-input
+          [(min)]="priceMin"
+          [(max)]="priceMax"></mampf-price-range-input>
+      </section>
+
+      <!-- Öffnungszeiten -->
+      <section class="panel">
+        <h2 class="panel-title">Öffnungszeiten</h2>
+        <span class="question">Wann gibt es etwas zu essen?</span>
+        <mampf-opening-input
+          [opening]="opening"
+          (openingChange)="onOpeningChanged($event)"></mampf-opening-input>
+        <p class="hint">
+          Klick auf einen Tag / Tageszeit kreuzt die ganze Reihe an. Ohne Kreuze
+          gilt: werktags am Mittag.
+        </p>
+      </section>
+
+      <!-- Standort -->
+      <section class="panel">
+        <h2 class="panel-title">Standort</h2>
+        <span class="question">Steht der Ort immer am gleichen Platz?</span>
+        <div class="segmented" role="radiogroup" aria-label="Standort">
+          <button
+            type="button"
+            role="radio"
+            [class.selected]="!multipleLocations"
+            [attr.aria-checked]="!multipleLocations"
+            (click)="onMultipleLocationsChanged(false)">
+            Immer gleich
+          </button>
+          <button
+            type="button"
+            role="radio"
+            [class.selected]="multipleLocations"
+            [attr.aria-checked]="multipleLocations"
+            (click)="onMultipleLocationsChanged(true)">
+            Je nach Wochentag
+          </button>
+        </div>
+
+        @if (!multipleLocations) {
+          <mampf-location-input
+            class="gap-top"
+            [height]="340"
+            [(lat)]="lat"
+            [(lng)]="lng"></mampf-location-input>
+          <p class="hint">
+            @if (positionFromMap) {
+              Standort von der Karte übernommen.
+            }
+            Zum Anpassen Punkt verschieben.
+          </p>
+        } @else {
+          @if (openDays.length === 0 || locationError) {
+            <p class="hint gap-top" [class.error]="locationError">
+              Zuerst bei den Öffnungszeiten Tage ankreuzen.
+            </p>
+          }
+          @for (day of openDays; track day.value) {
+            @for (
+              location of locationsFor(day.value);
+              track location;
+              let index = $index
+            ) {
+              <div class="day-location">
+                <div class="day-header">
+                  <span class="day-name">
+                    {{ day.name }}
+                    @if (index > 0) {
+                      <span class="day-index">· {{ index + 1 }}. Standort</span>
+                    }
+                  </span>
+                  @if (
+                    index === 0 && previousOpenDay(day.value);
+                    as previousDay
+                  ) {
+                    <button
+                      type="button"
+                      class="chip"
+                      (click)="copyFromPreviousDay(location)">
+                      wie {{ previousDay.name }}
+                    </button>
+                  }
+                  @if (index > 0) {
+                    <button
+                      type="button"
+                      class="chip danger"
+                      (click)="removeLocation(location)">
+                      Entfernen
+                    </button>
+                  }
+                </div>
+                <input
+                  type="text"
+                  maxlength="50"
+                  class="field small gap-bottom"
+                  placeholder="Bezeichnung (freiwillig), z.B. Helvetiaplatz"
+                  [name]="'location-label-' + day.value + '-' + index"
+                  [(ngModel)]="location.label" />
+                <mampf-location-input
+                  [height]="240"
+                  [(lat)]="location.lat"
+                  [(lng)]="location.lng"></mampf-location-input>
+                @if (
+                  index === locationsFor(day.value).length - 1 &&
+                  locationsFor(day.value).length < MAX_LOCATIONS_PER_DAY
+                ) {
+                  <button
+                    type="button"
+                    class="text-button"
+                    (click)="addLocation(day.value)">
+                    + Zweiter Standort am {{ day.name }}
+                  </button>
+                }
+              </div>
+            }
+          }
+        }
+      </section>
+    }
+  </div>
+
+  <!-- Leiste unten, rund wie der Tages-Wähler auf der Karte (bleibt immer sichtbar) -->
+  <div class="save-bar">
+    <button type="button" class="cancel" (click)="onCancel()">Abbrechen</button>
+    <button
+      type="submit"
+      class="save"
+      [disabled]="isLoading || loadError"
+      (pointerup)="onSavePointerUp($event, placeForm)">
+      Speichern
+    </button>
+  </div>
+</form>
+
+<mampf-status-modal
+  [title]="'Bitte warten'"
+  [status]="actionStatus"></mampf-status-modal>

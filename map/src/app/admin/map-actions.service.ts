@@ -11,4 +11,7 @@ export class MapActionsService {
   readonly showPlace = new Subject<number>();
   /** Platzieren-Modus starten (neuen Ort mit dem Punkt in der Kartenmitte wählen). */
   readonly startPlacing = new Subject<void>();
+  /** Ein Ort wurde gespeichert oder gelöscht: Panel zu, Orte neu laden.
+   *  Mit Ort-ID: diesen Ort danach zeigen und seine Infobox öffnen. */
+  readonly placesChanged = new Subject<number | undefined>();
 }

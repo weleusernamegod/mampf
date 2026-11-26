@@ -19,6 +19,18 @@ export const routes: Routes = [
         m => m.MyPlacesPanelComponent
       ),
   },
+  {
+    path: 'ort/neu',
+    canActivate: [loginGuard],
+    loadComponent: () =>
+      import('./admin/place-form/place-form.component').then(m => m.PlaceFormComponent),
+  },
+  {
+    path: 'ort/:id',
+    canActivate: [loginGuard],
+    loadComponent: () =>
+      import('./admin/place-form/place-form.component').then(m => m.PlaceFormComponent),
+  },
   // Unbekannte Adresse: einfach die Karte
   { path: '**', redirectTo: '' },
 ];

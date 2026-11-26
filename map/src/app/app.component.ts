@@ -16,7 +16,6 @@ import {
 import { matchesPrice } from './util/price';
 import { filterByCategories } from './util/category-filter';
 import { CategoryList } from './dto/category';
-import { savePendingPosition } from './util/pending-position';
 import { DEFAULT_SLOTS } from './util/place-util';
 import { takePendingComment } from './util/pending-comment';
 import { takePendingShowPlace } from './util/pending-show-place';
@@ -63,6 +62,8 @@ export class AppComponent implements OnInit {
   placing = false;
   /** Ein Admin-Panel (z.B. /meine-orte) ist offen. */
   panelOpen = false;
+  /** Schliesst ein Klick auf die Karte das Panel? (Nicht beim Formular.) */
+  private panelClosesOnMapClick = true;
 
   constructor(
     private router: Router,
@@ -70,20 +71,16 @@ export class AppComponent implements OnInit {
   ) {
     mapActions.showPlace.pipe(takeUntilDestroyed()).subscribe(id => this.showPlaceById(id));
     mapActions.startPlacing.pipe(takeUntilDestroyed()).subscribe(() => this.startPlacing());
+    mapActions.placesChanged
+      .pipe(takeUntilDestroyed())
+      .subscribe(id => this.onPlacesChanged(id));
   }
 
   ngOnInit(): void {
-    fetch('api/get-public-places.php')
-      .then(response => response.json())
-      .then(data => {
-        this.places = data;
-        this.updateVisiblePlaces();
-        this.openPendingComment();
-        this.openPendingShowPlace();
-      })
-      .catch(error => {
-        console.error('Could not fetch places', error);
-      });
+    this.loadPlaces().then(() => {
+      this.openPendingComment();
+      this.openPendingShowPlace();
+    });
 
     fetch('api/get-categories.php')
       .then(response => response.json())
@@ -94,6 +91,26 @@ export class AppComponent implements OnInit {
       .catch(error => {
         console.error('Could not fetch categories', error);
       });
+  }
+
+  private loadPlaces(): Promise<void> {
+    return fetch('/api/get-public-places.php', { cache: 'no-store' })
+      .then(response => response.json())
+      .then(data => {
+        this.places = data;
+        this.updateVisiblePlaces();
+      })
+      .catch(error => {
+        console.error('Could not fetch places', error);
+      });
+  }
+
+  /** Ort gespeichert oder gelöscht: Panel zu, Orte neu laden, gespeicherten Ort öffnen. */
+  private onPlacesChanged(placeId: number | undefined) {
+    this.closePanel();
+    this.loadPlaces().then(() => {
+      if (placeId !== undefined) this.showPlaceById(placeId);
+    });
   }
 
   /** Vom Login zurück, wollte kommentieren: diesen Ort öffnen, Kommentarfeld offen. */
@@ -135,8 +152,9 @@ export class AppComponent implements OnInit {
   }
 
   /** Ein Admin-Panel wurde geöffnet: alle anderen Fenster zu. */
-  onPanelActivated() {
+  onPanelActivated(panel: { closeOnMapClick?: boolean }) {
     this.panelOpen = true;
+    this.panelClosesOnMapClick = panel.closeOnMapClick !== false;
     this.placing = false;
     this.aboutDialogVisible = false;
     this.placeDialogVisible = false;
@@ -145,6 +163,7 @@ export class AppComponent implements OnInit {
 
   onPanelDeactivated() {
     this.panelOpen = false;
+    this.panelClosesOnMapClick = true;
   }
 
   /** Offenes Admin-Panel schliessen (zurück zur Adresse der Karte). */
@@ -176,10 +195,16 @@ export class AppComponent implements OnInit {
    * About-Seite, Infobox und Filter schliessen. Der Filter bleibt dabei wie er war.
    */
   onMapClicked() {
-    this.closePanel();
+    if (this.panelClosesOnMapClick) this.closePanel();
     this.aboutDialogVisible = false;
     this.placeDialogVisible = false;
     this.filterDialogVisible = false;
+  }
+
+  /** Ort auf der Karte angetippt. Während das Formular offen ist: nichts tun. */
+  onMapPlaceClicked(place: Place) {
+    if (!this.panelClosesOnMapClick) return;
+    this.onPlaceClicked(place);
   }
 
   onPlaceClicked(place: Place) {
@@ -258,11 +283,11 @@ export class AppComponent implements OnInit {
   /** ✓ im Platzieren-Modus: Position merken und Formular "Ort hinzufügen" öffnen. */
   onPlaceConfirmed() {
     const center = this.mapComponent?.getCenter();
-    if (center) {
-      savePendingPosition(center);
-    }
-    // Ohne Login leitet der Admin-Bereich zuerst zum Login weiter.
-    // Die Position bleibt im Browser gespeichert.
-    window.location.href = './admin/place/new';
+    this.placing = false;
+    // Position steht in der Adresse (?lat=..&lng=..), so übersteht sie auch
+    // den Umweg über Login oder Registrierung.
+    this.router.navigate(['/ort/neu'], {
+      queryParams: center ? { lat: center.lat.toFixed(6), lng: center.lng.toFixed(6) } : {},
+    });
   }
 }

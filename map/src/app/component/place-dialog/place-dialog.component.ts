@@ -1,3 +1,4 @@
+import { RouterLink } from '@angular/router';
 import {
   Component,
   ElementRef,
@@ -40,7 +41,7 @@ interface Drag {
 @Component({
   selector: 'mampf-place-dialog',
   standalone: true,
-  imports: [OpenDaysComponent, CommentsComponent],
+  imports: [OpenDaysComponent, CommentsComponent, RouterLink],
   templateUrl: './place-dialog.component.html',
   styleUrl: './place-dialog.component.scss',
 })

@@ -1,0 +1,21 @@
+.picture {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+img {
+  flex: none;
+  width: 96px;
+  height: 96px;
+
+  border-radius: 12px;
+  box-shadow: 0px 1px 3px 0px var(--shadow);
+
+  object-fit: cover;
+}
+
+label.chip {
+  margin: 0;
+  cursor: pointer;
+}

@@ -31,8 +31,7 @@
                   <span class="description">{{ place.description }}</span>
                 </span>
               </button>
-              <!-- Bearbeiten vorerst noch in der alten Admin-App -->
-              <a class="edit" [href]="'/admin/place/' + place.id" title="bearbeiten">
+              <a class="edit" [routerLink]="['/ort', place.id]" title="bearbeiten">
                 <span class="icon-edit"></span>
               </a>
             </li>

@@ -136,7 +136,7 @@
       <!-- Ganz unten: eigener Ort -> bearbeiten, sonst wer ihn erstellt hat -->
       <div class="section footer">
         @if (place?.editable) {
-          <a class="edit" [href]="'/admin/place/' + place?.id" (click)="$event.stopPropagation()">
+          <a class="edit" [routerLink]="['/ort', place?.id]" (click)="$event.stopPropagation()">
             <span class="icon-edit"></span>bearbeiten
           </a>
         }
