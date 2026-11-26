@@ -4,16 +4,20 @@
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $file = $_SERVER['DOCUMENT_ROOT'] . $path;
 
-// /admin bzw. /login ohne Schrägstrich -> mit Schrägstrich (wie Apache)
-if ($path === '/admin' || $path === '/login') {
-    header('Location: ' . $path . '/', true, 301);
+// /login ohne Schrägstrich -> mit Schrägstrich (wie Apache)
+if ($path === '/login') {
+    header('Location: /login/', true, 301);
     exit;
 }
 
-// Unterseiten des Admin-Bereichs (z. B. /admin/place/new) -> admin/index.html
-if (str_starts_with($path, '/admin/') && !is_file($file)) {
-    header('Cache-Control: no-cache');
-    readfile($_SERVER['DOCUMENT_ROOT'] . '/admin/index.html');
+// Alte Admin-Adressen -> neue Adressen in der Karte (wie map/public/admin/.htaccess)
+if ($path === '/admin' || str_starts_with($path, '/admin/')) {
+    $target = '/meine-orte';
+    if (preg_match('#^/admin/place/new/?$#', $path)) $target = '/ort/neu';
+    elseif (preg_match('#^/admin/place/([0-9]+)/?$#', $path, $m)) $target = '/ort/' . $m[1];
+    elseif (preg_match('#^/admin/profile/?$#', $path)) $target = '/profil';
+    elseif (preg_match('#^/admin/categories/?$#', $path)) $target = '/kategorien';
+    header('Location: ' . $target, true, 301);
     exit;
 }
 

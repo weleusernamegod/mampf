@@ -8,7 +8,6 @@ const FALLBACK_PICTURE = 'assets/marktstand.svg';
 
 /**
  * Panel "Meine Orte" über der Karte (Adresse /meine-orte).
- * Ersetzt nach und nach die Seite /admin/my-places der alten Admin-App.
  */
 @Component({
   selector: 'mampf-my-places-panel',

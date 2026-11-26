@@ -1,7 +1,7 @@
 #!/bin/bash
 # Baut die komplette Website nach ./dist (so wie sie auf dem Server liegt):
-#   dist/            -> Karte (map)
-#   dist/admin/      -> Admin-App (mampf-admin)
+#   dist/            -> Karte (map), mit dem Admin-Bereich (/meine-orte, /ort/...)
+#   dist/admin/      -> nur Weiterleitungen der alten Admin-Adressen
 #   dist/login/      -> Login-Seiten
 #   dist/api/        -> PHP-API
 set -e
@@ -29,11 +29,9 @@ mkdir ./dist
 cp -R ./map/dist/map/browser/* ./dist
 cp ./map/public/.htaccess ./dist/.htaccess   # Angular kopiert keine versteckten Dateien
 
-# Admin
-mkdir ./dist/admin
-(cd ./mampf-admin && npm ci && npm run build)
-cp -R ./mampf-admin/dist/mampf-admin/browser/* ./dist/admin
-cp ./mampf-admin/public/.htaccess ./dist/admin/.htaccess
+# Alte Admin-Adressen (/admin/...) -> neue Adressen in der Karte
+mkdir -p ./dist/admin
+cp ./map/public/admin/.htaccess ./dist/admin/.htaccess
 
 # Login & API (ohne Editor-/Systemdateien und ohne Vorlage)
 rsync -a --exclude '.DS_Store' ./login/ ./dist/login/

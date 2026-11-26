@@ -34,7 +34,6 @@ function normalize(text: string): string {
 
 /**
  * Panel "Ort bearbeiten" / "Neuer Ort" über der Karte (Adressen /ort/123 und /ort/neu).
- * Ersetzt die Seite /admin/place/... der alten Admin-App.
  *
  * Die Formular-Stile (panel, chip, segmented ...) gelten auch in den Bausteinen
  * darin (Bild, Öffnungszeiten), deshalb ViewEncapsulation.None. Alle Regeln stehen

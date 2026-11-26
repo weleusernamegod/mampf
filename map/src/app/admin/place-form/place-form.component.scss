@@ -73,22 +73,29 @@ mampf-place-form {
     flex: 1 1 auto;
     min-height: 0;
 
-    padding: 14px;
+    // Weisse Felder gehen bis an den Rand, grau bleibt nur dazwischen
+    padding: 10px 0;
 
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
 
+  // "Wird geladen …" direkt im grauen Bereich: nicht am Rand kleben
+  .form-content > .hint {
+    padding: 0 22px;
+  }
+
   // ---------- Karten (Abschnitte) ----------
 
   .panel {
-    margin-bottom: 14px;
+    margin-bottom: 10px;
     padding: 22px 22px 24px 22px;
 
-    border-radius: 16px;
-    box-shadow: 0px 2px 5px 0px var(--shadow);
-
     background-color: var(--white);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   .panel-title {
@@ -423,10 +430,6 @@ mampf-place-form {
   // ---------- Handy: ganzer Bildschirm, schmalere Ränder ----------
 
   @media (max-width: 480px) {
-    .form-content {
-      padding: 10px;
-    }
-
     .panel {
       padding: 20px 14px 22px 14px;
     }

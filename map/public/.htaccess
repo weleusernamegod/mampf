@@ -1,4 +1,4 @@
-# Apache-Einstellungen für mampf.io (liegt im Webroot, gilt auch für /admin und /login)
+# Apache-Einstellungen für mampf.io (liegt im Webroot, gilt auch für /login)
 
 # Die HTML-Seiten (index.html usw.) nie ungeprüft aus dem Cache nehmen.
 # So bekommen alle Besucher nach einem Upload sofort die neue Version.
@@ -11,7 +11,7 @@
 
 # Unterseiten der Karte (z.B. /meine-orte) gibt es nur in der Angular-App.
 # Alles, was keine echte Datei ist, geht an index.html (auch Neuladen und direkte Links).
-# /api, /admin, /login und /bilder sind ausgenommen (eigene Regeln bzw. echte 404).
+# /api, /admin (Weiterleitungen), /login und /bilder sind ausgenommen.
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteRule ^(api|admin|login|bilder)(/|$) - [L]

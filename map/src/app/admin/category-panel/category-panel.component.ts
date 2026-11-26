@@ -29,7 +29,6 @@ interface Row {
  * Panel "Kategorien" über der Karte (Adresse /kategorien, nur für Admins):
  * hinzufügen, umbenennen, Reihenfolge ändern, ausblenden. Gelöscht wird nie,
  * damit die Zuordnungen zu den Orten erhalten bleiben.
- * Ersetzt /admin/categories der alten Admin-App.
  */
 @Component({
   selector: 'mampf-category-panel',

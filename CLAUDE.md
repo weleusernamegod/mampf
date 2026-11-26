@@ -6,14 +6,20 @@ Web-App mit einer Karte von Foodtrucks/Imbissständen. Live unter https://mampf.
 
 | Ordner | Was | Technik |
 |---|---|---|
-| `map/` | Öffentliche Karte (Startseite `/`) | Angular 18, @angular/google-maps |
-| `mampf-admin/` | Admin-Bereich (`/admin`, auf der Karte "meine Orte & Konto"): eigene Orte, Profil (Name) | Angular 18, Bootstrap |
+| `map/` | Öffentliche Karte (Startseite `/`) mit dem Admin-Bereich als Fenster über der Karte | Angular 18, @angular/google-maps |
 | `login/` | Login & Registrierung (`/login`) | Plain HTML + fetch |
 | `api/` | Backend (`/api/*.php`) | PHP (mysqli), Sessions |
 | `mampf.sql` | Datenbankschema (tbl_user, tbl_place, tbl_place_opening, tbl_place_location, tbl_category, tbl_place_category, tbl_picture, tbl_comment) | MySQL/MariaDB |
 | `bilder/orte/` | Nur `.htaccess` (Bilder selbst liegen nur auf dem Server) | Apache |
 
 | `design/font/` | Mampf-Schrift (vom Logo abgeleitet), Generator `mampf_font.py`, Testseite `testen.html` | Python (fonttools, shapely) |
+
+Admin-Bereich (auf der About-Seite "meine Orte & Konto"): liegt in `map/src/app/admin/`, als
+Fenster über der Karte wie die About-Seite. Adressen (`map/src/app/app.routes.ts`): `/meine-orte`,
+`/ort/neu?lat=..&lng=..`, `/ort/123`, `/profil`, `/kategorien` (nur Admins). Der Code lädt erst beim
+Öffnen (Lazy Loading), Login-Prüfung in `admin/login-guard.ts`. Die alten Adressen `/admin/...`
+leiten weiter (`map/public/admin/.htaccess`, lokal `dev-router.php`). Die frühere eigene Admin-App
+`mampf-admin/` gibt es nicht mehr.
 
 Sprüche unter dem Logo: `map/public/assets/slogans.txt` (einer pro Zeile). `map/public/assets/slogan.js`
 wählt bei jedem Anzeigen des Logos zufällig einen (Splashscreen, About-Seite, Login, Registrierung).
@@ -37,7 +43,7 @@ den Ordner nie löschen. Im Git liegt nur `bilder/orte/.htaccess` (sperrt alles 
 
 - `./dev.sh` baut alles und startet den PHP-Server auf http://localhost:8080 (wie live).
 - `./dev.sh --no-build` startet nur den Server mit dem bestehenden `dist/`.
-- Für schnelles Frontend-Arbeiten mit Live-Reload: in `map/` oder `mampf-admin/` `npm start`
+- Für schnelles Frontend-Arbeiten mit Live-Reload: in `map/` `npm start`
   (Port 4200, Proxy für `/api`, `/login`, `/admin`, `/bilder` → localhost:8080, PHP-Server muss laufen).
 - Angular 18 braucht **Node 22**: `export PATH="/opt/homebrew/opt/node@22/bin:$PATH"`
   (build.sh macht das automatisch). Node 26 ist global installiert, aber nicht kompatibel.

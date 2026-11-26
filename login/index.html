@@ -127,7 +127,7 @@
                     // Oder zurück zu einer Seite der Karte (z.B. "/meine-orte"),
                     // aber nur auf mampf selbst (kein "//", keine fremde Adresse).
                     const back = new URLSearchParams(window.location.search).get('zurueck');
-                    let target = "../admin/";
+                    let target = "/meine-orte";
                     if (back === 'karte') {
                         target = "../";
                     } else if (back && /^\/[a-z0-9]/i.test(back)) {

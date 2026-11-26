@@ -12,7 +12,7 @@ declare global {
 
 /**
  * Panel "Profil" über der Karte (Adresse /profil): Anzeigename ändern
- * (erscheint bei den Kommentaren). Ersetzt /admin/profile der alten Admin-App.
+ * (erscheint bei den Kommentaren).
  */
 @Component({
   selector: 'mampf-profile-panel',
