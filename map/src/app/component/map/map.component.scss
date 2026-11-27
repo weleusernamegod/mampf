@@ -45,6 +45,16 @@
   }
 }
 
+/* Gewählter Ort (Infobox offen): bleibt normal grün und liegt über allen anderen,
+   die übrigen offenen Orte werden hellgrün. Am Wochenende das Gleiche in Weinrot. */
+::ng-deep .has-selection .place-marker.open:not(.selected) .dot {
+  background-color: var(--primary-light);
+}
+
+::ng-deep .place-marker.selected {
+  z-index: 4;
+}
+
 /* Blase mit Anzahl, wenn beim Rauszoomen mehrere Shops zusammengefasst werden */
 ::ng-deep .place-cluster {
   position: absolute;
@@ -84,6 +94,10 @@
   .place-marker.open .dot,
   .place-cluster .bubble {
     background-color: var(--accent);
+  }
+
+  .has-selection .place-marker.open:not(.selected) .dot {
+    background-color: var(--accent-light);
   }
 }
 

@@ -93,31 +93,19 @@ export class CompassWatcher {
   /** Erlaubnis erteilt oder abgelehnt: nicht mehr fragen. */
   private answered = false;
 
-  /**
-   * Android & Co.: ohne Erlaubnis starten.
-   * iOS: Die Erlaubnis darf nur nach einem Antippen abgefragt werden. Darum
-   * beim ersten Antippen irgendwo auf der Seite automatisch fragen.
-   */
-  start(): void {
-    if (!this.permissionFunction()) {
-      this.listen();
-      return;
-    }
-    const onTap = () => {
-      this.requestPermission();
-      if (this.answered || this.started) {
-        document.removeEventListener('click', onTap, true);
-        document.removeEventListener('touchend', onTap, true);
-      }
-    };
-    document.addEventListener('click', onTap, true);
-    document.addEventListener('touchend', onTap, true);
+  /** Android & Co.: ohne Erlaubnis starten. iOS: nichts tun (fragen geht nur beim Antippen). */
+  startWithoutAsking(): void {
+    if (!this.permissionFunction()) this.listen();
   }
 
   /** Muss direkt aus einem Antippen kommen, sonst lehnt iOS ab. */
   requestPermission(): void {
     const permission = this.permissionFunction();
-    if (!permission || this.started || this.answered || this.asking) return;
+    if (!permission) {
+      this.listen();
+      return;
+    }
+    if (this.started || this.answered || this.asking) return;
     this.asking = true;
     permission
       .call(window.DeviceOrientationEvent)

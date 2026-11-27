@@ -222,6 +222,33 @@ export class AppComponent implements OnInit {
     this.mapComponent?.locate();
   }
 
+  /** Würfel: zufälligen offenen Ort in der Nähe aussuchen, hinschieben und aufklappen. */
+  onRandomClicked() {
+    if (this.placing) return;
+    const pin = this.mapComponent?.randomNearbyPin(this.selectedPlace?.id);
+    if (!pin) return;
+    this.onPlaceClicked(pin.place);
+    // Erst wenn die Infobox steht, weiss man, wie viel Karte frei bleibt:
+    // dann den Punkt in die Mitte der freien Fläche schieben.
+    // (Zweimal warten: die Infobox setzt ihre Höhe selbst erst im nächsten Moment.)
+    setTimeout(() =>
+      setTimeout(() => this.mapComponent?.showPlace(pin.position, this.freeMapArea()))
+    );
+  }
+
+  /** Sichtbarer Teil der Karte zwischen den Icons (oben) und der zugeklappten Infobox (unten), in Pixeln. */
+  private freeMapArea(): { top: number; bottom: number } | undefined {
+    const navigation = document.querySelector<HTMLElement>('mampf-navigation #navigation');
+    const dialog = document.querySelector<HTMLElement>('mampf-place-dialog #dialog');
+    if (!navigation || !dialog) return undefined;
+    // Die Infobox steht unten und wächst nach oben. Zielhöhe (style.height) statt
+    // der gerade animierten Höhe nehmen.
+    const height = parseFloat(dialog.style.height) || dialog.offsetHeight;
+    const top = navigation.getBoundingClientRect().bottom;
+    const bottom = dialog.getBoundingClientRect().bottom - height;
+    return bottom > top ? { top, bottom } : undefined;
+  }
+
   onFilterClicked() {
     this.closePanel();
     this.placing = false;

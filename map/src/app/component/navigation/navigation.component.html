@@ -20,6 +20,9 @@
   <div class="overlay button" title="Über mampf" (click)="onAboutClicked()">
     <span class="icon icon-about"></span>
   </div>
+  <div class="overlay button" title="Zufälliger Ort in der Nähe" (click)="randomClicked.emit()">
+    <span class="icon icon-shuffle"></span>
+  </div>
   </div>
 
   @if (placing) {

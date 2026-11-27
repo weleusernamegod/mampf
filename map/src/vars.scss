@@ -12,6 +12,8 @@
   /* Komplementärfarbe zum Grün, genau gegenüber auf dem Farbkreis
      (Standard #992e37, Weinrot): Wochenende, heutiger Tag, Platzieren-Punkt */
   --accent: hsl(calc(var(--hue) + 180) 53.8% 39%);
+  /* helles Weinrot, Gegenstück zu --primary-light (Wochenende: nicht gewählte Orte) */
+  --accent-light: hsl(calc(var(--hue) + 180) 30.6% 80.8%);
   --white: #ffffff;
   /* heller Hintergrund (Admin-Bereich, hinter den weissen Karten) */
   --grey0: #f2f2f2;

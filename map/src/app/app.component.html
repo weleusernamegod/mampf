@@ -5,6 +5,7 @@
     [day]="selectedDay"
     [slots]="selectedSlots"
     [placing]="placing"
+    [selectedPlaceId]="placeDialogVisible ? selectedPlace?.id : undefined"
     (placeClicked)="onMapPlaceClicked($event)"
     (mapClicked)="onMapClicked()"></mampf-map>
 
@@ -23,7 +24,8 @@
         (filterClicked)="onFilterClicked()"
         (addClicked)="onAddClicked()"
         [placing]="placing"
-        (aboutClicked)="onAboutClicked()"></mampf-navigation>
+        (aboutClicked)="onAboutClicked()"
+        (randomClicked)="onRandomClicked()"></mampf-navigation>
     </div>
     <div>
       @if (aboutDialogVisible) {

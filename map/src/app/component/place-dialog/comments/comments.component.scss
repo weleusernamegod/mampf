@@ -10,31 +10,40 @@
 }
 
 // --- Knopf "Kommentar abgeben" -------------------------------------
+// Zurückhaltend: sieht aus wie ein leeres Textfeld ("Wie war's?").
+// Beim Antippen wird daraus das echte Textfeld an genau der gleichen Stelle.
 
 .comment-button {
   display: block;
+  box-sizing: border-box;
   width: 100%;
   margin-bottom: 12px;
   padding: 7px 14px; // genau so hoch wie das einzeilige Textfeld
 
-  border: 1px solid var(--primary);
+  border: 1px solid var(--grey1);
   border-radius: 18px;
-  background-color: var(--primary);
+  background-color: var(--white);
 
-  color: var(--white);
+  color: var(--grey2);
   font-family: inherit;
   font-size: 14px;
   line-height: 1.5;
-  cursor: pointer;
+  text-align: left;
+  cursor: text;
 
   transition:
-    background-color 0.2s ease,
+    border-color 0.2s ease,
     color 0.2s ease;
 
-  // Nicht angemeldet: weiss, nächster Klick führt zum Login
+  &:hover {
+    border-color: var(--grey2);
+  }
+
+  // Nicht angemeldet: grüner Hinweis, nächster Klick führt zum Login
   &.ask-login {
-    background-color: var(--white);
+    border-color: var(--primary);
     color: var(--primary);
+    cursor: pointer;
   }
 }
 
@@ -63,7 +72,7 @@ textarea {
 
 @keyframes field-in {
   from {
-    background-color: var(--primary);
+    border-color: var(--grey1);
   }
 }
 

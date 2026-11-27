@@ -10,7 +10,8 @@ main,
   display: grid;
   grid-template-columns: 100%;
   grid-template-rows: max-content minmax(0, 1fr) max-content;
-  row-gap: 10px;
+  /* Gleich viel Luft über den Fenstern (zu den Icons) wie darunter (zur Tagesliste) */
+  row-gap: 16px;
 
   pointer-events: none;
 }

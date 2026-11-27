@@ -19,6 +19,8 @@ export interface PlacesOverlay {
   update(pins: PlacePin[]): void;
   /** Alle Shops ausblenden (z.B. im Platzieren-Modus) oder wieder einblenden. */
   setHidden(hidden: boolean): void;
+  /** Punkt(e) dieses Orts hervorheben (Infobox offen); undefined = keiner. */
+  setSelected(placeId: number | undefined): void;
 }
 
 interface Marker {
@@ -103,6 +105,7 @@ export function createPlacesOverlay(
     private clusters = new Map<string, Cluster>();
     private lastZoom: number | undefined = undefined;
     private hidden = false;
+    private selectedId: number | undefined = undefined;
 
     override onAdd() {
       this.getPanes()?.overlayMouseTarget.appendChild(this.container);
@@ -129,6 +132,25 @@ export function createPlacesOverlay(
       this.position();
     }
 
+    setSelected(placeId: number | undefined) {
+      if (placeId === this.selectedId) return;
+      this.selectedId = placeId;
+      // Solange ein Ort gewählt ist, werden die anderen hell (siehe map.component.scss)
+      this.container.classList.toggle('has-selection', placeId !== undefined);
+      for (const marker of this.markers.values()) this.markSelected(marker);
+      // Hervorgehobener Punkt steht nie in einer Blase
+      this.updateClusters();
+      this.position();
+    }
+
+    private isSelected(marker: Marker): boolean {
+      return this.selectedId !== undefined && marker.pin.place.id === this.selectedId;
+    }
+
+    private markSelected(marker: Marker) {
+      marker.element.classList.toggle('selected', this.isSelected(marker));
+    }
+
     update(pins: PlacePin[]) {
       const keys = new Set(pins.map(pin => pin.key));
       for (const [key, marker] of this.markers) {
@@ -150,6 +172,7 @@ export function createPlacesOverlay(
         marker ??= this.createMarker(pin);
         marker.pin = pin;
         this.setOpen(marker, pin.open);
+        this.markSelected(marker);
       }
 
       this.updateClusters();
@@ -191,6 +214,8 @@ export function createPlacesOverlay(
       for (const marker of this.markers.values()) {
         if (this.hidden) {
           this.setVisible(marker, false);
+        } else if (this.isSelected(marker)) {
+          this.setVisible(marker, true);
         } else if (marker.open) {
           this.setVisible(marker, !hidden.has(marker));
         } else {
@@ -206,7 +231,7 @@ export function createPlacesOverlay(
     /** Offene Shops in Gruppen einteilen, die nah beieinander liegen. */
     private groupNearby(): Marker[][] {
       const open = [...this.markers.values()]
-        .filter(marker => marker.open)
+        .filter(marker => marker.open && !this.isSelected(marker))
         .sort((a, b) => a.pin.key.localeCompare(b.pin.key));
 
       if ((map.getZoom() ?? 0) >= CLUSTER_MAX_ZOOM) {

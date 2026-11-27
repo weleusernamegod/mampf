@@ -20,6 +20,17 @@ const FIXED_LOCATION: google.maps.LatLngLiteral | null = isTestBuild()
 /** Im Test-Build ein Genauigkeitskreis von so vielen Metern, damit man ihn sieht. */
 const FIXED_ACCURACY = 40;
 
+/** Luftlinie zwischen zwei Punkten in Metern. */
+function distanceInMeters(a: google.maps.LatLngLiteral, b: google.maps.LatLngLiteral): number {
+  const rad = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * rad;
+  const dLng = (b.lng - a.lng) * rad;
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) ** 2;
+  return 2 * 6371000 * Math.asin(Math.sqrt(h));
+}
+
 /** Blau des eigenen Standorts aus vars.scss (--location-blue). */
 function locationBlue(): string {
   return (
@@ -41,6 +52,10 @@ export class MapComponent implements OnInit, OnChanges {
 
   readonly MAX_ACCURACY_RADIUS = 300;
   readonly DETAIL_ZOOM = 16;
+  /** Würfel: so weit (Meter) darf ein zufälliger Ort höchstens weg sein. */
+  readonly RANDOM_RADIUS = 250;
+  /** Würfel: nichts im Umkreis? Dann unter so vielen nächsten Orten auswählen. */
+  readonly RANDOM_NEAREST = 10;
   /** Ein Ort wurde gezielt geöffnet: nicht automatisch zum eigenen Standort springen. */
   private skipAutoLocate = false;
   readonly MAP_OPTIONS: google.maps.MapOptions = {
@@ -75,7 +90,8 @@ export class MapComponent implements OnInit, OnChanges {
   positionReceived = false;
   /** Blaue Kugel für den eigenen Standort, mit Ankerpunkt in der Mitte. */
   positionIcon: google.maps.Icon | undefined = undefined;
-  mapZoom = 9;
+  /** Startansicht: Stadt Zürich (bis man auf Lokalisieren tippt). */
+  mapZoom = 12;
   mapCenter: google.maps.LatLngLiteral = { lat: 47.3769, lng: 8.5417 };
   accuracyCircleCenter: google.maps.LatLngLiteral = {
     lat: 47.3769,
@@ -99,19 +115,46 @@ export class MapComponent implements OnInit, OnChanges {
   @Input() slots: Slot[] = DEFAULT_SLOTS;
   /** Platzieren-Modus: Shops ausblenden, roter Punkt in der Kartenmitte. */
   @Input() placing = false;
+  /** Ort mit offener Infobox: sein Punkt wird hervorgehoben. */
+  @Input() selectedPlaceId: number | undefined = undefined;
   /** Klick auf eine leere Stelle der Karte (nicht auf einen Shop). */
   @Output() mapClicked: EventEmitter<void> = new EventEmitter<void>();
   @Output() placeClicked: EventEmitter<Place> = new EventEmitter<Place>();
 
+  /** Läuft die Standort-Abfrage schon (watchPosition)? */
+  private tracking = false;
+  /** Lokalisieren wurde angetippt, die Position kommt aber erst noch: dann hinspringen. */
+  private locateWhenReady = false;
+
   ngOnInit(): void {
-    this.compass.start();
+    // Nach Standort und Blickrichtung wird erst gefragt, wenn man auf Lokalisieren tippt.
+    // Hat man den Standort früher schon erlaubt, gleich anzeigen (ohne Rückfrage).
+    navigator.permissions
+      ?.query({ name: 'geolocation' })
+      .then(status => {
+        if (status.state === 'granted') {
+          this.startTracking();
+          // Android & Co.: Kompass braucht keine Erlaubnis. iOS fragt erst beim Antippen.
+          this.compass.startWithoutAsking();
+        }
+      })
+      .catch(() => {
+        // Browser kennt die Abfrage nicht: warten, bis Lokalisieren angetippt wird
+      });
+  }
+
+  /** Standort laufend verfolgen (fragt beim ersten Mal nach der Erlaubnis). */
+  private startTracking(): void {
+    if (this.tracking) return;
+    this.tracking = true;
     if (FIXED_LOCATION) {
       this.onPositionUpdate(FIXED_LOCATION, FIXED_ACCURACY);
       return;
     }
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(
-        (geolocationPosition: GeolocationPosition) => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.watchPosition(
+      (geolocationPosition: GeolocationPosition) => {
+        this.zone.run(() => {
           this.onPositionUpdate(
             this.toLatLngLiteral(geolocationPosition),
             geolocationPosition.coords.accuracy
@@ -121,11 +164,15 @@ export class MapComponent implements OnInit, OnChanges {
           if (this.compassHeading === null && heading !== null && (speed ?? 0) > 0.5) {
             this.headingOverlay?.setHeading(heading);
           }
-        },
-        undefined,
-        { enableHighAccuracy: true }
-      );
-    }
+        });
+      },
+      () => {
+        // Abgelehnt oder kein Empfang: beim nächsten Antippen nochmals versuchen
+        this.tracking = false;
+        this.locateWhenReady = false;
+      },
+      { enableHighAccuracy: true }
+    );
   }
 
   /** Wird die Karte gerade verschoben? Dann hebt sich der rote Punkt leicht an. */
@@ -135,11 +182,33 @@ export class MapComponent implements OnInit, OnChanges {
   ngOnChanges(): void {
     // Beim Platzieren bleiben die anderen Orte sichtbar (man sieht, was schon da ist)
     this.placesOverlay?.update(this.pins());
+    this.placesOverlay?.setSelected(this.selectedPlaceId);
   }
 
   /** Punkte für den gewählten Tag (Foodtrucks am Standort dieses Tages). */
   private pins(): PlacePin[] {
     return pinsForDay(this.places, this.day, this.slots);
+  }
+
+  /**
+   * Zufälliger offener Ort in der Nähe (passend zu Tag, Tageszeit und Filter).
+   * Nähe = um den eigenen Standort, sonst um die Kartenmitte. Zuerst im Umkreis
+   * von RANDOM_RADIUS; gibt es dort keinen, unter den RANDOM_NEAREST nächsten.
+   * Der gerade offene Ort (excludeId) kommt nicht nochmals dran, ausser er ist der einzige.
+   */
+  randomNearbyPin(excludeId?: number): PlacePin | undefined {
+    const center = this.positionReceived ? this.locationMarkerPosition : this.getCenter();
+    const open = this.pins().filter(pin => pin.open);
+    if (!center || open.length === 0) return undefined;
+    const byDistance = open
+      .map(pin => ({ pin, distance: distanceInMeters(center, pin.position) }))
+      .sort((a, b) => a.distance - b.distance);
+    let candidates = byDistance.filter(entry => entry.distance <= this.RANDOM_RADIUS);
+    if (candidates.length === 0) candidates = byDistance.slice(0, this.RANDOM_NEAREST);
+    const others = candidates.filter(entry => entry.pin.place.id !== excludeId);
+    const pool = others.length > 0 ? others : candidates;
+    // Der Punkt (nicht nur der Ort): beim Foodtruck der heutige Standort
+    return pool[Math.floor(Math.random() * pool.length)].pin;
   }
 
   /** Aktuelle Kartenmitte = Position des roten Punkts im Platzieren-Modus. */
@@ -174,19 +243,42 @@ export class MapComponent implements OnInit, OnChanges {
       this.zone.run(() => this.onPinClicked(pin))
     );
     this.placesOverlay.update(this.pins());
+    this.placesOverlay.setSelected(this.selectedPlaceId);
   }
 
-  /** Karte auf einen Ort ausrichten (z.B. zurück vom Login). Danach nicht mehr zum eigenen Standort springen. */
-  showPlace(position: google.maps.LatLngLiteral): void {
+  /**
+   * Karte auf einen Ort ausrichten (z.B. zurück vom Login). Danach nicht mehr zum eigenen Standort springen.
+   * Mit "free" (Bildschirm-Pixel von oben/unten): den Punkt in die Mitte dieser
+   * freien Fläche schieben statt in die Mitte der ganzen Karte.
+   */
+  showPlace(position: google.maps.LatLngLiteral, free?: { top: number; bottom: number }): void {
     this.skipAutoLocate = true;
-    this.goToPosition(position);
+    const projection = this.map?.getProjection();
+    if (!this.map || !projection || !free) {
+      this.goToPosition(position);
+      return;
+    }
+    const rect = this.map.getDiv().getBoundingClientRect();
+    // So viele Pixel soll der Punkt unter (+) bzw. über (-) der Kartenmitte stehen
+    const offset = (free.top + free.bottom) / 2 - (rect.top + rect.height / 2);
+    const scale = 2 ** this.DETAIL_ZOOM;
+    const point = projection.fromLatLngToPoint(position)!;
+    const center = projection.fromPointToLatLng(
+      new google.maps.Point(point.x, point.y - offset / scale)
+    )!;
+    this.map.setZoom(this.DETAIL_ZOOM);
+    this.map.panTo(center);
   }
 
+  /** Lokalisieren angetippt: Standort und Blickrichtung gleichzeitig abfragen, dann hinspringen. */
   locate(): void {
-    // iPhone: Blickrichtung erst nach Erlaubnis, und fragen darf man nur beim Antippen
+    // Beides direkt aus dem Antippen heraus, sonst lehnt das iPhone ab
     this.compass.requestPermission();
+    this.startTracking();
     if (this.positionReceived) {
       this.goToPosition(this.locationMarkerPosition);
+    } else {
+      this.locateWhenReady = true;
     }
   }
 
@@ -209,8 +301,9 @@ export class MapComponent implements OnInit, OnChanges {
 
     if (!this.positionReceived) {
       this.positionReceived = true;
-      if (!this.skipAutoLocate) this.locate();
+      if (this.locateWhenReady || !this.skipAutoLocate) this.goToPosition(position);
     }
+    this.locateWhenReady = false;
   }
 
   private toLatLngLiteral(

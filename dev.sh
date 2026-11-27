@@ -8,4 +8,7 @@ cd "$(dirname "$0")"
 # api/config.php (lokal, nicht im Git) immer frisch nach dist kopieren
 cp ./api/config.php ./dist/api/config.php
 echo "mampf läuft auf http://localhost:8080  (Stoppen mit Ctrl-C)"
-php -S localhost:8080 -t ./dist ./dev-router.php
+# Auch im WLAN erreichbar (z.B. iPhone): http://<IP des Macs>:8080
+IP=$(ipconfig getifaddr en0 2>/dev/null || true)
+[ -n "$IP" ] && echo "Im WLAN (iPhone):  http://$IP:8080"
+php -S 0.0.0.0:8080 -t ./dist ./dev-router.php

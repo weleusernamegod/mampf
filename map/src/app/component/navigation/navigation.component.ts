@@ -35,6 +35,8 @@ export class NavigationComponent {
   @Output() locateClicked: EventEmitter<void> = new EventEmitter<void>();
   @Output() aboutClicked: EventEmitter<void> = new EventEmitter<void>();
   @Output() addClicked: EventEmitter<void> = new EventEmitter<void>();
+  /** Würfel: zufälligen offenen Ort in der Nähe öffnen (wenn man nicht weiss, was essen). */
+  @Output() randomClicked: EventEmitter<void> = new EventEmitter<void>();
 
   /** Ist ein Filter aktiv? Dann wird das Filter-Icon grün. */
   get filterActive(): boolean {
